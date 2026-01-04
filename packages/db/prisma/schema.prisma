@@ -1,0 +1,837 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrgDomainStatus {
+  PENDING
+  VERIFIED
+  ERROR
+}
+
+enum UserStatus {
+  INVITED
+  ACTIVE
+  DISABLED
+}
+
+enum CampaignType {
+  EVENT
+  ONLINE
+  HYBRID
+  PEER_TO_PEER
+  AUCTION_ONLY
+}
+
+enum CampaignStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum CampaignPageType {
+  HOME
+  TICKETS
+  AUCTION_CATALOG
+  ITEM_DETAIL
+  DONATE
+  PADDLE_RAISE
+  RAFFLE
+  STORE
+  SPONSORS
+  FAQ
+  PORTAL_LOGIN
+  THANK_YOU
+}
+
+enum ModuleType {
+  DONATIONS
+  TICKETING
+  AUCTION
+  PADDLE_RAISE
+  RAFFLE
+  VOTING
+  STORE
+  PEER_TO_PEER
+  LIVESTREAM
+  VOLUNTEER
+}
+
+enum CartStatus {
+  ACTIVE
+  ABANDONED
+  CONVERTED
+  EXPIRED
+}
+
+enum OrderStatus {
+  DRAFT
+  PENDING
+  PAID
+  CANCELED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  REQUIRES_PAYMENT
+  SUCCEEDED
+  FAILED
+  CANCELED
+  PARTIALLY_REFUNDED
+  REFUNDED
+}
+
+enum PaymentProvider {
+  STRIPE
+  MANUAL
+}
+
+enum LineItemType {
+  DONATION
+  TICKET
+  ADD_ON
+  AUCTION_WIN
+  RAFFLE_TICKET
+  STORE_ITEM
+  FEE_COVERAGE_DONATION
+  SHIPPING
+  ADJUSTMENT
+}
+
+enum LedgerAccountType {
+  OPERATING
+  PROCESSOR_CLEARING
+  PLATFORM_FEES
+  REFUNDS
+  PAYOUTS
+}
+
+enum LedgerEntryType {
+  DEBIT
+  CREDIT
+}
+
+enum CommunicationChannel {
+  EMAIL
+  SMS
+}
+
+enum CommunicationCategory {
+  TRANSACTIONAL
+  MARKETING
+  OUTBID_ALERTS
+}
+
+enum ReceiptType {
+  TRANSACTIONAL
+  YEAR_END
+}
+
+enum CustomFieldScope {
+  DONOR
+}
+
+enum CustomFieldType {
+  TEXT
+  NUMBER
+  DATE
+  SELECT
+  MULTI_SELECT
+}
+
+enum HouseholdMembershipRole {
+  PRIMARY
+  MEMBER
+}
+
+model Organization {
+  id              String       @id @default(cuid())
+  legalName       String
+  publicName      String
+  einTaxId        String?      @map("ein_tax_id")
+  timezone        String
+  logoUrl         String?      @map("logo_url")
+  defaultCurrency String       @default("USD") @map("default_currency")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+  deletedAt       DateTime?    @map("deleted_at")
+
+  domains                  OrgDomain[]
+  brandTheme               OrgBrandTheme?
+  users                    User[]
+  roles                    Role[]
+  donors                   Donor[]
+  campaigns                Campaign[]
+  ledgerAccounts           LedgerAccount[]
+  ledgerTransactions       LedgerTransaction[]
+  ledgerEntries            LedgerEntry[]
+  carts                    Cart[]
+  orders                   Order[]
+  payments                 Payment[]
+  refunds                  Refund[]
+  payouts                  Payout[]
+  receipts                 Receipt[]
+  sponsors                 Sponsor[]
+  auditLogEntries          AuditLogEntry[]
+  communicationPreferences CommunicationPreference[]
+  customFields             CustomField[]
+  donorTags                DonorTag[]
+  households               Household[]
+
+  @@map("organizations")
+}
+
+model OrgDomain {
+  id         String         @id @default(cuid())
+  orgId      String         @map("org_id")
+  domain     String
+  isPrimary  Boolean        @default(false) @map("is_primary")
+  isCustom   Boolean        @default(false) @map("is_custom")
+  status     OrgDomainStatus @default(PENDING)
+  verifiedAt DateTime?      @map("verified_at")
+  createdAt  DateTime       @default(now()) @map("created_at")
+  updatedAt  DateTime       @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+
+  @@unique([orgId, domain])
+  @@index([domain])
+  @@map("org_domains")
+}
+
+model OrgBrandTheme {
+  id        String   @id @default(cuid())
+  orgId     String   @unique @map("org_id")
+  name      String
+  tokens    Json
+  customCss String?  @map("custom_css")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+
+  @@map("org_brand_themes")
+}
+
+model User {
+  id           String     @id @default(cuid())
+  orgId        String     @map("org_id")
+  clerkUserId  String     @unique @map("clerk_user_id")
+  email        String
+  displayName  String?    @map("display_name")
+  status       UserStatus @default(INVITED)
+  lastLoginAt  DateTime?  @map("last_login_at")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  roleAssignments UserRoleAssignment[]
+  auditLogEntries AuditLogEntry[] @relation("AuditLogActor")
+
+  @@index([orgId, status])
+  @@map("users")
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  orgId       String   @map("org_id")
+  key         String
+  name        String
+  description String?
+  isSystem    Boolean  @default(false) @map("is_system")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  assignments  UserRoleAssignment[]
+
+  @@unique([orgId, key])
+  @@map("roles")
+}
+
+model UserRoleAssignment {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  roleId    String   @map("role_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+  role Role @relation(fields: [roleId], references: [id])
+
+  @@unique([userId, roleId])
+  @@map("user_role_assignments")
+}
+
+model AuditLogEntry {
+  id          String   @id @default(cuid())
+  orgId       String   @map("org_id")
+  actorUserId String?  @map("actor_user_id")
+  action      String
+  targetType  String   @map("target_type")
+  targetId    String   @map("target_id")
+  beforeData  Json?    @map("before_data")
+  afterData   Json?    @map("after_data")
+  ipAddress   String?  @map("ip_address")
+  userAgent   String?  @map("user_agent")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  actor         User?       @relation("AuditLogActor", fields: [actorUserId], references: [id])
+
+  @@index([orgId, createdAt])
+  @@map("audit_log_entries")
+}
+
+model Donor {
+  id            String   @id @default(cuid())
+  orgId         String   @map("org_id")
+  clerkUserId   String?  @map("clerk_user_id")
+  displayName   String?  @map("display_name")
+  firstName     String?  @map("first_name")
+  lastName      String?  @map("last_name")
+  preferredName String?  @map("preferred_name")
+  primaryEmail  String?  @map("primary_email")
+  primaryPhone  String?  @map("primary_phone")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  emails        DonorEmail[]
+  phones        DonorPhone[]
+  addresses     DonorAddress[]
+  tagAssignments DonorTagAssignment[]
+  customFieldValues DonorCustomFieldValue[]
+  householdMemberships HouseholdMembership[]
+  communicationPreferences CommunicationPreference[]
+  carts         Cart[]
+  orders        Order[]
+  receipts      Receipt[]
+
+  @@index([orgId, primaryEmail])
+  @@index([orgId, primaryPhone])
+  @@map("donors")
+}
+
+model DonorEmail {
+  id        String   @id @default(cuid())
+  orgId     String   @map("org_id")
+  donorId   String   @map("donor_id")
+  email     String
+  isPrimary Boolean  @default(false) @map("is_primary")
+  isVerified Boolean @default(false) @map("is_verified")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  donor Donor @relation(fields: [donorId], references: [id])
+  organization Organization @relation(fields: [orgId], references: [id])
+
+  @@unique([orgId, email])
+  @@index([donorId])
+  @@map("donor_emails")
+}
+
+model DonorPhone {
+  id        String   @id @default(cuid())
+  orgId     String   @map("org_id")
+  donorId   String   @map("donor_id")
+  phoneE164 String   @map("phone_e164")
+  isPrimary Boolean  @default(false) @map("is_primary")
+  isVerified Boolean @default(false) @map("is_verified")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  donor Donor @relation(fields: [donorId], references: [id])
+  organization Organization @relation(fields: [orgId], references: [id])
+
+  @@unique([orgId, phoneE164])
+  @@index([donorId])
+  @@map("donor_phones")
+}
+
+model DonorAddress {
+  id         String   @id @default(cuid())
+  orgId      String   @map("org_id")
+  donorId    String   @map("donor_id")
+  line1      String
+  line2      String?
+  city       String
+  region     String
+  postalCode String   @map("postal_code")
+  country    String   @default("US")
+  isPrimary  Boolean  @default(false) @map("is_primary")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  donor Donor @relation(fields: [donorId], references: [id])
+  organization Organization @relation(fields: [orgId], references: [id])
+
+  @@index([donorId])
+  @@map("donor_addresses")
+}
+
+model Household {
+  id        String   @id @default(cuid())
+  orgId     String   @map("org_id")
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  memberships HouseholdMembership[]
+
+  @@index([orgId, name])
+  @@map("households")
+}
+
+model HouseholdMembership {
+  id            String                   @id @default(cuid())
+  householdId   String                   @map("household_id")
+  donorId       String                   @map("donor_id")
+  role          HouseholdMembershipRole  @default(MEMBER)
+  relationship  String?
+  createdAt     DateTime                 @default(now()) @map("created_at")
+
+  household Household @relation(fields: [householdId], references: [id])
+  donor     Donor     @relation(fields: [donorId], references: [id])
+
+  @@unique([householdId, donorId])
+  @@map("household_memberships")
+}
+
+model DonorTag {
+  id        String   @id @default(cuid())
+  orgId     String   @map("org_id")
+  name      String
+  color     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  assignments DonorTagAssignment[]
+
+  @@unique([orgId, name])
+  @@map("donor_tags")
+}
+
+model DonorTagAssignment {
+  id        String   @id @default(cuid())
+  donorId   String   @map("donor_id")
+  donorTagId String  @map("donor_tag_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  donor Donor @relation(fields: [donorId], references: [id])
+  donorTag DonorTag @relation(fields: [donorTagId], references: [id])
+
+  @@unique([donorId, donorTagId])
+  @@map("donor_tag_assignments")
+}
+
+model CustomField {
+  id        String           @id @default(cuid())
+  orgId     String           @map("org_id")
+  scope     CustomFieldScope @default(DONOR)
+  name      String
+  fieldType CustomFieldType  @map("field_type")
+  options   Json?
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime         @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  values DonorCustomFieldValue[]
+
+  @@unique([orgId, scope, name])
+  @@map("custom_fields")
+}
+
+model DonorCustomFieldValue {
+  id            String   @id @default(cuid())
+  donorId       String   @map("donor_id")
+  customFieldId String   @map("custom_field_id")
+  value         String?
+  valueJson     Json?    @map("value_json")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  donor Donor @relation(fields: [donorId], references: [id])
+  customField CustomField @relation(fields: [customFieldId], references: [id])
+
+  @@unique([donorId, customFieldId])
+  @@map("donor_custom_field_values")
+}
+
+model CommunicationPreference {
+  id        String                 @id @default(cuid())
+  orgId     String                 @map("org_id")
+  donorId   String                 @map("donor_id")
+  channel   CommunicationChannel
+  category  CommunicationCategory
+  optedIn   Boolean                @default(true) @map("opted_in")
+  createdAt DateTime               @default(now()) @map("created_at")
+  updatedAt DateTime               @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  donor Donor @relation(fields: [donorId], references: [id])
+
+  @@unique([donorId, channel, category])
+  @@map("communication_preferences")
+}
+
+model Campaign {
+  id               String         @id @default(cuid())
+  orgId            String         @map("org_id")
+  name             String
+  slug             String
+  description      String?
+  type             CampaignType
+  status           CampaignStatus @default(DRAFT)
+  startsAt         DateTime?      @map("starts_at")
+  endsAt           DateTime?      @map("ends_at")
+  goalAmount       Int?           @map("goal_amount")
+  heroTitle        String?        @map("hero_title")
+  heroMediaUrl     String?        @map("hero_media_url")
+  storyContent     String?        @map("story_content")
+  seoTitle         String?        @map("seo_title")
+  seoDescription   String?        @map("seo_description")
+  socialShareImageUrl String?     @map("social_share_image_url")
+  themeOverrides   Json?          @map("theme_overrides")
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  pages CampaignPage[]
+  modules CampaignModule[]
+  sponsorPlacements SponsorPlacement[]
+  carts Cart[]
+  orders Order[]
+
+  @@unique([orgId, slug])
+  @@index([orgId, status])
+  @@map("campaigns")
+}
+
+model CampaignPage {
+  id          String           @id @default(cuid())
+  orgId       String           @map("org_id")
+  campaignId  String           @map("campaign_id")
+  type        CampaignPageType
+  slug        String
+  title       String?
+  isPublished Boolean          @default(false) @map("is_published")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+  blocks   PageBlock[]
+
+  @@unique([campaignId, slug])
+  @@map("campaign_pages")
+}
+
+model PageBlock {
+  id             String   @id @default(cuid())
+  orgId          String   @map("org_id")
+  campaignPageId String   @map("campaign_page_id")
+  type           String
+  data           Json
+  sortOrder      Int      @default(0) @map("sort_order")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  page CampaignPage @relation(fields: [campaignPageId], references: [id])
+
+  @@index([campaignPageId, sortOrder])
+  @@map("page_blocks")
+}
+
+model CampaignModule {
+  id         String     @id @default(cuid())
+  orgId      String     @map("org_id")
+  campaignId String     @map("campaign_id")
+  type       ModuleType
+  config     Json?
+  isEnabled  Boolean    @default(true) @map("is_enabled")
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+
+  @@unique([campaignId, type])
+  @@map("campaign_modules")
+}
+
+model Sponsor {
+  id        String   @id @default(cuid())
+  orgId     String   @map("org_id")
+  name      String
+  level     String?
+  logoUrl   String?  @map("logo_url")
+  websiteUrl String? @map("website_url")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  placements SponsorPlacement[]
+
+  @@index([orgId, level])
+  @@map("sponsors")
+}
+
+model SponsorPlacement {
+  id            String   @id @default(cuid())
+  orgId         String   @map("org_id")
+  sponsorId     String   @map("sponsor_id")
+  campaignId    String   @map("campaign_id")
+  placementType String   @map("placement_type")
+  placementRefId String  @map("placement_ref_id")
+  sortOrder     Int      @default(0) @map("sort_order")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  sponsor Sponsor @relation(fields: [sponsorId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+
+  @@index([campaignId, placementType])
+  @@map("sponsor_placements")
+}
+
+model Cart {
+  id         String     @id @default(cuid())
+  orgId      String     @map("org_id")
+  campaignId String?    @map("campaign_id")
+  donorId    String?    @map("donor_id")
+  status     CartStatus @default(ACTIVE)
+  expiresAt  DateTime?  @map("expires_at")
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign? @relation(fields: [campaignId], references: [id])
+  donor Donor? @relation(fields: [donorId], references: [id])
+  items CartItem[]
+
+  @@index([orgId, status])
+  @@map("carts")
+}
+
+model CartItem {
+  id         String      @id @default(cuid())
+  orgId      String      @map("org_id")
+  cartId     String      @map("cart_id")
+  type       LineItemType
+  sourceId   String?     @map("source_id")
+  name       String
+  quantity   Int         @default(1)
+  unitAmount Int         @map("unit_amount")
+  currency   String      @default("USD")
+  metadata   Json?
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @updatedAt @map("updated_at")
+
+  cart Cart @relation(fields: [cartId], references: [id])
+  organization Organization @relation(fields: [orgId], references: [id])
+
+  @@index([cartId])
+  @@map("cart_items")
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  orgId      String      @map("org_id")
+  campaignId String?     @map("campaign_id")
+  donorId    String?     @map("donor_id")
+  orderNumber String     @map("order_number")
+  status     OrderStatus @default(PENDING)
+  totalAmount Int        @map("total_amount")
+  currency   String      @default("USD")
+  coverFeesAmount Int    @default(0) @map("cover_fees_amount")
+  stripePaymentIntentId String? @map("stripe_payment_intent_id")
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign? @relation(fields: [campaignId], references: [id])
+  donor Donor? @relation(fields: [donorId], references: [id])
+  lineItems OrderLineItem[]
+  payments Payment[]
+  receipts Receipt[]
+
+  @@unique([orgId, orderNumber])
+  @@index([orgId, status])
+  @@map("orders")
+}
+
+model OrderLineItem {
+  id          String      @id @default(cuid())
+  orgId       String      @map("org_id")
+  orderId     String      @map("order_id")
+  type        LineItemType
+  sourceId    String?     @map("source_id")
+  description String?
+  quantity    Int         @default(1)
+  unitAmount  Int         @map("unit_amount")
+  totalAmount Int         @map("total_amount")
+  currency    String      @default("USD")
+  fmvAmount   Int         @default(0) @map("fmv_amount")
+  benefitAmount Int       @default(0) @map("benefit_amount")
+  taxDeductibleAmount Int @default(0) @map("tax_deductible_amount")
+  metadata    Json?
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  order Order @relation(fields: [orderId], references: [id])
+  organization Organization @relation(fields: [orgId], references: [id])
+
+  @@index([orderId])
+  @@map("order_line_items")
+}
+
+model Payment {
+  id               String        @id @default(cuid())
+  orgId            String        @map("org_id")
+  orderId          String?       @map("order_id")
+  provider         PaymentProvider
+  providerPaymentId String?      @map("provider_payment_id")
+  status           PaymentStatus
+  amount           Int
+  currency         String        @default("USD")
+  feeAmount        Int           @default(0) @map("fee_amount")
+  netAmount        Int           @default(0) @map("net_amount")
+  capturedAt       DateTime?     @map("captured_at")
+  createdAt        DateTime      @default(now()) @map("created_at")
+  updatedAt        DateTime      @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  order Order? @relation(fields: [orderId], references: [id])
+  refunds Refund[]
+  ledgerTransactions LedgerTransaction[]
+
+  @@index([orgId, status])
+  @@map("payments")
+}
+
+model Refund {
+  id               String   @id @default(cuid())
+  orgId            String   @map("org_id")
+  paymentId        String   @map("payment_id")
+  providerRefundId String?  @map("provider_refund_id")
+  status           String
+  amount           Int
+  currency         String   @default("USD")
+  createdAt        DateTime @default(now()) @map("created_at")
+  processedAt      DateTime? @map("processed_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  payment Payment @relation(fields: [paymentId], references: [id])
+  ledgerTransactions LedgerTransaction[]
+
+  @@index([orgId, status])
+  @@map("refunds")
+}
+
+model Payout {
+  id               String   @id @default(cuid())
+  orgId            String   @map("org_id")
+  providerPayoutId String?  @map("provider_payout_id")
+  status           String
+  amount           Int
+  currency         String   @default("USD")
+  arrivalDate      DateTime? @map("arrival_date")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  ledgerTransactions LedgerTransaction[]
+
+  @@index([orgId, arrivalDate])
+  @@map("payouts")
+}
+
+model LedgerAccount {
+  id        String            @id @default(cuid())
+  orgId     String            @map("org_id")
+  name      String
+  type      LedgerAccountType
+  currency  String            @default("USD")
+  isSystem  Boolean           @default(false) @map("is_system")
+  createdAt DateTime          @default(now()) @map("created_at")
+  updatedAt DateTime          @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  entries LedgerEntry[]
+
+  @@unique([orgId, name])
+  @@map("ledger_accounts")
+}
+
+model LedgerTransaction {
+  id        String   @id @default(cuid())
+  orgId     String   @map("org_id")
+  paymentId String?  @map("payment_id")
+  refundId  String?  @map("refund_id")
+  payoutId  String?  @map("payout_id")
+  type      String
+  amount    Int
+  currency  String   @default("USD")
+  occurredAt DateTime @default(now()) @map("occurred_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  payment Payment? @relation(fields: [paymentId], references: [id])
+  refund Refund? @relation(fields: [refundId], references: [id])
+  payout Payout? @relation(fields: [payoutId], references: [id])
+  entries LedgerEntry[]
+
+  @@index([orgId, occurredAt])
+  @@map("ledger_transactions")
+}
+
+model LedgerEntry {
+  id                 String          @id @default(cuid())
+  orgId              String          @map("org_id")
+  ledgerAccountId    String          @map("ledger_account_id")
+  ledgerTransactionId String         @map("ledger_transaction_id")
+  entryType          LedgerEntryType @map("entry_type")
+  amount             Int
+  currency           String          @default("USD")
+  occurredAt         DateTime        @map("occurred_at")
+  referenceType      String?         @map("reference_type")
+  referenceId        String?         @map("reference_id")
+  memo               String?
+  createdAt          DateTime        @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  ledgerAccount LedgerAccount @relation(fields: [ledgerAccountId], references: [id])
+  ledgerTransaction LedgerTransaction @relation(fields: [ledgerTransactionId], references: [id])
+
+  @@index([ledgerAccountId, occurredAt])
+  @@map("ledger_entries")
+}
+
+model Receipt {
+  id            String      @id @default(cuid())
+  orgId         String      @map("org_id")
+  donorId       String?     @map("donor_id")
+  orderId       String?     @map("order_id")
+  receiptType   ReceiptType @map("receipt_type")
+  receiptNumber String      @map("receipt_number")
+  issuedAt      DateTime    @map("issued_at")
+  year          Int?
+  documentUrl   String?     @map("document_url")
+  metadata      Json?
+  createdAt     DateTime    @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  donor Donor? @relation(fields: [donorId], references: [id])
+  order Order? @relation(fields: [orderId], references: [id])
+
+  @@unique([orgId, receiptNumber])
+  @@index([donorId])
+  @@map("receipts")
+}
