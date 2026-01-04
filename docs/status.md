@@ -18,10 +18,10 @@ Status: in progress
 Notes: Initial Prisma schema added (orgs, donors, campaigns, ledger, orders).
 
 ## WS-AUTH - Clerk + RBAC
-Owner: unassigned
+Owner: codex
 Scope: `apps/web/src` auth + middleware
-Status: not started
-Notes: Waiting for env config and base routes.
+Status: in progress
+Notes: Clerk provider, auth routes, middleware, and RBAC helpers added.
 
 ## WS-PAY - Stripe + receipts
 Owner: unassigned
