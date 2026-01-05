@@ -112,6 +112,15 @@ export default async function VolunteerShiftDetailPage({
         </button>
       </form>
 
+      <div className="flex justify-end">
+        <a
+          href={`/api/admin/volunteers/${shift.id}/signups?format=csv`}
+          className="inline-flex h-10 items-center justify-center rounded-full border border-zinc-200 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-700 transition hover:border-zinc-300"
+        >
+          Download CSV
+        </a>
+      </div>
+
       <div className="rounded-2xl border border-zinc-200 bg-white shadow-sm">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-zinc-200 bg-zinc-50">

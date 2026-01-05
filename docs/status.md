@@ -123,7 +123,7 @@ Notes: API token and webhook management UI + CRUD APIs added.
 Owner: codex
 Scope: `apps/web/src/app/admin/volunteers`, `apps/web/src/app/(public)/campaigns/*`, `packages/db`
 Status: in progress
-Notes: Volunteer shifts + signups schema, admin shift management, public signup form, and API endpoints added.
+Notes: Volunteer shifts + signups schema, admin shift management, public signup form, and CSV export endpoint added.
 
 ## WS-CRM - Donor profiles
 Owner: codex
