@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { label: "Voting", href: "/admin/voting" },
   { label: "Store", href: "/admin/store" },
   { label: "Donations", href: "/admin/donations" },
+  { label: "Donors", href: "/admin/donors" },
   { label: "Messaging", href: "/admin/messaging" },
   { label: "Integrations", href: "/admin/integrations" },
   { label: "Reports", href: "/admin/reports" },

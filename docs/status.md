@@ -112,3 +112,9 @@ Owner: codex
 Scope: `apps/web/src/app/admin/integrations`, `apps/web/src/app/api/admin/api-tokens`, `apps/web/src/app/api/admin/webhooks`
 Status: in progress
 Notes: API token and webhook management UI + CRUD APIs added.
+
+## WS-CRM - Donor profiles
+Owner: codex
+Scope: `apps/web/src/app/admin/donors`, `apps/web/src/app/api/admin/donors`
+Status: in progress
+Notes: Donor list + detail UI with update form and donor CRUD API added.
