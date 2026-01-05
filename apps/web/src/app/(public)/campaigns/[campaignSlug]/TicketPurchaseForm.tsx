@@ -34,6 +34,13 @@ export async function TicketPurchaseForm({
     },
     orderBy: { price: "asc" },
   });
+  const addOns = await prisma.ticketAddOn.findMany({
+    where: {
+      campaignId: campaign.id,
+      isActive: true,
+    },
+    orderBy: { price: "asc" },
+  });
 
   const currency = campaign.currency ?? ticketTypes[0]?.currency ?? "USD";
   const defaultTicket = ticketTypes[0];
@@ -111,6 +118,41 @@ export async function TicketPurchaseForm({
                 className="mt-2 w-32 rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
               />
             </label>
+
+            {addOns.length ? (
+              <div className="space-y-3">
+                <p className="text-sm font-semibold text-[color:var(--campaign-ink)]">
+                  Add-ons
+                </p>
+                <div className="space-y-3">
+                  {addOns.map((addOn) => (
+                    <label
+                      key={addOn.id}
+                      className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] px-4 py-3 text-sm"
+                    >
+                      <div>
+                        <p className="font-semibold text-[color:var(--campaign-ink)]">
+                          {addOn.name}
+                        </p>
+                        <p className="text-xs text-[color:var(--campaign-ink-soft)]">
+                          {formatCurrency(addOn.price, currency)}{" "}
+                          {addOn.scope === "ATTENDEE"
+                            ? "per attendee"
+                            : "per order"}
+                        </p>
+                      </div>
+                      <input
+                        name={`addOn_${addOn.id}`}
+                        type="number"
+                        min="0"
+                        defaultValue={0}
+                        className="w-24 rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                      />
+                    </label>
+                  ))}
+                </div>
+              </div>
+            ) : null}
 
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="block text-sm font-semibold text-[color:var(--campaign-ink)]">

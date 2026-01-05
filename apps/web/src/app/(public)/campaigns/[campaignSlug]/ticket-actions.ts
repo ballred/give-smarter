@@ -16,6 +16,16 @@ function parseQuantity(value: FormDataEntryValue | null) {
   return Number.isFinite(num) && num > 0 ? Math.floor(num) : null;
 }
 
+function parseAddOnEntries(formData: FormData) {
+  return Array.from(formData.entries())
+    .filter(([key]) => key.startsWith("addOn_"))
+    .map(([key, value]) => ({
+      id: key.replace("addOn_", ""),
+      quantity: Number(value),
+    }))
+    .filter((entry) => Number.isFinite(entry.quantity) && entry.quantity > 0);
+}
+
 function resolveOrigin() {
   const headerList = headers();
   const host = headerList.get("host");
@@ -70,6 +80,7 @@ export async function createTicketCheckout(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
   const firstName = String(formData.get("firstName") ?? "").trim();
   const lastName = String(formData.get("lastName") ?? "").trim();
+  const addOnEntries = parseAddOnEntries(formData);
 
   if (!campaignId || !ticketTypeId) {
     throw new Error("Campaign and ticket type are required.");
@@ -103,6 +114,49 @@ export async function createTicketCheckout(formData: FormData) {
   const benefitAmount = ticketType.benefitAmount * quantity;
   const taxDeductibleAmount = Math.max(0, totalAmount - benefitAmount);
 
+  const addOnLineItems: Array<{
+    type: LineItemType;
+    sourceId?: string | null;
+    description: string;
+    quantity: number;
+    unitAmount: number;
+    totalAmount: number;
+    fmvAmount?: number;
+    benefitAmount?: number;
+    taxDeductibleAmount?: number;
+    metadata?: Record<string, unknown>;
+  }> = [];
+
+  if (addOnEntries.length) {
+    const addOns = await prisma.ticketAddOn.findMany({
+      where: {
+        campaignId: campaign.id,
+        isActive: true,
+        id: { in: addOnEntries.map((entry) => entry.id) },
+      },
+    });
+
+    const addOnMap = new Map(addOns.map((addOn) => [addOn.id, addOn]));
+
+    for (const entry of addOnEntries) {
+      const addOn = addOnMap.get(entry.id);
+      if (!addOn) continue;
+      const baseQuantity = Math.floor(entry.quantity);
+      if (baseQuantity <= 0) continue;
+      const effectiveQuantity =
+        addOn.scope === "ATTENDEE" ? baseQuantity * quantity : baseQuantity;
+      if (effectiveQuantity <= 0) continue;
+      addOnLineItems.push({
+        type: "ADD_ON" as LineItemType,
+        sourceId: addOn.id,
+        description: addOn.name,
+        quantity: effectiveQuantity,
+        unitAmount: addOn.price,
+        totalAmount: addOn.price * effectiveQuantity,
+      });
+    }
+  }
+
   const normalized = normalizeLineItems(
     [
       {
@@ -116,6 +170,7 @@ export async function createTicketCheckout(formData: FormData) {
         benefitAmount,
         taxDeductibleAmount,
       },
+      ...addOnLineItems,
     ],
     currency,
   );
