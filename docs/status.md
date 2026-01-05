@@ -100,3 +100,9 @@ Owner: codex
 Scope: `apps/web/src/app/admin/messaging`, `apps/web/src/app/api/admin/email-templates`, `apps/web/src/app/api/admin/sms-templates`
 Status: in progress
 Notes: Email/SMS template UI, send history, and template CRUD APIs added.
+
+## WS-DON - Donations + text-to-give
+Owner: codex
+Scope: `apps/web/src/app/admin/donations`, `apps/web/src/app/api/admin/keyword-routes`
+Status: in progress
+Notes: Keyword route management UI + API added; donation form builder still pending.

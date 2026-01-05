@@ -371,6 +371,19 @@ async function main() {
       sentAt: new Date(),
     },
   });
+
+  await prisma.keywordRoute.upsert({
+    where: { id: "keyword_route_demo" },
+    update: {},
+    create: {
+      id: "keyword_route_demo",
+      orgId: organization.id,
+      keyword: "GIVE",
+      campaignId: campaign.id,
+      replyMessage: "Thanks for supporting our campaign! Give here: {{link}}",
+      status: "ACTIVE",
+    },
+  });
 }
 
 main()
