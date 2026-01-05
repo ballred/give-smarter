@@ -6,7 +6,11 @@ import {
   PaymentStatus,
   type LineItemType,
 } from "@prisma/client";
-import { getBidIncrement, type BidIncrementRule } from "@give-smarter/core";
+import {
+  getBidIncrement,
+  resolveProxyBid,
+  type BidIncrementRule,
+} from "@give-smarter/core";
 import { prisma } from "@/lib/db";
 import { createOrderNumber, normalizeLineItems } from "@/lib/orders";
 import { getStripeClient } from "@/lib/stripe";
@@ -158,30 +162,103 @@ export async function placeBid(formData: FormData) {
 
   const maxBidCents =
     maxBidInput && maxBidInput > 0 ? Math.round(maxBidInput * 100) : null;
+  const incomingMaxCents = Math.max(
+    bidAmountCents,
+    maxBidCents ?? bidAmountCents,
+  );
 
-  const newBid = await prisma.bid.create({
-    data: {
-      orgId: item.orgId,
-      auctionItemId: item.id,
-      donorId,
-      amount: bidAmountCents,
-      maxBidAmount: maxBidCents,
+  const currentMaxRecord = topBid
+    ? await prisma.bid.findFirst({
+        where: {
+          auctionItemId: item.id,
+          donorId: topBid.donorId,
+          isAuto: false,
+        },
+        orderBy: { createdAt: "desc" },
+      })
+    : null;
+  const currentMaxCents =
+    currentMaxRecord?.maxBidAmount ??
+    currentMaxRecord?.amount ??
+    topBid?.maxBidAmount ??
+    topBid?.amount ??
+    item.startingBid;
+
+  const bidPlacedAt = new Date();
+  const resolution = resolveProxyBid(
+    topBid
+      ? {
+          bidderId: topBid.donorId,
+          currentBidAmount: currentBidCents / 100,
+          maxBidAmount: currentMaxCents / 100,
+          maxBidPlacedAt: currentMaxRecord?.createdAt ?? topBid.createdAt,
+        }
+      : null,
+    {
+      bidderId: donorId,
+      bidAmount: bidAmountCents / 100,
+      maxBidAmount: incomingMaxCents / 100,
+      placedAt: bidPlacedAt,
     },
+    rules,
+  );
+  const winningBidAmountCents = Math.round(
+    resolution.winningBidAmount * 100,
+  );
+  const winningMaxBidAmountCents = Math.round(
+    resolution.winningMaxBidAmount * 100,
+  );
+  const incomingEffectiveBidCents =
+    resolution.winningBidderId === donorId
+      ? winningBidAmountCents
+      : incomingMaxCents;
+
+  await prisma.$transaction(async (tx) => {
+    const incomingBid = await tx.bid.create({
+      data: {
+        orgId: item.orgId,
+        auctionItemId: item.id,
+        donorId,
+        amount: incomingEffectiveBidCents,
+        maxBidAmount:
+          incomingMaxCents > bidAmountCents ? incomingMaxCents : null,
+      },
+    });
+
+    let winningId = incomingBid.id;
+
+    if (resolution.winningBidderId !== donorId && topBid) {
+      if (winningBidAmountCents !== topBid.amount) {
+        const autoBid = await tx.bid.create({
+          data: {
+            orgId: item.orgId,
+            auctionItemId: item.id,
+            donorId: topBid.donorId,
+            amount: winningBidAmountCents,
+            maxBidAmount: winningMaxBidAmountCents,
+            isAuto: true,
+          },
+        });
+        winningId = autoBid.id;
+      } else {
+        winningId = topBid.id;
+      }
+    }
+
+    await tx.bid.updateMany({
+      where: { auctionItemId: item.id },
+      data: { status: "OUTBID" },
+    });
+    await tx.bid.update({
+      where: { id: winningId },
+      data: { status: "WINNING" },
+    });
+
   });
 
-  await prisma.bid.updateMany({
-    where: { auctionItemId: item.id },
-    data: { status: "OUTBID" },
-  });
-
-  await prisma.bid.update({
-    where: { id: newBid.id },
-    data: { status: "WINNING" },
-  });
-
-  if (topBid && topBid.donorId !== donorId) {
+  if (resolution.outbidBidderId) {
     const outbidDonor = await prisma.donor.findUnique({
-      where: { id: topBid.donorId },
+      where: { id: resolution.outbidBidderId },
       select: { primaryPhone: true, primaryEmail: true },
     });
 
