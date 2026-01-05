@@ -208,6 +208,39 @@ async function main() {
               ],
             },
           },
+          {
+            orgId: organization.id,
+            type: "AUCTION_CATALOG",
+            slug: "auction",
+            title: "Auction",
+            isPublished: true,
+            blocks: {
+              create: [
+                {
+                  orgId: organization.id,
+                  type: "story",
+                  sortOrder: 0,
+                  data: {
+                    title: "Bid for a cause",
+                    body: [
+                      "Every winning bid supports student programs.",
+                      "Browse the catalog and set your max bid.",
+                    ],
+                  },
+                },
+                {
+                  orgId: organization.id,
+                  type: "cta",
+                  sortOrder: 1,
+                  data: {
+                    title: "Ready to bid?",
+                    body: "Explore the items and place a bid from your phone.",
+                    primaryCta: { label: "View items", href: \"#auction\" },
+                  },
+                },
+              ],
+            },
+          },
         ],
       },
     },

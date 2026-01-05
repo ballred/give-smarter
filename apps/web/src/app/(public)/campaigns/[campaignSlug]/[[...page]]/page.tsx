@@ -6,6 +6,8 @@ import { moduleTypeLabels } from "@give-smarter/core";
 import { getCampaignBySlug } from "../campaign-data";
 import { DonationForm } from "../DonationForm";
 import { TicketPurchaseForm } from "../TicketPurchaseForm";
+import { AuctionCatalog } from "../AuctionCatalog";
+import { AuctionItemDetail } from "../AuctionItemDetail";
 import styles from "../campaign-page.module.css";
 
 type CampaignPageParams = {
@@ -61,8 +63,11 @@ export default async function CampaignPage({
   const donateHref = donatePage
     ? `/campaigns/${campaign.slug}/${donatePage.slug}`
     : "#donate";
+  const auctionItemId = params.page?.[1];
   const showDonationForm = page.slug === "donate";
   const showTicketForm = page.slug === "tickets";
+  const showAuctionCatalog = page.slug === "auction" && !auctionItemId;
+  const showAuctionItem = page.slug === "auction" && Boolean(auctionItemId);
   const showSuccess = searchParams?.success === "1";
   const showCanceled = searchParams?.canceled === "1";
 
@@ -137,6 +142,13 @@ export default async function CampaignPage({
               campaign={campaign}
               showSuccess={showSuccess}
               showCanceled={showCanceled}
+            />
+          ) : null}
+          {showAuctionCatalog ? <AuctionCatalog campaign={campaign} /> : null}
+          {showAuctionItem && auctionItemId ? (
+            <AuctionItemDetail
+              itemId={auctionItemId}
+              currency={campaign.currency ?? "USD"}
             />
           ) : null}
         </main>
