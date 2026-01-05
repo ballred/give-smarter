@@ -328,6 +328,49 @@ async function main() {
       fmvAmount: 50000,
     },
   });
+
+  await prisma.emailTemplate.upsert({
+    where: { id: "email_template_demo" },
+    update: {},
+    create: {
+      id: "email_template_demo",
+      orgId: organization.id,
+      name: "Spring Gala Invite",
+      subject: "You're invited to the Spring Gala",
+      html: "<h1>Join us for the Spring Gala</h1><p>Reserve your seats today.</p>",
+      status: "APPROVED",
+      version: 1,
+    },
+  });
+
+  await prisma.smsTemplate.upsert({
+    where: { id: "sms_template_demo" },
+    update: {},
+    create: {
+      id: "sms_template_demo",
+      orgId: organization.id,
+      name: "Outbid alert",
+      body: "You're outbid on Weekend Retreat Package. Tap to bid again: {{link}}",
+      status: "APPROVED",
+      version: 1,
+    },
+  });
+
+  await prisma.messageSend.upsert({
+    where: { id: "message_send_demo" },
+    update: {},
+    create: {
+      id: "message_send_demo",
+      orgId: organization.id,
+      channel: "EMAIL",
+      emailTemplateId: "email_template_demo",
+      to: "jamie@example.org",
+      subject: "You're invited to the Spring Gala",
+      body: "Join us for the Spring Gala.",
+      status: "SENT",
+      sentAt: new Date(),
+    },
+  });
 }
 
 main()

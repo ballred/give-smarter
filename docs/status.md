@@ -94,3 +94,9 @@ Owner: codex
 Scope: `apps/web/src/app/admin/ticketing`, `apps/web/src/app/api/admin/ticket-types`
 Status: in progress
 Notes: Admin ticketing list + create form and CRUD API routes added.
+
+## WS-MSG - Messaging templates
+Owner: codex
+Scope: `apps/web/src/app/admin/messaging`, `apps/web/src/app/api/admin/email-templates`, `apps/web/src/app/api/admin/sms-templates`
+Status: in progress
+Notes: Email/SMS template UI, send history, and template CRUD APIs added.
