@@ -10,6 +10,11 @@ import { prisma } from "@/lib/db";
 type CampaignRecord = Prisma.CampaignGetPayload<{
   include: {
     modules: true;
+    organization: {
+      select: {
+        defaultCurrency: true;
+      };
+    };
     pages: {
       include: {
         blocks: true;
@@ -121,6 +126,7 @@ function mapModules(modules: CampaignRecord["modules"]): CampaignModule[] {
       isEnabled: module.isEnabled,
       label,
       description,
+      config: config ?? undefined,
     } satisfies CampaignModule;
   });
 }
@@ -137,6 +143,9 @@ export async function getCampaignBySlug(
     include: {
       modules: {
         orderBy: { type: "asc" },
+      },
+      organization: {
+        select: { defaultCurrency: true },
       },
       pages: {
         where: options.includeDraft ? {} : { isPublished: true },
@@ -170,6 +179,7 @@ export async function getCampaignBySlug(
     goalAmount: campaign.goalAmount ?? undefined,
     heroTitle: campaign.heroTitle ?? undefined,
     heroMediaUrl: campaign.heroMediaUrl ?? undefined,
+    currency: campaign.organization.defaultCurrency ?? undefined,
     theme,
     pages: mapPages(campaign.pages),
     modules: mapModules(campaign.modules),

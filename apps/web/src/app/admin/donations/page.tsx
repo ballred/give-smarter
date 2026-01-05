@@ -16,9 +16,12 @@ export default function DonationsPage() {
           <p className="mt-2 text-sm text-zinc-600">
             Build embeddable forms and preset giving levels.
           </p>
-          <div className="mt-4 inline-flex h-10 items-center justify-center rounded-full border border-dashed border-zinc-200 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
-            Coming soon
-          </div>
+          <Link
+            href="/admin/donations/forms"
+            className="mt-4 inline-flex h-10 items-center justify-center rounded-full border border-zinc-200 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-700 transition hover:border-zinc-300"
+          >
+            Configure forms
+          </Link>
         </div>
         <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
           <h2 className="text-sm font-semibold text-zinc-900">

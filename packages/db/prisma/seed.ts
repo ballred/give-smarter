@@ -31,7 +31,34 @@ async function main() {
       },
       modules: {
         create: [
-          { orgId: organization.id, type: "DONATIONS", isEnabled: true },
+          {
+            orgId: organization.id,
+            type: "DONATIONS",
+            isEnabled: true,
+            config: {
+              tiers: [
+                {
+                  amount: 5000,
+                  label: "Supplies",
+                  description: "Stock a classroom with supplies.",
+                },
+                {
+                  amount: 15000,
+                  label: "Experience",
+                  description: "Fund a student field trip.",
+                },
+                {
+                  amount: 50000,
+                  label: "Legacy",
+                  description: "Support a full enrichment program.",
+                },
+              ],
+              allowCustomAmount: true,
+              coverFeesEnabled: true,
+              coverFeesDefault: false,
+              designationOptions: ["General Fund", "STEM", "Arts"],
+            },
+          },
           { orgId: organization.id, type: "TICKETING", isEnabled: true },
           { orgId: organization.id, type: "AUCTION", isEnabled: true },
           { orgId: organization.id, type: "PADDLE_RAISE", isEnabled: true },
@@ -108,6 +135,41 @@ async function main() {
                     body: "Reserve your seats and share the campaign.",
                     primaryCta: { label: "Buy tickets", href: "#tickets" },
                     secondaryCta: { label: "Share", href: "#share" },
+                  },
+                },
+              ],
+            },
+          },
+          {
+            orgId: organization.id,
+            type: "DONATE",
+            slug: "donate",
+            title: "Donate",
+            isPublished: true,
+            blocks: {
+              create: [
+                {
+                  orgId: organization.id,
+                  type: "donationTiers",
+                  sortOrder: 0,
+                  data: {
+                    title: "Make a gift",
+                    subtitle: "Choose a level or enter your own amount.",
+                    tiers: [
+                      { amount: "$50", label: "Supplies" },
+                      { amount: "$150", label: "Field trip" },
+                      { amount: "$500", label: "Program support" },
+                    ],
+                  },
+                },
+                {
+                  orgId: organization.id,
+                  type: "cta",
+                  sortOrder: 1,
+                  data: {
+                    title: "Your gift changes every classroom.",
+                    body: "Every donation supports student enrichment.",
+                    primaryCta: { label: "Donate now", href: "#donate" },
                   },
                 },
               ],

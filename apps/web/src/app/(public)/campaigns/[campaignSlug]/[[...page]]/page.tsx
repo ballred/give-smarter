@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { BlockRenderer, CampaignThemeProvider } from "@give-smarter/ui";
 import { moduleTypeLabels } from "@give-smarter/core";
 import { getCampaignBySlug } from "../campaign-data";
+import { DonationForm } from "../DonationForm";
 import styles from "../campaign-page.module.css";
 
 type CampaignPageParams = {
@@ -36,8 +37,10 @@ export async function generateMetadata({
 
 export default async function CampaignPage({
   params,
+  searchParams,
 }: {
   params: CampaignPageParams;
+  searchParams?: { success?: string; canceled?: string };
 }) {
   const campaign = await getCampaignBySlug(params.campaignSlug);
 
@@ -57,6 +60,9 @@ export default async function CampaignPage({
   const donateHref = donatePage
     ? `/campaigns/${campaign.slug}/${donatePage.slug}`
     : "#donate";
+  const showDonationForm = page.slug === "donate";
+  const showSuccess = searchParams?.success === "1";
+  const showCanceled = searchParams?.canceled === "1";
 
   return (
     <CampaignThemeProvider theme={campaign.theme} className={styles.page}>
@@ -117,6 +123,13 @@ export default async function CampaignPage({
           ) : null}
 
           <BlockRenderer blocks={page.blocks} />
+          {showDonationForm ? (
+            <DonationForm
+              campaign={campaign}
+              showSuccess={showSuccess}
+              showCanceled={showCanceled}
+            />
+          ) : null}
         </main>
 
         <footer className="border-t border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] px-6 py-10 sm:px-10">

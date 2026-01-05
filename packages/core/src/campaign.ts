@@ -159,6 +159,7 @@ export type CampaignModule = {
   isEnabled: boolean;
   label?: string;
   description?: string;
+  config?: Record<string, unknown>;
 };
 
 export type Campaign = {
@@ -173,6 +174,7 @@ export type Campaign = {
   goalAmount?: number;
   heroTitle?: string;
   heroMediaUrl?: string;
+  currency?: string;
   theme?: Partial<CampaignThemeTokens>;
   pages: CampaignPage[];
   modules: CampaignModule[];
