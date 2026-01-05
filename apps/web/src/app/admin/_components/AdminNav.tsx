@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { label: "Raffles", href: "/admin/raffles" },
   { label: "Voting", href: "/admin/voting" },
   { label: "Store", href: "/admin/store" },
+  { label: "Sponsors", href: "/admin/sponsors" },
   { label: "Donations", href: "/admin/donations" },
   { label: "Peer-to-Peer", href: "/admin/peer-to-peer" },
   { label: "Donors", href: "/admin/donors" },

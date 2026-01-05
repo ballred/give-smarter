@@ -107,6 +107,12 @@ Scope: `apps/web/src/app/admin/donations`, `apps/web/src/app/api/admin/keyword-r
 Status: in progress
 Notes: Keyword route management UI + API added; donation form config UI and public donate checkout flow added.
 
+## WS-SPONSOR - Sponsor management
+Owner: codex
+Scope: `apps/web/src/app/admin/sponsors`, `apps/web/src/app/api/admin/sponsors`
+Status: in progress
+Notes: Sponsor CRUD UI + placements form and API endpoints added.
+
 ## WS-INT - Integrations + API
 Owner: codex
 Scope: `apps/web/src/app/admin/integrations`, `apps/web/src/app/api/admin/api-tokens`, `apps/web/src/app/api/admin/webhooks`
