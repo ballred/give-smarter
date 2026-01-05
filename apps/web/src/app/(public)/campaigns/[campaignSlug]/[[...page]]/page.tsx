@@ -17,6 +17,7 @@ import {
   PeerFundraiserDetail,
   PeerTeamDetail,
 } from "../PeerToPeerDetail";
+import { VolunteerSignupForm } from "../VolunteerSignupForm";
 import styles from "../campaign-page.module.css";
 
 type CampaignPageParams = {
@@ -82,6 +83,7 @@ export default async function CampaignPage({
   const showVotingForm = page.slug === "voting";
   const showAuctionCatalog = page.slug === "auction" && !auctionItemId;
   const showAuctionItem = page.slug === "auction" && Boolean(auctionItemId);
+  const showVolunteerForm = page.slug === "volunteer";
   const showPeerOverview = page.slug === "peer-to-peer" && !peerSection;
   const showPeerFundraiser =
     page.slug === "peer-to-peer" &&
@@ -195,6 +197,12 @@ export default async function CampaignPage({
             <AuctionItemDetail
               itemId={auctionItemId}
               currency={campaign.currency ?? "USD"}
+            />
+          ) : null}
+          {showVolunteerForm ? (
+            <VolunteerSignupForm
+              campaign={campaign}
+              showSuccess={showSuccess}
             />
           ) : null}
           {showPeerOverview ? (

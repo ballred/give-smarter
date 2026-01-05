@@ -43,6 +43,7 @@ enum CampaignPageType {
   RAFFLE
   STORE
   PEER_TO_PEER
+  VOLUNTEER
   SPONSORS
   FAQ
   PORTAL_LOGIN
@@ -186,6 +187,8 @@ model Organization {
   peerFundraisingTeams     PeerFundraisingTeam[]
   peerFundraisingClassrooms PeerFundraisingClassroom[]
   peerFundraisingAttributions PeerFundraisingAttribution[]
+  volunteerShifts          VolunteerShift[]
+  volunteerSignups         VolunteerSignup[]
 
   @@map("organizations")
 }
@@ -517,6 +520,8 @@ model Campaign {
   peerFundraisingTeams PeerFundraisingTeam[]
   peerFundraisingClassrooms PeerFundraisingClassroom[]
   peerFundraisingAttributions PeerFundraisingAttribution[]
+  volunteerShifts VolunteerShift[]
+  volunteerSignups VolunteerSignup[]
 
   @@unique([orgId, slug])
   @@index([orgId, status])
@@ -940,6 +945,11 @@ enum PeerFundraiserStatus {
   DRAFT
   PUBLISHED
   ARCHIVED
+}
+
+enum VolunteerSignupStatus {
+  CONFIRMED
+  CANCELED
 }
 
 enum VotingContestStatus {
@@ -1711,6 +1721,48 @@ model PeerFundraisingAttribution {
   @@index([teamId])
   @@index([classroomId])
   @@map("peer_fundraising_attributions")
+}
+
+model VolunteerShift {
+  id         String   @id @default(cuid())
+  orgId      String   @map("org_id")
+  campaignId String   @map("campaign_id")
+  name       String
+  description String?
+  startsAt   DateTime? @map("starts_at")
+  endsAt     DateTime? @map("ends_at")
+  capacity   Int?
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+  signups VolunteerSignup[]
+
+  @@index([campaignId])
+  @@map("volunteer_shifts")
+}
+
+model VolunteerSignup {
+  id         String   @id @default(cuid())
+  orgId      String   @map("org_id")
+  campaignId String   @map("campaign_id")
+  shiftId    String   @map("shift_id")
+  donorId    String?  @map("donor_id")
+  name       String
+  email      String?
+  phone      String?
+  status     VolunteerSignupStatus @default(CONFIRMED)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+  shift VolunteerShift @relation(fields: [shiftId], references: [id])
+  donor Donor? @relation(fields: [donorId], references: [id])
+
+  @@index([shiftId])
+  @@index([campaignId])
+  @@map("volunteer_signups")
 }
 
 model StoreProduct {

@@ -118,6 +118,7 @@ export type CampaignPageType =
   | "RAFFLE"
   | "STORE"
   | "PEER_TO_PEER"
+  | "VOLUNTEER"
   | "SPONSORS"
   | "FAQ"
   | "PORTAL_LOGIN"

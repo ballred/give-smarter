@@ -66,6 +66,7 @@ async function main() {
           { orgId: organization.id, type: "STORE", isEnabled: true },
           { orgId: organization.id, type: "VOTING", isEnabled: true },
           { orgId: organization.id, type: "PEER_TO_PEER", isEnabled: true },
+          { orgId: organization.id, type: "VOLUNTEER", isEnabled: true },
         ],
       },
       pages: {
@@ -207,6 +208,39 @@ async function main() {
                       label: "View fundraisers",
                       href: "#peer-to-peer",
                     },
+                  },
+                },
+              ],
+            },
+          },
+          {
+            orgId: organization.id,
+            type: "VOLUNTEER",
+            slug: "volunteer",
+            title: "Volunteer",
+            isPublished: true,
+            blocks: {
+              create: [
+                {
+                  orgId: organization.id,
+                  type: "story",
+                  sortOrder: 0,
+                  data: {
+                    title: "Volunteer with us",
+                    body: [
+                      "Sign up for a shift and help make the gala a success.",
+                      "Every volunteer hour supports our students.",
+                    ],
+                  },
+                },
+                {
+                  orgId: organization.id,
+                  type: "cta",
+                  sortOrder: 1,
+                  data: {
+                    title: "Choose a shift",
+                    body: "Pick a role and time that works for you.",
+                    primaryCta: { label: "View shifts", href: "#volunteer" },
                   },
                 },
               ],
@@ -439,6 +473,21 @@ async function main() {
       story: "Help our classroom reach our reading goal!",
       goalAmount: 50000,
       status: "PUBLISHED",
+    },
+  });
+
+  await prisma.volunteerShift.upsert({
+    where: { id: "volunteer_shift_demo" },
+    update: {},
+    create: {
+      id: "volunteer_shift_demo",
+      orgId: organization.id,
+      campaignId: campaign.id,
+      name: "Guest check-in",
+      description: "Welcome guests and scan tickets at the entrance.",
+      startsAt: new Date("2026-03-12T16:30:00.000Z"),
+      endsAt: new Date("2026-03-12T19:30:00.000Z"),
+      capacity: 8,
     },
   });
 

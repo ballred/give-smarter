@@ -119,6 +119,12 @@ Scope: `apps/web/src/app/admin/integrations`, `apps/web/src/app/api/admin/api-to
 Status: in progress
 Notes: API token and webhook management UI + CRUD APIs added.
 
+## WS-VOL - Volunteer signups
+Owner: codex
+Scope: `apps/web/src/app/admin/volunteers`, `apps/web/src/app/(public)/campaigns/*`, `packages/db`
+Status: in progress
+Notes: Volunteer shifts + signups schema, admin shift management, public signup form, and API endpoints added.
+
 ## WS-CRM - Donor profiles
 Owner: codex
 Scope: `apps/web/src/app/admin/donors`, `apps/web/src/app/api/admin/donors`
