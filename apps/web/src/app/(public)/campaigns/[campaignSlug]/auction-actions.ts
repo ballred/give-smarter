@@ -122,10 +122,17 @@ export async function placeBid(formData: FormData) {
   }
 
   const now = new Date();
-  if (item.auction.opensAt && now < item.auction.opensAt) {
+  const opensAt = item.opensAt ?? item.auction.opensAt;
+  const closesAt = item.closesAt ?? item.auction.closesAt;
+
+  if (item.isPreviewOnly) {
+    throw new Error("This item is in preview.");
+  }
+
+  if (opensAt && now < opensAt) {
     throw new Error("Auction has not opened yet.");
   }
-  if (item.auction.closesAt && now > item.auction.closesAt) {
+  if (closesAt && now > closesAt) {
     throw new Error("Auction has closed.");
   }
 
@@ -443,10 +450,17 @@ export async function buyNow(formData: FormData) {
   }
 
   const now = new Date();
-  if (item.auction.opensAt && now < item.auction.opensAt) {
+  const opensAt = item.opensAt ?? item.auction.opensAt;
+  const closesAt = item.closesAt ?? item.auction.closesAt;
+
+  if (item.isPreviewOnly) {
+    throw new Error("This item is in preview.");
+  }
+
+  if (opensAt && now < opensAt) {
     throw new Error("Auction has not opened yet.");
   }
-  if (item.auction.closesAt && now > item.auction.closesAt) {
+  if (closesAt && now > closesAt) {
     throw new Error("Auction has closed.");
   }
 

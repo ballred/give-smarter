@@ -69,6 +69,12 @@ export async function AuctionItemDetail({
     parseRules(item.auction.bidIncrementRules);
   const increment = getBidIncrement(currentBid / 100, rules);
   const minBid = Math.round((currentBid / 100 + increment) * 100);
+  const now = new Date();
+  const opensAt = item.opensAt ?? item.auction.opensAt;
+  const closesAt = item.closesAt ?? item.auction.closesAt;
+  const isClosed = item.status === "CLOSED" || (closesAt && now > closesAt);
+  const isPreview = item.isPreviewOnly || (opensAt && now < opensAt);
+  const bidDisabled = isClosed || isPreview;
 
   return (
     <section className="px-6 pb-16 pt-8 sm:px-10">
@@ -105,6 +111,18 @@ export async function AuctionItemDetail({
           </div>
         ) : null}
 
+        {isPreview ? (
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-900">
+            This item is in preview. Bidding opens soon.
+          </div>
+        ) : null}
+
+        {isClosed ? (
+          <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-700">
+            Bidding is closed for this item.
+          </div>
+        ) : null}
+
         <div className="grid gap-4 md:grid-cols-3">
           <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] px-4 py-3">
             <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--campaign-ink-muted)]">
@@ -135,79 +153,81 @@ export async function AuctionItemDetail({
         </div>
 
         <form action={placeBid} className="space-y-6">
-          <input type="hidden" name="itemId" value={item.id} />
+          <fieldset disabled={bidDisabled} className="space-y-6">
+            <input type="hidden" name="itemId" value={item.id} />
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <label className="block text-sm font-semibold text-[color:var(--campaign-ink)]">
-              Bid amount ({currency})
-              <input
-                name="bidAmount"
-                type="number"
-                min={(minBid / 100).toFixed(2)}
-                step="0.01"
-                required
-                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
-              />
-            </label>
-            {item.auction.allowMaxBid ? (
+            <div className="grid gap-4 md:grid-cols-2">
               <label className="block text-sm font-semibold text-[color:var(--campaign-ink)]">
-                Max bid (optional)
+                Bid amount ({currency})
                 <input
-                  name="maxBidAmount"
+                  name="bidAmount"
                   type="number"
                   min={(minBid / 100).toFixed(2)}
                   step="0.01"
+                  required
                   className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
                 />
               </label>
-            ) : null}
-          </div>
+              {item.auction.allowMaxBid ? (
+                <label className="block text-sm font-semibold text-[color:var(--campaign-ink)]">
+                  Max bid (optional)
+                  <input
+                    name="maxBidAmount"
+                    type="number"
+                    min={(minBid / 100).toFixed(2)}
+                    step="0.01"
+                    className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                  />
+                </label>
+              ) : null}
+            </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="block text-sm font-semibold text-[color:var(--campaign-ink)]">
+                First name
+                <input
+                  name="firstName"
+                  type="text"
+                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                />
+              </label>
+              <label className="block text-sm font-semibold text-[color:var(--campaign-ink)]">
+                Last name
+                <input
+                  name="lastName"
+                  type="text"
+                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                />
+              </label>
+            </div>
+
             <label className="block text-sm font-semibold text-[color:var(--campaign-ink)]">
-              First name
+              Email
               <input
-                name="firstName"
-                type="text"
+                name="email"
+                type="email"
+                required
                 className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                placeholder="you@example.org"
               />
             </label>
-            <label className="block text-sm font-semibold text-[color:var(--campaign-ink)]">
-              Last name
-              <input
-                name="lastName"
-                type="text"
-                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
-              />
-            </label>
-          </div>
 
-          <label className="block text-sm font-semibold text-[color:var(--campaign-ink)]">
-            Email
-            <input
-              name="email"
-              type="email"
-              required
-              className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
-              placeholder="you@example.org"
-            />
-          </label>
-
-          <button
-            type="submit"
-            className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[color:var(--campaign-accent)] px-6 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:bg-[color:var(--campaign-accent-strong)]"
-          >
-            Place bid
-          </button>
-          {item.buyNowPrice ? (
             <button
               type="submit"
-              formAction={buyNow}
-              className="inline-flex h-12 w-full items-center justify-center rounded-full border border-[color:var(--campaign-border)] bg-white px-6 text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--campaign-ink)] transition hover:bg-[color:var(--campaign-surface)]"
+              className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[color:var(--campaign-accent)] px-6 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:bg-[color:var(--campaign-accent-strong)]"
             >
-              Buy now
+              Place bid
             </button>
-          ) : null}
+            {item.buyNowPrice ? (
+              <button
+                type="submit"
+                formAction={buyNow}
+                className="inline-flex h-12 w-full items-center justify-center rounded-full border border-[color:var(--campaign-border)] bg-white px-6 text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--campaign-ink)] transition hover:bg-[color:var(--campaign-surface)]"
+              >
+                Buy now
+              </button>
+            ) : null}
+          </fieldset>
         </form>
 
         <form

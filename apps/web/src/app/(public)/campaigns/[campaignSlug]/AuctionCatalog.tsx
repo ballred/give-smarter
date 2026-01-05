@@ -35,6 +35,7 @@ export async function AuctionCatalog({ campaign }: AuctionCatalogProps) {
   });
 
   const currency = campaign.currency ?? "USD";
+  const now = new Date();
 
   if (!items.length) {
     return (
@@ -61,6 +62,12 @@ export async function AuctionCatalog({ campaign }: AuctionCatalogProps) {
           {items.map((item) => {
             const topBid = item.bids[0];
             const currentBid = topBid?.amount ?? item.startingBid;
+            const opensAt = item.opensAt ?? item.auction.opensAt;
+            const closesAt = item.closesAt ?? item.auction.closesAt;
+            const isClosed =
+              item.status === "CLOSED" || (closesAt && now > closesAt);
+            const isPreview =
+              item.isPreviewOnly || (opensAt && now < opensAt);
             return (
               <Link
                 key={item.id}
@@ -70,7 +77,11 @@ export async function AuctionCatalog({ campaign }: AuctionCatalogProps) {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between text-xs uppercase tracking-[0.3em] text-[color:var(--campaign-ink-muted)]">
                     <span>{item.category?.name ?? "Auction"}</span>
-                    {item.isFeatured ? <span>Featured</span> : null}
+                    <div className="flex items-center gap-2">
+                      {item.isFeatured ? <span>Featured</span> : null}
+                      {isPreview ? <span>Preview</span> : null}
+                      {isClosed ? <span>Closed</span> : null}
+                    </div>
                   </div>
                   <h3 className="text-xl font-semibold text-[color:var(--campaign-ink)]">
                     {item.title}
