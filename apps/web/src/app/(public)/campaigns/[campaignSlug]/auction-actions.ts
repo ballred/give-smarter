@@ -261,6 +261,21 @@ export async function placeBid(formData: FormData) {
       data: { status: "WINNING" },
     });
 
+    if (item.auction.antiSnipingMinutes && closesAt) {
+      const extensionWindowStart = new Date(
+        closesAt.getTime() - item.auction.antiSnipingMinutes * 60 * 1000,
+      );
+      if (bidPlacedAt >= extensionWindowStart && bidPlacedAt < closesAt) {
+        const extendedClosesAt = new Date(
+          closesAt.getTime() + item.auction.antiSnipingMinutes * 60 * 1000,
+        );
+        await tx.auctionItem.update({
+          where: { id: item.id },
+          data: { closesAt: extendedClosesAt },
+        });
+      }
+    }
+
   });
 
   if (resolution.outbidBidderId) {
