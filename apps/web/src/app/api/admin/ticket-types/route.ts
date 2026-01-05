@@ -10,6 +10,7 @@ type TicketTypePayload = {
   name?: string;
   description?: string;
   price?: number;
+  priceCents?: number;
   capacity?: number | null;
   visibility?: TicketVisibility;
   isComp?: boolean;
@@ -44,11 +45,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
-  if (!body.campaignId || !body.name || typeof body.price !== "number") {
+  if (!body.campaignId || !body.name) {
     return NextResponse.json({ error: "invalid_payload" }, { status: 400 });
   }
 
-  if (!Number.isFinite(body.price) || body.price < 0) {
+  const priceCents =
+    typeof body.priceCents === "number"
+      ? body.priceCents
+      : typeof body.price === "number"
+        ? Math.round(body.price * 100)
+        : null;
+
+  if (priceCents === null || !Number.isFinite(priceCents) || priceCents < 0) {
     return NextResponse.json({ error: "invalid_price" }, { status: 400 });
   }
 
@@ -67,7 +75,7 @@ export async function POST(request: Request) {
       campaignId: body.campaignId,
       name: body.name,
       description: body.description ?? null,
-      price: Math.round(body.price * 100),
+      price: Math.round(priceCents),
       capacity: body.capacity ?? null,
       visibility: body.visibility ?? TicketVisibility.PUBLIC,
       isComp: body.isComp ?? false,

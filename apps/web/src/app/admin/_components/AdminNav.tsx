@@ -5,6 +5,7 @@ const NAV_ITEMS = [
   { label: "Campaigns", href: "/admin/campaigns" },
   { label: "Ticketing", href: "/admin/ticketing" },
   { label: "Auctions", href: "/admin/auctions" },
+  { label: "Live Giving", href: "/admin/live-giving" },
   { label: "Donations", href: "/admin/donations" },
   { label: "Messaging", href: "/admin/messaging" },
   { label: "Reports", href: "/admin/reports" },

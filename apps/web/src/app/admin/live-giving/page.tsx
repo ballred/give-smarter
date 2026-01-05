@@ -1,28 +1,28 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 
-export default async function AuctionsPage() {
-  const auctions = await prisma.auction.findMany({
+export default async function LiveGivingPage() {
+  const levels = await prisma.paddleRaiseLevel.findMany({
     include: {
       campaign: { select: { name: true } },
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: [{ campaignId: "asc" }, { sortOrder: "asc" }],
   });
 
   return (
     <div className="space-y-6">
       <header className="flex flex-wrap items-center justify-between gap-4">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-semibold text-zinc-900">Auctions</h1>
+        <div>
+          <h1 className="text-2xl font-semibold text-zinc-900">Live Giving</h1>
           <p className="text-sm text-zinc-600">
-            Configure auction catalogs, bidding rules, and live closeouts.
+            Configure paddle raise levels and live display scenes.
           </p>
         </div>
         <Link
           className="inline-flex h-10 items-center justify-center rounded-full bg-zinc-900 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-800"
-          href="/admin/auctions/new"
+          href="/admin/live-giving/new"
         >
-          New auction
+          New level
         </Link>
       </header>
 
@@ -30,33 +30,27 @@ export default async function AuctionsPage() {
         <table className="w-full text-left text-sm">
           <thead className="border-b border-zinc-200 bg-zinc-50">
             <tr>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Name</th>
+              <th className="px-4 py-3 font-semibold text-zinc-700">Level</th>
               <th className="px-4 py-3 font-semibold text-zinc-700">Campaign</th>
+              <th className="px-4 py-3 font-semibold text-zinc-700">Amount</th>
               <th className="px-4 py-3 font-semibold text-zinc-700">Status</th>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Opens</th>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Closes</th>
             </tr>
           </thead>
           <tbody>
-            {auctions.length ? (
-              auctions.map((auction) => (
-                <tr key={auction.id} className="border-b border-zinc-100">
+            {levels.length ? (
+              levels.map((level) => (
+                <tr key={level.id} className="border-b border-zinc-100">
                   <td className="px-4 py-3 font-semibold text-zinc-900">
-                    {auction.name}
+                    {level.label}
                   </td>
                   <td className="px-4 py-3 text-zinc-600">
-                    {auction.campaign?.name ?? "—"}
-                  </td>
-                  <td className="px-4 py-3 text-zinc-600">{auction.status}</td>
-                  <td className="px-4 py-3 text-zinc-600">
-                    {auction.opensAt
-                      ? new Date(auction.opensAt).toLocaleString()
-                      : "—"}
+                    {level.campaign?.name ?? "—"}
                   </td>
                   <td className="px-4 py-3 text-zinc-600">
-                    {auction.closesAt
-                      ? new Date(auction.closesAt).toLocaleString()
-                      : "—"}
+                    {(level.amount / 100).toFixed(2)} USD
+                  </td>
+                  <td className="px-4 py-3 text-zinc-600">
+                    {level.isActive ? "Active" : "Paused"}
                   </td>
                 </tr>
               ))
@@ -64,9 +58,9 @@ export default async function AuctionsPage() {
               <tr>
                 <td
                   className="px-4 py-6 text-center text-zinc-500"
-                  colSpan={5}
+                  colSpan={4}
                 >
-                  No auctions yet.
+                  No levels yet.
                 </td>
               </tr>
             )}

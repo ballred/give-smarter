@@ -35,6 +35,24 @@ Scope: `apps/web/src/app/(public)`, `packages/ui`
 Status: in progress
 Notes: Scaffolding public campaign routes, block schema, and renderer.
 
+## WS-AUC - Auction management
+Owner: codex
+Scope: `apps/web/src/app/admin/auctions`, `apps/web/src/app/api/admin/auctions`, `packages/core/src/auction.ts`
+Status: in progress
+Notes: Admin auction list + create flow + CRUD endpoints and bid increment helpers.
+
+## WS-LIVE - Paddle raise
+Owner: codex
+Scope: `apps/web/src/app/admin/live-giving`, `apps/web/src/app/api/admin/paddle-raise-levels`
+Status: in progress
+Notes: Admin paddle raise level list + create flow + CRUD endpoints.
+
+## WS-PORTAL - Donor portal shell
+Owner: codex
+Scope: `apps/web/src/app/portal`
+Status: in progress
+Notes: Portal layout + placeholder sections for tickets, bids, receipts, recurring, profile.
+
 ## WS-QA - Testing + perf
 Owner: codex
 Scope: `packages/tests`
