@@ -384,6 +384,31 @@ async function main() {
       status: "ACTIVE",
     },
   });
+
+  await prisma.apiToken.upsert({
+    where: { id: "api_token_demo" },
+    update: {},
+    create: {
+      id: "api_token_demo",
+      orgId: organization.id,
+      name: "Demo data sync",
+      tokenHash: "demo_token_hash",
+      scopes: ["donors:read", "campaigns:read", "transactions:read"],
+    },
+  });
+
+  await prisma.webhookEndpoint.upsert({
+    where: { id: "webhook_demo" },
+    update: {},
+    create: {
+      id: "webhook_demo",
+      orgId: organization.id,
+      url: "https://example.org/webhooks/givesmarter",
+      secret: "demo_webhook_secret",
+      events: ["donation.succeeded", "invoice.paid"],
+      status: "ACTIVE",
+    },
+  });
 }
 
 main()

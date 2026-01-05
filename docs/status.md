@@ -106,3 +106,9 @@ Owner: codex
 Scope: `apps/web/src/app/admin/donations`, `apps/web/src/app/api/admin/keyword-routes`
 Status: in progress
 Notes: Keyword route management UI + API added; donation form builder still pending.
+
+## WS-INT - Integrations + API
+Owner: codex
+Scope: `apps/web/src/app/admin/integrations`, `apps/web/src/app/api/admin/api-tokens`, `apps/web/src/app/api/admin/webhooks`
+Status: in progress
+Notes: API token and webhook management UI + CRUD APIs added.
