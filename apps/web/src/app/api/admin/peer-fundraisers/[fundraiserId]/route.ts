@@ -1,0 +1,132 @@
+import { NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
+import { prisma } from "@/lib/db";
+
+export const runtime = "nodejs";
+
+type PeerFundraiserUpdate = {
+  name?: string;
+  slug?: string;
+  story?: string;
+  goalAmount?: number;
+  status?: "DRAFT" | "PUBLISHED" | "ARCHIVED";
+  teamId?: string | null;
+  classroomId?: string | null;
+};
+
+function normalizeSlug(input: string) {
+  return input
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+export async function GET(
+  _request: Request,
+  { params }: { params: { fundraiserId: string } },
+) {
+  const { userId } = auth();
+
+  if (!userId) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+
+  const fundraiser = await prisma.peerFundraiser.findUnique({
+    where: { id: params.fundraiserId },
+  });
+
+  if (!fundraiser) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
+  return NextResponse.json({ data: fundraiser });
+}
+
+export async function PUT(
+  request: Request,
+  { params }: { params: { fundraiserId: string } },
+) {
+  const { userId } = auth();
+
+  if (!userId) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+
+  let body: PeerFundraiserUpdate;
+
+  try {
+    body = (await request.json()) as PeerFundraiserUpdate;
+  } catch {
+    return NextResponse.json({ error: "invalid_json" }, { status: 400 });
+  }
+
+  const existing = await prisma.peerFundraiser.findUnique({
+    where: { id: params.fundraiserId },
+    select: { campaignId: true },
+  });
+
+  if (!existing) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
+  if (body.teamId) {
+    const team = await prisma.peerFundraisingTeam.findUnique({
+      where: { id: body.teamId },
+      select: { campaignId: true },
+    });
+    if (!team || team.campaignId !== existing.campaignId) {
+      return NextResponse.json({ error: "team_invalid" }, { status: 400 });
+    }
+  }
+
+  if (body.classroomId) {
+    const classroom = await prisma.peerFundraisingClassroom.findUnique({
+      where: { id: body.classroomId },
+      select: { campaignId: true },
+    });
+    if (!classroom || classroom.campaignId !== existing.campaignId) {
+      return NextResponse.json({ error: "classroom_invalid" }, { status: 400 });
+    }
+  }
+
+  const data: PeerFundraiserUpdate = {
+    ...body,
+  };
+
+  if (body.slug || body.name) {
+    const base = body.slug ?? body.name ?? "";
+    data.slug = normalizeSlug(base);
+  }
+
+  const fundraiser = await prisma.peerFundraiser.update({
+    where: { id: params.fundraiserId },
+    data: {
+      name: data.name,
+      slug: data.slug,
+      story: data.story ?? undefined,
+      goalAmount: data.goalAmount ?? undefined,
+      status: data.status ?? undefined,
+      teamId: data.teamId === undefined ? undefined : data.teamId,
+      classroomId: data.classroomId === undefined ? undefined : data.classroomId,
+    },
+  });
+
+  return NextResponse.json({ data: fundraiser });
+}
+
+export async function DELETE(
+  _request: Request,
+  { params }: { params: { fundraiserId: string } },
+) {
+  const { userId } = auth();
+
+  if (!userId) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+
+  await prisma.peerFundraiser.delete({
+    where: { id: params.fundraiserId },
+  });
+
+  return NextResponse.json({ ok: true });
+}

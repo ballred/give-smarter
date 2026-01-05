@@ -117,6 +117,7 @@ export type CampaignPageType =
   | "PADDLE_RAISE"
   | "RAFFLE"
   | "STORE"
+  | "PEER_TO_PEER"
   | "SPONSORS"
   | "FAQ"
   | "PORTAL_LOGIN"

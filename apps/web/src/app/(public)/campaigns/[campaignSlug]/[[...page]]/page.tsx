@@ -11,6 +11,12 @@ import { AuctionItemDetail } from "../AuctionItemDetail";
 import { StorePurchaseForm } from "../StorePurchaseForm";
 import { RafflePurchaseForm } from "../RafflePurchaseForm";
 import { VotingForm } from "../VotingForm";
+import { PeerToPeerOverview } from "../PeerToPeerOverview";
+import {
+  PeerClassroomDetail,
+  PeerFundraiserDetail,
+  PeerTeamDetail,
+} from "../PeerToPeerDetail";
 import styles from "../campaign-page.module.css";
 
 type CampaignPageParams = {
@@ -67,6 +73,8 @@ export default async function CampaignPage({
     ? `/campaigns/${campaign.slug}/${donatePage.slug}`
     : "#donate";
   const auctionItemId = params.page?.[1];
+  const peerSection = params.page?.[1];
+  const peerSlug = params.page?.[2];
   const showDonationForm = page.slug === "donate";
   const showTicketForm = page.slug === "tickets";
   const showStoreForm = page.slug === "store";
@@ -74,6 +82,17 @@ export default async function CampaignPage({
   const showVotingForm = page.slug === "voting";
   const showAuctionCatalog = page.slug === "auction" && !auctionItemId;
   const showAuctionItem = page.slug === "auction" && Boolean(auctionItemId);
+  const showPeerOverview = page.slug === "peer-to-peer" && !peerSection;
+  const showPeerFundraiser =
+    page.slug === "peer-to-peer" &&
+    peerSection === "fundraisers" &&
+    Boolean(peerSlug);
+  const showPeerTeam =
+    page.slug === "peer-to-peer" && peerSection === "teams" && Boolean(peerSlug);
+  const showPeerClassroom =
+    page.slug === "peer-to-peer" &&
+    peerSection === "classrooms" &&
+    Boolean(peerSlug);
   const showSuccess = searchParams?.success === "1";
   const showCanceled = searchParams?.canceled === "1";
 
@@ -176,6 +195,37 @@ export default async function CampaignPage({
             <AuctionItemDetail
               itemId={auctionItemId}
               currency={campaign.currency ?? "USD"}
+            />
+          ) : null}
+          {showPeerOverview ? (
+            <PeerToPeerOverview
+              campaignId={campaign.id ?? ""}
+              campaignSlug={campaign.slug}
+              currency={campaign.currency ?? "USD"}
+            />
+          ) : null}
+          {showPeerFundraiser && peerSlug ? (
+            <PeerFundraiserDetail
+              campaign={campaign}
+              slug={peerSlug}
+              showSuccess={showSuccess}
+              showCanceled={showCanceled}
+            />
+          ) : null}
+          {showPeerTeam && peerSlug ? (
+            <PeerTeamDetail
+              campaign={campaign}
+              slug={peerSlug}
+              showSuccess={showSuccess}
+              showCanceled={showCanceled}
+            />
+          ) : null}
+          {showPeerClassroom && peerSlug ? (
+            <PeerClassroomDetail
+              campaign={campaign}
+              slug={peerSlug}
+              showSuccess={showSuccess}
+              showCanceled={showCanceled}
             />
           ) : null}
         </main>

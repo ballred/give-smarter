@@ -27,6 +27,11 @@ function resolveOrigin() {
   return `${proto}://${host}`;
 }
 
+function buildReturnUrl(origin: string, path: string, params: string) {
+  const joiner = path.includes("?") ? "&" : "?";
+  return `${origin}${path}${joiner}${params}`;
+}
+
 function buildLineItems({
   amountCents,
   coverFees,
@@ -97,6 +102,93 @@ async function resolveDonor({
   return donor.id;
 }
 
+async function resolvePeerAttribution({
+  campaignId,
+  fundraiserId,
+  teamId,
+  classroomId,
+}: {
+  campaignId: string;
+  fundraiserId?: string | null;
+  teamId?: string | null;
+  classroomId?: string | null;
+}) {
+  let resolvedFundraiserId: string | null = null;
+  let resolvedTeamId: string | null = null;
+  let resolvedClassroomId: string | null = null;
+
+  if (fundraiserId) {
+    const fundraiser = await prisma.peerFundraiser.findUnique({
+      where: { id: fundraiserId },
+      select: { campaignId: true, teamId: true, classroomId: true },
+    });
+
+    if (!fundraiser) {
+      throw new Error("Fundraiser not found.");
+    }
+
+    if (fundraiser.campaignId !== campaignId) {
+      throw new Error("Fundraiser does not belong to this campaign.");
+    }
+
+    resolvedFundraiserId = fundraiserId;
+    resolvedTeamId = fundraiser.teamId ?? null;
+    resolvedClassroomId = fundraiser.classroomId ?? null;
+  }
+
+  if (teamId) {
+    const team = await prisma.peerFundraisingTeam.findUnique({
+      where: { id: teamId },
+      select: { campaignId: true },
+    });
+
+    if (!team) {
+      throw new Error("Team not found.");
+    }
+
+    if (team.campaignId !== campaignId) {
+      throw new Error("Team does not belong to this campaign.");
+    }
+
+    if (resolvedTeamId && resolvedTeamId !== teamId) {
+      throw new Error("Team does not match fundraiser.");
+    }
+
+    resolvedTeamId = teamId;
+  }
+
+  if (classroomId) {
+    const classroom = await prisma.peerFundraisingClassroom.findUnique({
+      where: { id: classroomId },
+      select: { campaignId: true },
+    });
+
+    if (!classroom) {
+      throw new Error("Classroom not found.");
+    }
+
+    if (classroom.campaignId !== campaignId) {
+      throw new Error("Classroom does not belong to this campaign.");
+    }
+
+    if (resolvedClassroomId && resolvedClassroomId !== classroomId) {
+      throw new Error("Classroom does not match fundraiser.");
+    }
+
+    resolvedClassroomId = classroomId;
+  }
+
+  if (!resolvedFundraiserId && !resolvedTeamId && !resolvedClassroomId) {
+    return null;
+  }
+
+  return {
+    fundraiserId: resolvedFundraiserId,
+    teamId: resolvedTeamId,
+    classroomId: resolvedClassroomId,
+  };
+}
+
 export async function createDonationCheckout(formData: FormData) {
   "use server";
 
@@ -109,6 +201,10 @@ export async function createDonationCheckout(formData: FormData) {
   const lastName = String(formData.get("lastName") ?? "").trim();
   const designation = String(formData.get("designation") ?? "").trim();
   const tribute = String(formData.get("tribute") ?? "").trim();
+  const fundraiserId = String(formData.get("fundraiserId") ?? "").trim();
+  const teamId = String(formData.get("teamId") ?? "").trim();
+  const classroomId = String(formData.get("classroomId") ?? "").trim();
+  const returnPathInput = String(formData.get("returnPath") ?? "").trim();
 
   if (!campaignId) {
     throw new Error("Campaign is required.");
@@ -162,6 +258,13 @@ export async function createDonationCheckout(formData: FormData) {
   if (designation) metadata.designation = designation;
   if (tribute) metadata.tribute = tribute;
 
+  const attribution = await resolvePeerAttribution({
+    campaignId: campaign.id,
+    fundraiserId: fundraiserId || null,
+    teamId: teamId || null,
+    classroomId: classroomId || null,
+  });
+
   const order = await prisma.order.create({
     data: {
       orgId: campaign.orgId,
@@ -182,10 +285,30 @@ export async function createDonationCheckout(formData: FormData) {
           totalAmount: item.totalAmount,
           currency: item.currency,
           metadata: Object.keys(metadata).length ? metadata : undefined,
-        })),
+          })),
       },
     },
+    include: { lineItems: true },
   });
+
+  if (attribution) {
+    const donationItems = order.lineItems.filter(
+      (item) => item.type === "DONATION",
+    );
+
+    if (donationItems.length) {
+      await prisma.peerFundraisingAttribution.createMany({
+        data: donationItems.map((item) => ({
+          orgId: campaign.orgId,
+          campaignId: campaign.id,
+          orderLineItemId: item.id,
+          fundraiserId: attribution.fundraiserId,
+          teamId: attribution.teamId,
+          classroomId: attribution.classroomId,
+        })),
+      });
+    }
+  }
 
   const payment = await prisma.payment.create({
     data: {
@@ -204,8 +327,17 @@ export async function createDonationCheckout(formData: FormData) {
     throw new Error("Missing request origin.");
   }
 
-  const successUrl = `${origin}/campaigns/${campaign.slug}/donate?success=1&orderId=${order.id}`;
-  const cancelUrl = `${origin}/campaigns/${campaign.slug}/donate?canceled=1`;
+  const fallbackPath = `/campaigns/${campaign.slug}/donate`;
+  const returnPath =
+    returnPathInput && returnPathInput.startsWith("/")
+      ? returnPathInput
+      : fallbackPath;
+  const successUrl = buildReturnUrl(
+    origin,
+    returnPath,
+    `success=1&orderId=${order.id}`,
+  );
+  const cancelUrl = buildReturnUrl(origin, returnPath, "canceled=1");
 
   const session = await getStripeClient().checkout.sessions.create({
     mode: "payment",

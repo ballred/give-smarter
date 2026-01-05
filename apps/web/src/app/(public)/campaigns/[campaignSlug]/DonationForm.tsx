@@ -16,16 +16,26 @@ type DonationFormProps = {
   campaign: Campaign;
   showSuccess?: boolean;
   showCanceled?: boolean;
+  attribution?: {
+    fundraiserId?: string;
+    teamId?: string;
+    classroomId?: string;
+  };
+  returnPath?: string;
 };
 
 export function DonationForm({
   campaign,
   showSuccess,
   showCanceled,
+  attribution,
+  returnPath,
 }: DonationFormProps) {
   const config = getDonationConfig(campaign.modules);
   const currency = campaign.currency ?? "USD";
   const defaultTier = config.tiers[0];
+  const resolvedReturnPath =
+    returnPath ?? `/campaigns/${campaign.slug}/donate`;
 
   return (
     <section id="donate" className="px-6 pb-16 pt-8 sm:px-10">
@@ -53,6 +63,24 @@ export function DonationForm({
 
         <form action={createDonationCheckout} className="space-y-6">
           <input type="hidden" name="campaignId" value={campaign.id ?? ""} />
+          <input type="hidden" name="returnPath" value={resolvedReturnPath} />
+          {attribution?.fundraiserId ? (
+            <input
+              type="hidden"
+              name="fundraiserId"
+              value={attribution.fundraiserId}
+            />
+          ) : null}
+          {attribution?.teamId ? (
+            <input type="hidden" name="teamId" value={attribution.teamId} />
+          ) : null}
+          {attribution?.classroomId ? (
+            <input
+              type="hidden"
+              name="classroomId"
+              value={attribution.classroomId}
+            />
+          ) : null}
 
           <div className="space-y-3">
             <p className="text-sm font-semibold text-[color:var(--campaign-ink)]">

@@ -65,6 +65,7 @@ async function main() {
           { orgId: organization.id, type: "RAFFLE", isEnabled: true },
           { orgId: organization.id, type: "STORE", isEnabled: true },
           { orgId: organization.id, type: "VOTING", isEnabled: true },
+          { orgId: organization.id, type: "PEER_TO_PEER", isEnabled: true },
         ],
       },
       pages: {
@@ -170,6 +171,42 @@ async function main() {
                     title: "Your gift changes every classroom.",
                     body: "Every donation supports student enrichment.",
                     primaryCta: { label: "Donate now", href: "#donate" },
+                  },
+                },
+              ],
+            },
+          },
+          {
+            orgId: organization.id,
+            type: "PEER_TO_PEER",
+            slug: "peer-to-peer",
+            title: "Peer to Peer",
+            isPublished: true,
+            blocks: {
+              create: [
+                {
+                  orgId: organization.id,
+                  type: "story",
+                  sortOrder: 0,
+                  data: {
+                    title: "Give through a classroom or student",
+                    body: [
+                      "Support the students you love most by giving directly to their page.",
+                      "Every gift rolls up to classroom and campaign totals.",
+                    ],
+                  },
+                },
+                {
+                  orgId: organization.id,
+                  type: "cta",
+                  sortOrder: 1,
+                  data: {
+                    title: "Pick a fundraiser and make an impact",
+                    body: "Choose a student, classroom, or team to support.",
+                    primaryCta: {
+                      label: "View fundraisers",
+                      href: "#peer-to-peer",
+                    },
                   },
                 },
               ],
@@ -355,6 +392,53 @@ async function main() {
       firstName: "Jamie",
       lastName: "Rivera",
       primaryEmail: "jamie@example.org",
+    },
+  });
+
+  const classroom = await prisma.peerFundraisingClassroom.upsert({
+    where: { id: "classroom_demo" },
+    update: {},
+    create: {
+      id: "classroom_demo",
+      orgId: organization.id,
+      campaignId: campaign.id,
+      name: "Ms. Park's Class",
+      slug: "ms-parks-class",
+      grade: "3rd Grade",
+      teacherName: "Ms. Park",
+      goalAmount: 150000,
+    },
+  });
+
+  const team = await prisma.peerFundraisingTeam.upsert({
+    where: { id: "team_demo" },
+    update: {},
+    create: {
+      id: "team_demo",
+      orgId: organization.id,
+      campaignId: campaign.id,
+      name: "Families of Lincoln",
+      slug: "families-of-lincoln",
+      goalAmount: 250000,
+      story: "Parents and guardians rallying for enrichment programs.",
+    },
+  });
+
+  await prisma.peerFundraiser.upsert({
+    where: { id: "fundraiser_demo" },
+    update: {},
+    create: {
+      id: "fundraiser_demo",
+      orgId: organization.id,
+      campaignId: campaign.id,
+      donorId: donor.id,
+      teamId: team.id,
+      classroomId: classroom.id,
+      name: "Ava Chen",
+      slug: "ava-chen",
+      story: "Help our classroom reach our reading goal!",
+      goalAmount: 50000,
+      status: "PUBLISHED",
     },
   });
 

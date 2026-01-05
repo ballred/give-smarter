@@ -42,6 +42,7 @@ enum CampaignPageType {
   PADDLE_RAISE
   RAFFLE
   STORE
+  PEER_TO_PEER
   SPONSORS
   FAQ
   PORTAL_LOGIN
@@ -181,6 +182,10 @@ model Organization {
   customFields             CustomField[]
   donorTags                DonorTag[]
   households               Household[]
+  peerFundraisers          PeerFundraiser[]
+  peerFundraisingTeams     PeerFundraisingTeam[]
+  peerFundraisingClassrooms PeerFundraisingClassroom[]
+  peerFundraisingAttributions PeerFundraisingAttribution[]
 
   @@map("organizations")
 }
@@ -508,6 +513,10 @@ model Campaign {
   sponsorPlacements SponsorPlacement[]
   carts Cart[]
   orders Order[]
+  peerFundraisers PeerFundraiser[]
+  peerFundraisingTeams PeerFundraisingTeam[]
+  peerFundraisingClassrooms PeerFundraisingClassroom[]
+  peerFundraisingAttributions PeerFundraisingAttribution[]
 
   @@unique([orgId, slug])
   @@index([orgId, status])
@@ -688,6 +697,7 @@ model OrderLineItem {
 
   order Order @relation(fields: [orderId], references: [id])
   organization Organization @relation(fields: [orgId], references: [id])
+  peerAttribution PeerFundraisingAttribution?
 
   @@index([orderId])
   @@map("order_line_items")
@@ -924,6 +934,12 @@ enum RaffleStatus {
   DRAFT
   ACTIVE
   CLOSED
+}
+
+enum PeerFundraiserStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
 }
 
 enum VotingContestStatus {
@@ -1598,6 +1614,103 @@ model Vote {
 
   @@index([contestId])
   @@map("votes")
+}
+
+model PeerFundraisingTeam {
+  id         String   @id @default(cuid())
+  orgId      String   @map("org_id")
+  campaignId String   @map("campaign_id")
+  name       String
+  slug       String
+  story      String?
+  goalAmount Int?     @map("goal_amount")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+  fundraisers PeerFundraiser[]
+  attributions PeerFundraisingAttribution[]
+
+  @@unique([campaignId, slug])
+  @@index([campaignId])
+  @@map("peer_fundraising_teams")
+}
+
+model PeerFundraisingClassroom {
+  id         String   @id @default(cuid())
+  orgId      String   @map("org_id")
+  campaignId String   @map("campaign_id")
+  name       String
+  slug       String
+  grade      String?
+  teacherName String? @map("teacher_name")
+  story      String?
+  goalAmount Int?     @map("goal_amount")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+  fundraisers PeerFundraiser[]
+  attributions PeerFundraisingAttribution[]
+
+  @@unique([campaignId, slug])
+  @@index([campaignId])
+  @@map("peer_fundraising_classrooms")
+}
+
+model PeerFundraiser {
+  id         String             @id @default(cuid())
+  orgId      String             @map("org_id")
+  campaignId String             @map("campaign_id")
+  donorId    String?            @map("donor_id")
+  teamId     String?            @map("team_id")
+  classroomId String?           @map("classroom_id")
+  name       String
+  slug       String
+  story      String?
+  photoUrl   String?            @map("photo_url")
+  goalAmount Int?               @map("goal_amount")
+  status     PeerFundraiserStatus @default(PUBLISHED)
+  createdAt  DateTime           @default(now()) @map("created_at")
+  updatedAt  DateTime           @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+  donor Donor? @relation(fields: [donorId], references: [id])
+  team PeerFundraisingTeam? @relation(fields: [teamId], references: [id])
+  classroom PeerFundraisingClassroom? @relation(fields: [classroomId], references: [id])
+  attributions PeerFundraisingAttribution[]
+
+  @@unique([campaignId, slug])
+  @@index([campaignId])
+  @@map("peer_fundraisers")
+}
+
+model PeerFundraisingAttribution {
+  id         String   @id @default(cuid())
+  orgId      String   @map("org_id")
+  campaignId String   @map("campaign_id")
+  orderLineItemId String @map("order_line_item_id")
+  fundraiserId String? @map("fundraiser_id")
+  teamId     String?   @map("team_id")
+  classroomId String?  @map("classroom_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+  orderLineItem OrderLineItem @relation(fields: [orderLineItemId], references: [id])
+  fundraiser PeerFundraiser? @relation(fields: [fundraiserId], references: [id])
+  team PeerFundraisingTeam? @relation(fields: [teamId], references: [id])
+  classroom PeerFundraisingClassroom? @relation(fields: [classroomId], references: [id])
+
+  @@unique([orderLineItemId])
+  @@index([campaignId])
+  @@index([fundraiserId])
+  @@index([teamId])
+  @@index([classroomId])
+  @@map("peer_fundraising_attributions")
 }
 
 model StoreProduct {
