@@ -16,6 +16,10 @@ function parseQuantity(value: FormDataEntryValue | null) {
   return Number.isFinite(num) && num > 0 ? Math.floor(num) : null;
 }
 
+function normalizePromoCode(value: string) {
+  return value.trim().toUpperCase().replace(/\s+/g, "");
+}
+
 function parseAddOnEntries(formData: FormData) {
   return Array.from(formData.entries())
     .filter(([key]) => key.startsWith("addOn_"))
@@ -81,6 +85,9 @@ export async function createTicketCheckout(formData: FormData) {
   const firstName = String(formData.get("firstName") ?? "").trim();
   const lastName = String(formData.get("lastName") ?? "").trim();
   const addOnEntries = parseAddOnEntries(formData);
+  const promoCodeInput = normalizePromoCode(
+    String(formData.get("promoCode") ?? ""),
+  );
 
   if (!campaignId || !ticketTypeId) {
     throw new Error("Campaign and ticket type are required.");
@@ -127,6 +134,24 @@ export async function createTicketCheckout(formData: FormData) {
     metadata?: Record<string, unknown>;
   }> = [];
 
+  let promoLineItem: {
+    type: LineItemType;
+    description: string;
+    quantity: number;
+    unitAmount: number;
+    totalAmount: number;
+    metadata: Record<string, unknown>;
+  } | null = null;
+
+  let promoRecord:
+    | {
+        id: string;
+        code: string;
+        discountType: "AMOUNT" | "PERCENT";
+        amount: number;
+      }
+    | null = null;
+
   if (addOnEntries.length) {
     const addOns = await prisma.ticketAddOn.findMany({
       where: {
@@ -157,6 +182,52 @@ export async function createTicketCheckout(formData: FormData) {
     }
   }
 
+  if (promoCodeInput) {
+    const promo = await prisma.promoCode.findUnique({
+      where: { campaignId_code: { campaignId: campaign.id, code: promoCodeInput } },
+    });
+
+    if (!promo || !promo.isActive) {
+      throw new Error("Promo code is invalid.");
+    }
+
+    const now = new Date();
+    if (promo.startsAt && now < promo.startsAt) {
+      throw new Error("Promo code is not active yet.");
+    }
+    if (promo.endsAt && now > promo.endsAt) {
+      throw new Error("Promo code has expired.");
+    }
+    if (promo.maxRedemptions !== null && promo.redeemedCount >= promo.maxRedemptions) {
+      throw new Error("Promo code has reached its limit.");
+    }
+
+    const preDiscountTotal =
+      totalAmount + addOnLineItems.reduce((sum, item) => sum + item.totalAmount, 0);
+    const discount =
+      promo.discountType === "PERCENT"
+        ? Math.round((preDiscountTotal * promo.amount) / 100)
+        : promo.amount;
+    const discountAmount = Math.min(discount, preDiscountTotal);
+
+    if (discountAmount > 0) {
+      promoLineItem = {
+        type: "ADJUSTMENT" as LineItemType,
+        description: `Promo code ${promo.code}`,
+        quantity: 1,
+        unitAmount: -discountAmount,
+        totalAmount: -discountAmount,
+        metadata: { promoCodeId: promo.id, promoCode: promo.code },
+      };
+      promoRecord = {
+        id: promo.id,
+        code: promo.code,
+        discountType: promo.discountType,
+        amount: promo.amount,
+      };
+    }
+  }
+
   const normalized = normalizeLineItems(
     [
       {
@@ -171,6 +242,7 @@ export async function createTicketCheckout(formData: FormData) {
         taxDeductibleAmount,
       },
       ...addOnLineItems,
+      ...(promoLineItem ? [promoLineItem] : []),
     ],
     currency,
   );
@@ -210,6 +282,13 @@ export async function createTicketCheckout(formData: FormData) {
       },
     },
   });
+
+  if (promoRecord) {
+    await prisma.promoCode.update({
+      where: { id: promoRecord.id },
+      data: { redeemedCount: { increment: 1 } },
+    });
+  }
 
   const ticketOrder = await prisma.ticketOrder.create({
     data: {

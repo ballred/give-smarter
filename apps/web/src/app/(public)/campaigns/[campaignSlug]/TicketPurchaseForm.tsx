@@ -119,6 +119,15 @@ export async function TicketPurchaseForm({
               />
             </label>
 
+            <label className="block text-sm font-semibold text-[color:var(--campaign-ink)]">
+              Promo code (optional)
+              <input
+                name="promoCode"
+                type="text"
+                className="mt-2 w-48 rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+              />
+            </label>
+
             {addOns.length ? (
               <div className="space-y-3">
                 <p className="text-sm font-semibold text-[color:var(--campaign-ink)]">
