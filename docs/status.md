@@ -40,3 +40,9 @@ Owner: codex
 Scope: `packages/tests`
 Status: in progress
 Notes: Playwright config and smoke tests added with Clerk-aware skip.
+
+## WS-TIX - Ticketing + check-in
+Owner: codex
+Scope: `apps/web/src/app/admin/ticketing`, `apps/web/src/app/api/admin/ticket-types`
+Status: in progress
+Notes: Admin ticketing list + create form and CRUD API routes added.

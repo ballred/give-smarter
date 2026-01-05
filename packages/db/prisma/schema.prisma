@@ -996,6 +996,7 @@ model TicketType {
   name        String
   description String?
   price       Int
+  currency    String           @default("USD")
   capacity    Int?
   saleStartAt DateTime?        @map("sale_start_at")
   saleEndAt   DateTime?        @map("sale_end_at")
