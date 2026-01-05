@@ -835,3 +835,992 @@ model Receipt {
   @@index([donorId])
   @@map("receipts")
 }
+
+enum TicketVisibility {
+  PUBLIC
+  PRIVATE
+}
+
+enum TicketAddOnScope {
+  ORDER
+  ATTENDEE
+}
+
+enum PromoCodeType {
+  AMOUNT
+  PERCENT
+}
+
+enum AttendeeStatus {
+  REGISTERED
+  CANCELED
+}
+
+enum CheckinMethod {
+  QR
+  SEARCH
+  MANUAL
+}
+
+enum AuctionStatus {
+  DRAFT
+  LIVE
+  CLOSED
+}
+
+enum AuctionItemStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+}
+
+enum AuctionMediaType {
+  IMAGE
+  VIDEO
+}
+
+enum ProcurementStatus {
+  PLEDGED
+  RECEIVED
+  CATALOGED
+  PUBLISHED
+  FULFILLED
+}
+
+enum BidStatus {
+  ACTIVE
+  OUTBID
+  WINNING
+}
+
+enum InvoiceStatus {
+  OPEN
+  PAID
+  VOID
+}
+
+enum FulfillmentStatus {
+  PENDING
+  PICKED_UP
+  SHIPPED
+  DELIVERED
+}
+
+enum PaddleRaiseStatus {
+  PLEDGED
+  PAID
+  CANCELED
+}
+
+enum LiveSceneType {
+  LEADERBOARD
+  THERMOMETER
+  ACTIVITY
+  SPONSOR
+  CTA
+}
+
+enum RaffleStatus {
+  DRAFT
+  ACTIVE
+  CLOSED
+}
+
+enum VotingContestStatus {
+  DRAFT
+  ACTIVE
+  CLOSED
+}
+
+enum StoreProductStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum TemplateStatus {
+  DRAFT
+  APPROVED
+  ARCHIVED
+}
+
+enum MessageSendStatus {
+  QUEUED
+  SENT
+  DELIVERED
+  FAILED
+}
+
+enum MessageEventType {
+  DELIVERED
+  OPENED
+  CLICKED
+  FAILED
+}
+
+enum KeywordRouteStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum WebhookStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum WebhookDeliveryStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum IntegrationProvider {
+  GENERIC
+  SALESFORCE
+  BLOOMERANG
+  DONORPERFECT
+  NEONCRM
+  RAISERS_EDGE
+}
+
+enum SyncJobStatus {
+  PENDING
+  RUNNING
+  SUCCEEDED
+  FAILED
+}
+
+model TicketType {
+  id          String           @id @default(cuid())
+  orgId       String           @map("org_id")
+  campaignId  String           @map("campaign_id")
+  name        String
+  description String?
+  price       Int
+  capacity    Int?
+  saleStartAt DateTime?        @map("sale_start_at")
+  saleEndAt   DateTime?        @map("sale_end_at")
+  minPerOrder Int?             @map("min_per_order")
+  maxPerOrder Int?             @map("max_per_order")
+  visibility  TicketVisibility @default(PUBLIC)
+  isComp      Boolean          @default(false) @map("is_comp")
+  fmvAmount   Int              @default(0) @map("fmv_amount")
+  benefitAmount Int            @default(0) @map("benefit_amount")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+  ticketOrders TicketOrder[]
+  attendees Attendee[]
+
+  @@index([campaignId])
+  @@map("ticket_types")
+}
+
+model TicketAddOn {
+  id          String           @id @default(cuid())
+  orgId       String           @map("org_id")
+  campaignId  String           @map("campaign_id")
+  name        String
+  description String?
+  price       Int
+  scope       TicketAddOnScope @default(ORDER)
+  capacity    Int?
+  isActive    Boolean          @default(true) @map("is_active")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+
+  @@index([campaignId])
+  @@map("ticket_add_ons")
+}
+
+model PromoCode {
+  id             String        @id @default(cuid())
+  orgId          String        @map("org_id")
+  campaignId     String        @map("campaign_id")
+  code           String
+  discountType   PromoCodeType @map("discount_type")
+  amount         Int
+  maxRedemptions Int?          @map("max_redemptions")
+  redeemedCount  Int           @default(0) @map("redeemed_count")
+  startsAt       DateTime?     @map("starts_at")
+  endsAt         DateTime?     @map("ends_at")
+  isActive       Boolean       @default(true) @map("is_active")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+
+  @@unique([campaignId, code])
+  @@map("promo_codes")
+}
+
+model TicketOrder {
+  id           String   @id @default(cuid())
+  orgId        String   @map("org_id")
+  campaignId   String   @map("campaign_id")
+  orderId      String   @map("order_id")
+  ticketTypeId String   @map("ticket_type_id")
+  quantity     Int      @default(1)
+  unitAmount   Int      @map("unit_amount")
+  totalAmount  Int      @map("total_amount")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+  order Order @relation(fields: [orderId], references: [id])
+  ticketType TicketType @relation(fields: [ticketTypeId], references: [id])
+  attendees Attendee[]
+
+  @@index([orderId])
+  @@map("ticket_orders")
+}
+
+model Attendee {
+  id            String         @id @default(cuid())
+  orgId         String         @map("org_id")
+  campaignId    String         @map("campaign_id")
+  orderId       String?        @map("order_id")
+  ticketOrderId String?        @map("ticket_order_id")
+  ticketTypeId  String?        @map("ticket_type_id")
+  donorId       String?        @map("donor_id")
+  firstName     String?        @map("first_name")
+  lastName      String?        @map("last_name")
+  email         String?
+  phone         String?
+  status        AttendeeStatus @default(REGISTERED)
+  qrCode        String?        @map("qr_code")
+  tableId       String?        @map("table_id")
+  seatId        String?        @unique @map("seat_id")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+  order Order? @relation(fields: [orderId], references: [id])
+  ticketOrder TicketOrder? @relation(fields: [ticketOrderId], references: [id])
+  ticketType TicketType? @relation(fields: [ticketTypeId], references: [id])
+  donor Donor? @relation(fields: [donorId], references: [id])
+  table Table? @relation(fields: [tableId], references: [id])
+  seat Seat? @relation(fields: [seatId], references: [id])
+  answers AttendeeAnswer[]
+  checkins Checkin[]
+
+  @@index([campaignId])
+  @@index([ticketTypeId])
+  @@map("attendees")
+}
+
+model AttendeeAnswer {
+  id         String   @id @default(cuid())
+  orgId      String   @map("org_id")
+  attendeeId String   @map("attendee_id")
+  question   String
+  answer     String?
+  valueJson  Json?    @map("value_json")
+  sortOrder  Int      @default(0) @map("sort_order")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  attendee Attendee @relation(fields: [attendeeId], references: [id])
+
+  @@index([attendeeId])
+  @@map("attendee_answers")
+}
+
+model Table {
+  id         String   @id @default(cuid())
+  orgId      String   @map("org_id")
+  campaignId String   @map("campaign_id")
+  name       String
+  capacity   Int
+  sortOrder  Int      @default(0) @map("sort_order")
+  notes      String?
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+  seats Seat[]
+  attendees Attendee[]
+
+  @@index([campaignId])
+  @@map("tables")
+}
+
+model Seat {
+  id         String   @id @default(cuid())
+  orgId      String   @map("org_id")
+  tableId    String   @map("table_id")
+  seatNumber Int      @map("seat_number")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  table Table @relation(fields: [tableId], references: [id])
+
+  @@unique([tableId, seatNumber])
+  @@map("seats")
+}
+
+model Checkin {
+  id            String        @id @default(cuid())
+  orgId         String        @map("org_id")
+  attendeeId    String        @map("attendee_id")
+  method        CheckinMethod
+  checkedInAt   DateTime      @map("checked_in_at")
+  createdByUserId String?     @map("created_by_user_id")
+  createdAt     DateTime      @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  attendee Attendee @relation(fields: [attendeeId], references: [id])
+  createdBy User? @relation(fields: [createdByUserId], references: [id])
+
+  @@index([attendeeId])
+  @@map("checkins")
+}
+
+model Auction {
+  id              String        @id @default(cuid())
+  orgId           String        @map("org_id")
+  campaignId      String        @map("campaign_id")
+  name            String
+  timezone        String
+  opensAt         DateTime?     @map("opens_at")
+  closesAt        DateTime?     @map("closes_at")
+  status          AuctionStatus @default(DRAFT)
+  bidIncrementRules Json?       @map("bid_increment_rules")
+  allowMaxBid     Boolean       @default(true) @map("allow_max_bid")
+  allowBuyNow     Boolean       @default(false) @map("allow_buy_now")
+  antiSnipingMinutes Int?       @map("anti_sniping_minutes")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+  categories AuctionCategory[]
+  items AuctionItem[]
+
+  @@index([campaignId])
+  @@map("auctions")
+}
+
+model AuctionCategory {
+  id         String   @id @default(cuid())
+  orgId      String   @map("org_id")
+  auctionId  String   @map("auction_id")
+  name       String
+  description String?
+  parentId   String?  @map("parent_id")
+  sortOrder  Int      @default(0) @map("sort_order")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  auction Auction @relation(fields: [auctionId], references: [id])
+  parent AuctionCategory? @relation("AuctionCategoryHierarchy", fields: [parentId], references: [id])
+  children AuctionCategory[] @relation("AuctionCategoryHierarchy")
+  items AuctionItem[]
+
+  @@index([auctionId])
+  @@map("auction_categories")
+}
+
+model AuctionItem {
+  id            String            @id @default(cuid())
+  orgId         String            @map("org_id")
+  auctionId     String            @map("auction_id")
+  categoryId    String?           @map("category_id")
+  title         String
+  description   String?
+  fmvAmount     Int               @default(0) @map("fmv_amount")
+  startingBid   Int               @default(0) @map("starting_bid")
+  bidIncrementOverride Json?      @map("bid_increment_override")
+  buyNowPrice   Int?              @map("buy_now_price")
+  quantity      Int               @default(1)
+  status        AuctionItemStatus @default(DRAFT)
+  isFeatured    Boolean           @default(false) @map("is_featured")
+  isPreviewOnly Boolean           @default(false) @map("is_preview_only")
+  opensAt       DateTime?         @map("opens_at")
+  closesAt      DateTime?         @map("closes_at")
+  fulfillmentMethod String?       @map("fulfillment_method")
+  shippingAmount Int?             @map("shipping_amount")
+  procurementSubmissionId String? @map("procurement_submission_id")
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  auction Auction @relation(fields: [auctionId], references: [id])
+  category AuctionCategory? @relation(fields: [categoryId], references: [id])
+  procurementSubmission ProcurementSubmission? @relation(fields: [procurementSubmissionId], references: [id])
+  media AuctionItemMedia[]
+  bids Bid[]
+  watchlist Watchlist[]
+  fulfillmentRecords FulfillmentRecord[]
+
+  @@index([auctionId])
+  @@map("auction_items")
+}
+
+model AuctionItemMedia {
+  id            String           @id @default(cuid())
+  orgId         String           @map("org_id")
+  auctionItemId String           @map("auction_item_id")
+  type          AuctionMediaType
+  url           String
+  sortOrder     Int              @default(0) @map("sort_order")
+  createdAt     DateTime         @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  auctionItem AuctionItem @relation(fields: [auctionItemId], references: [id])
+
+  @@index([auctionItemId])
+  @@map("auction_item_media")
+}
+
+model ProcurementDonor {
+  id        String   @id @default(cuid())
+  orgId     String   @map("org_id")
+  name      String
+  email     String?
+  phone     String?
+  notes     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  submissions ProcurementSubmission[]
+
+  @@index([orgId, name])
+  @@map("procurement_donors")
+}
+
+model ProcurementSubmission {
+  id         String            @id @default(cuid())
+  orgId      String            @map("org_id")
+  procurementDonorId String?   @map("procurement_donor_id")
+  status     ProcurementStatus @default(PLEDGED)
+  itemTitle  String?           @map("item_title")
+  itemDescription String?      @map("item_description")
+  fmvAmount  Int?              @map("fmv_amount")
+  restrictions String?         @map("restrictions")
+  notes      String?
+  receivedAt DateTime?         @map("received_at")
+  createdAt  DateTime          @default(now()) @map("created_at")
+  updatedAt  DateTime          @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  procurementDonor ProcurementDonor? @relation(fields: [procurementDonorId], references: [id])
+  auctionItems AuctionItem[]
+
+  @@map("procurement_submissions")
+}
+
+model Bid {
+  id            String   @id @default(cuid())
+  orgId         String   @map("org_id")
+  auctionItemId String   @map("auction_item_id")
+  donorId       String   @map("donor_id")
+  amount        Int
+  maxBidAmount  Int?     @map("max_bid_amount")
+  isAuto        Boolean  @default(false) @map("is_auto")
+  status        BidStatus @default(ACTIVE)
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  auctionItem AuctionItem @relation(fields: [auctionItemId], references: [id])
+  donor Donor @relation(fields: [donorId], references: [id])
+
+  @@index([auctionItemId])
+  @@index([donorId])
+  @@map("bids")
+}
+
+model Watchlist {
+  id            String   @id @default(cuid())
+  orgId         String   @map("org_id")
+  auctionItemId String   @map("auction_item_id")
+  donorId       String   @map("donor_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  auctionItem AuctionItem @relation(fields: [auctionItemId], references: [id])
+  donor Donor @relation(fields: [donorId], references: [id])
+
+  @@unique([auctionItemId, donorId])
+  @@map("watchlists")
+}
+
+model Invoice {
+  id         String        @id @default(cuid())
+  orgId      String        @map("org_id")
+  campaignId String?       @map("campaign_id")
+  donorId    String?       @map("donor_id")
+  orderId    String?       @map("order_id")
+  status     InvoiceStatus @default(OPEN)
+  totalAmount Int          @map("total_amount")
+  currency   String        @default("USD")
+  createdAt  DateTime      @default(now()) @map("created_at")
+  updatedAt  DateTime      @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign? @relation(fields: [campaignId], references: [id])
+  donor Donor? @relation(fields: [donorId], references: [id])
+  order Order? @relation(fields: [orderId], references: [id])
+  items InvoiceItem[]
+
+  @@index([campaignId])
+  @@map("invoices")
+}
+
+model InvoiceItem {
+  id           String      @id @default(cuid())
+  orgId        String      @map("org_id")
+  invoiceId    String      @map("invoice_id")
+  type         LineItemType
+  description  String?
+  quantity     Int         @default(1)
+  unitAmount   Int         @map("unit_amount")
+  totalAmount  Int         @map("total_amount")
+  auctionItemId String?    @map("auction_item_id")
+  createdAt    DateTime    @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  invoice Invoice @relation(fields: [invoiceId], references: [id])
+  auctionItem AuctionItem? @relation(fields: [auctionItemId], references: [id])
+  fulfillmentRecords FulfillmentRecord[]
+
+  @@index([invoiceId])
+  @@map("invoice_items")
+}
+
+model FulfillmentRecord {
+  id            String            @id @default(cuid())
+  orgId         String            @map("org_id")
+  auctionItemId String?           @map("auction_item_id")
+  invoiceItemId String?           @map("invoice_item_id")
+  status        FulfillmentStatus @default(PENDING)
+  method        String?
+  trackingNumber String?          @map("tracking_number")
+  fulfilledAt   DateTime?         @map("fulfilled_at")
+  createdAt     DateTime          @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  auctionItem AuctionItem? @relation(fields: [auctionItemId], references: [id])
+  invoiceItem InvoiceItem? @relation(fields: [invoiceItemId], references: [id])
+
+  @@index([auctionItemId])
+  @@map("fulfillment_records")
+}
+
+model PaddleRaiseLevel {
+  id         String   @id @default(cuid())
+  orgId      String   @map("org_id")
+  campaignId String   @map("campaign_id")
+  amount     Int
+  label      String
+  matchSponsorName String? @map("match_sponsor_name")
+  sortOrder  Int      @default(0) @map("sort_order")
+  isActive   Boolean  @default(true) @map("is_active")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+  pledges PaddleRaisePledge[]
+
+  @@index([campaignId])
+  @@map("paddle_raise_levels")
+}
+
+model PaddleRaisePledge {
+  id         String           @id @default(cuid())
+  orgId      String           @map("org_id")
+  campaignId String           @map("campaign_id")
+  donorId    String?          @map("donor_id")
+  levelId    String?          @map("level_id")
+  amount     Int
+  paddleNumber String?        @map("paddle_number")
+  status     PaddleRaiseStatus @default(PLEDGED)
+  enteredByUserId String?     @map("entered_by_user_id")
+  createdAt  DateTime         @default(now()) @map("created_at")
+  updatedAt  DateTime         @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+  donor Donor? @relation(fields: [donorId], references: [id])
+  level PaddleRaiseLevel? @relation(fields: [levelId], references: [id])
+  enteredBy User? @relation(fields: [enteredByUserId], references: [id])
+
+  @@index([campaignId])
+  @@map("paddle_raise_pledges")
+}
+
+model LiveDisplayScene {
+  id         String        @id @default(cuid())
+  orgId      String        @map("org_id")
+  campaignId String        @map("campaign_id")
+  name       String
+  sceneType  LiveSceneType @map("scene_type")
+  config     Json?
+  sortOrder  Int           @default(0) @map("sort_order")
+  isActive   Boolean       @default(false) @map("is_active")
+  createdAt  DateTime      @default(now()) @map("created_at")
+  updatedAt  DateTime      @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+
+  @@index([campaignId])
+  @@map("live_display_scenes")
+}
+
+model Raffle {
+  id         String       @id @default(cuid())
+  orgId      String       @map("org_id")
+  campaignId String       @map("campaign_id")
+  name       String
+  status     RaffleStatus @default(DRAFT)
+  ticketPrice Int         @map("ticket_price")
+  bundleRules Json?       @map("bundle_rules")
+  maxTicketsPerPerson Int? @map("max_tickets_per_person")
+  startsAt   DateTime?    @map("starts_at")
+  endsAt     DateTime?    @map("ends_at")
+  rulesUrl   String?      @map("rules_url")
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+  tickets RaffleTicket[]
+  draws RaffleDraw[]
+
+  @@index([campaignId])
+  @@map("raffles")
+}
+
+model RaffleTicket {
+  id        String   @id @default(cuid())
+  orgId     String   @map("org_id")
+  raffleId  String   @map("raffle_id")
+  donorId   String?  @map("donor_id")
+  orderId   String?  @map("order_id")
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  raffle Raffle @relation(fields: [raffleId], references: [id])
+  donor Donor? @relation(fields: [donorId], references: [id])
+  order Order? @relation(fields: [orderId], references: [id])
+
+  @@index([raffleId])
+  @@map("raffle_tickets")
+}
+
+model RaffleDraw {
+  id        String   @id @default(cuid())
+  orgId     String   @map("org_id")
+  raffleId  String   @map("raffle_id")
+  drawnAt   DateTime @map("drawn_at")
+  winnerDonorId String? @map("winner_donor_id")
+  notes     String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  raffle Raffle @relation(fields: [raffleId], references: [id])
+  winnerDonor Donor? @relation(fields: [winnerDonorId], references: [id])
+
+  @@index([raffleId])
+  @@map("raffle_draws")
+}
+
+model VotingContest {
+  id         String              @id @default(cuid())
+  orgId      String              @map("org_id")
+  campaignId String              @map("campaign_id")
+  name       String
+  status     VotingContestStatus @default(DRAFT)
+  startsAt   DateTime?           @map("starts_at")
+  endsAt     DateTime?           @map("ends_at")
+  createdAt  DateTime            @default(now()) @map("created_at")
+  updatedAt  DateTime            @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+  candidates VoteCandidate[]
+  votes Vote[]
+
+  @@index([campaignId])
+  @@map("voting_contests")
+}
+
+model VoteCandidate {
+  id          String   @id @default(cuid())
+  orgId       String   @map("org_id")
+  contestId   String   @map("contest_id")
+  name        String
+  description String?
+  photoUrl    String?  @map("photo_url")
+  sponsorName String?  @map("sponsor_name")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  contest VotingContest @relation(fields: [contestId], references: [id])
+  votes Vote[]
+
+  @@index([contestId])
+  @@map("vote_candidates")
+}
+
+model Vote {
+  id          String   @id @default(cuid())
+  orgId       String   @map("org_id")
+  contestId   String   @map("contest_id")
+  candidateId String   @map("candidate_id")
+  donorId     String?  @map("donor_id")
+  amount      Int      @default(0)
+  voteCount   Int      @default(0) @map("vote_count")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  contest VotingContest @relation(fields: [contestId], references: [id])
+  candidate VoteCandidate @relation(fields: [candidateId], references: [id])
+  donor Donor? @relation(fields: [donorId], references: [id])
+
+  @@index([contestId])
+  @@map("votes")
+}
+
+model StoreProduct {
+  id          String            @id @default(cuid())
+  orgId       String            @map("org_id")
+  campaignId  String            @map("campaign_id")
+  name        String
+  description String?
+  status      StoreProductStatus @default(ACTIVE)
+  price       Int
+  sku         String?
+  inventoryCount Int?           @map("inventory_count")
+  shippingRequired Boolean      @default(false) @map("shipping_required")
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+  variants StoreVariant[]
+
+  @@index([campaignId])
+  @@map("store_products")
+}
+
+model StoreVariant {
+  id          String   @id @default(cuid())
+  orgId       String   @map("org_id")
+  productId   String   @map("product_id")
+  name        String
+  sku         String?
+  price       Int?
+  inventoryCount Int? @map("inventory_count")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  product StoreProduct @relation(fields: [productId], references: [id])
+
+  @@index([productId])
+  @@map("store_variants")
+}
+
+model StoreOrder {
+  id         String     @id @default(cuid())
+  orgId      String     @map("org_id")
+  campaignId String?    @map("campaign_id")
+  orderId    String     @map("order_id")
+  status     OrderStatus @default(PENDING)
+  createdAt  DateTime   @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign? @relation(fields: [campaignId], references: [id])
+  order Order @relation(fields: [orderId], references: [id])
+
+  @@index([orderId])
+  @@map("store_orders")
+}
+
+model EmailTemplate {
+  id        String         @id @default(cuid())
+  orgId     String         @map("org_id")
+  name      String
+  subject   String
+  html      String
+  status    TemplateStatus @default(DRAFT)
+  version   Int            @default(1)
+  createdAt DateTime       @default(now()) @map("created_at")
+  updatedAt DateTime       @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  messageSends MessageSend[]
+
+  @@unique([orgId, name, version])
+  @@map("email_templates")
+}
+
+model SmsTemplate {
+  id        String         @id @default(cuid())
+  orgId     String         @map("org_id")
+  name      String
+  body      String
+  status    TemplateStatus @default(DRAFT)
+  version   Int            @default(1)
+  createdAt DateTime       @default(now()) @map("created_at")
+  updatedAt DateTime       @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  messageSends MessageSend[]
+
+  @@unique([orgId, name, version])
+  @@map("sms_templates")
+}
+
+model MessageSend {
+  id             String             @id @default(cuid())
+  orgId          String             @map("org_id")
+  channel        CommunicationChannel
+  emailTemplateId String?           @map("email_template_id")
+  smsTemplateId  String?            @map("sms_template_id")
+  to             String
+  subject        String?
+  body           String
+  status         MessageSendStatus  @default(QUEUED)
+  providerMessageId String?         @map("provider_message_id")
+  scheduledAt    DateTime?          @map("scheduled_at")
+  sentAt         DateTime?          @map("sent_at")
+  createdAt      DateTime           @default(now()) @map("created_at")
+  updatedAt      DateTime           @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  emailTemplate EmailTemplate? @relation(fields: [emailTemplateId], references: [id])
+  smsTemplate SmsTemplate? @relation(fields: [smsTemplateId], references: [id])
+  events MessageEvent[]
+
+  @@index([channel, status])
+  @@map("message_sends")
+}
+
+model MessageEvent {
+  id            String           @id @default(cuid())
+  orgId         String           @map("org_id")
+  messageSendId String           @map("message_send_id")
+  eventType     MessageEventType @map("event_type")
+  providerEventId String?        @map("provider_event_id")
+  occurredAt    DateTime         @map("occurred_at")
+  createdAt     DateTime         @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  messageSend MessageSend @relation(fields: [messageSendId], references: [id])
+
+  @@index([messageSendId])
+  @@map("message_events")
+}
+
+model KeywordRoute {
+  id           String            @id @default(cuid())
+  orgId        String            @map("org_id")
+  keyword      String
+  campaignId   String?           @map("campaign_id")
+  replyMessage String?           @map("reply_message")
+  status       KeywordRouteStatus @default(ACTIVE)
+  createdAt    DateTime          @default(now()) @map("created_at")
+  updatedAt    DateTime          @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign? @relation(fields: [campaignId], references: [id])
+
+  @@unique([orgId, keyword])
+  @@map("keyword_routes")
+}
+
+model ApiToken {
+  id        String   @id @default(cuid())
+  orgId     String   @map("org_id")
+  name      String
+  tokenHash String   @map("token_hash")
+  scopes    String[]
+  lastUsedAt DateTime? @map("last_used_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+
+  @@unique([orgId, name])
+  @@map("api_tokens")
+}
+
+model WebhookEndpoint {
+  id        String        @id @default(cuid())
+  orgId     String        @map("org_id")
+  url       String
+  secret    String
+  events    String[]
+  status    WebhookStatus @default(ACTIVE)
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  deliveries WebhookDelivery[]
+
+  @@map("webhook_endpoints")
+}
+
+model WebhookDelivery {
+  id          String                @id @default(cuid())
+  orgId       String                @map("org_id")
+  endpointId  String                @map("endpoint_id")
+  eventType   String                @map("event_type")
+  payload     Json
+  status      WebhookDeliveryStatus @default(PENDING)
+  responseCode Int?                 @map("response_code")
+  attempts    Int                   @default(0)
+  nextAttemptAt DateTime?           @map("next_attempt_at")
+  createdAt   DateTime              @default(now()) @map("created_at")
+  updatedAt   DateTime              @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+  endpoint WebhookEndpoint @relation(fields: [endpointId], references: [id])
+
+  @@index([endpointId])
+  @@map("webhook_deliveries")
+}
+
+model CrmMapping {
+  id        String              @id @default(cuid())
+  orgId     String              @map("org_id")
+  provider  IntegrationProvider
+  config    Json
+  createdAt DateTime            @default(now()) @map("created_at")
+  updatedAt DateTime            @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+
+  @@map("crm_mappings")
+}
+
+model IntegrationSyncJob {
+  id         String           @id @default(cuid())
+  orgId      String           @map("org_id")
+  provider   IntegrationProvider
+  status     SyncJobStatus    @default(PENDING)
+  details    Json?
+  startedAt  DateTime?        @map("started_at")
+  finishedAt DateTime?        @map("finished_at")
+  createdAt  DateTime         @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [orgId], references: [id])
+
+  @@map("integration_sync_jobs")
+}

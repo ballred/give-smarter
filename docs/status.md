@@ -15,7 +15,7 @@ Notes: <short updates or blockers>
 Owner: codex
 Scope: `packages/db`
 Status: in progress
-Notes: Initial Prisma schema added (orgs, donors, campaigns, ledger, orders).
+Notes: Expanded schema to cover ticketing, auctions, live giving, growth modules, messaging, and integrations.
 
 ## WS-AUTH - Clerk + RBAC
 Owner: codex
