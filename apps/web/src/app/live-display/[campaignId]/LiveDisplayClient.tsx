@@ -6,6 +6,7 @@ type LiveDisplayData = {
   totalRaised: number;
   donationTotal: number;
   pledgeTotal: number;
+  topBids: Array<{ id: string; title: string; amount: number }>;
   goalAmount: number | null;
   currency: string;
   updatedAt: string;
@@ -78,6 +79,7 @@ export function LiveDisplayClient({
     totalRaised: 0,
     donationTotal: 0,
     pledgeTotal: 0,
+    topBids: [],
     goalAmount,
     currency,
     updatedAt: "",
@@ -153,6 +155,34 @@ export function LiveDisplayClient({
             </p>
           </div>
         </div>
+
+        {resolvedData.topBids.length ? (
+          <section className="w-full max-w-5xl text-left">
+            <div className="flex items-center justify-between">
+              <p className="text-xs uppercase tracking-[0.3em] text-zinc-400">
+                Top auction bids
+              </p>
+              <span className="text-xs uppercase tracking-[0.3em] text-zinc-500">
+                Live
+              </span>
+            </div>
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
+              {resolvedData.topBids.map((item) => (
+                <div
+                  key={item.id}
+                  className="rounded-2xl border border-zinc-800 bg-zinc-900/60 px-5 py-4"
+                >
+                  <p className="text-sm font-semibold text-white">
+                    {item.title}
+                  </p>
+                  <p className="mt-2 text-lg font-semibold text-emerald-400">
+                    {formatCurrency(item.amount, resolvedData.currency)}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : null}
       </main>
     </div>
   );

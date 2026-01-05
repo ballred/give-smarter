@@ -45,7 +45,7 @@ Notes: Admin auction list + create flow + CRUD endpoints and bid increment helpe
 Owner: codex
 Scope: `apps/web/src/app/admin/live-giving`, `apps/web/src/app/api/admin/paddle-raise-levels`
 Status: in progress
-Notes: Admin paddle raise level list + create flow + pledge entry UI; live display page + API for totals added.
+Notes: Admin paddle raise level list + create flow + pledge entry UI; live display page + API now include auction top bids and totals.
 
 ## WS-PORTAL - Donor portal shell
 Owner: codex

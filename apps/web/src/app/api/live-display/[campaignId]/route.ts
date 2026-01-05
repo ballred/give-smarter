@@ -20,7 +20,7 @@ export async function GET(
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
 
-  const [donationTotals, pledgeTotals] = await Promise.all([
+  const [donationTotals, pledgeTotals, auctionItems] = await Promise.all([
     prisma.orderLineItem.aggregate({
       where: {
         order: { campaignId: campaign.id },
@@ -35,11 +35,28 @@ export async function GET(
       },
       _sum: { amount: true },
     }),
+    prisma.auctionItem.findMany({
+      where: {
+        auction: { campaignId: campaign.id },
+        status: "PUBLISHED",
+      },
+      include: {
+        bids: { orderBy: [{ amount: "desc" }, { createdAt: "asc" }], take: 1 },
+      },
+    }),
   ]);
 
   const donationTotal = donationTotals._sum.totalAmount ?? 0;
   const pledgeTotal = pledgeTotals._sum.amount ?? 0;
   const totalRaised = donationTotal + pledgeTotal;
+  const topBids = auctionItems
+    .map((item) => ({
+      id: item.id,
+      title: item.title,
+      amount: item.bids[0]?.amount ?? item.startingBid,
+    }))
+    .sort((a, b) => b.amount - a.amount)
+    .slice(0, 5);
 
   return NextResponse.json({
     data: {
@@ -47,6 +64,7 @@ export async function GET(
       donationTotal,
       pledgeTotal,
       totalRaised,
+      topBids,
       goalAmount: campaign.goalAmount ?? null,
       currency: campaign.organization.defaultCurrency ?? "USD",
       updatedAt: new Date().toISOString(),
