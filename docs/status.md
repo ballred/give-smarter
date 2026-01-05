@@ -53,6 +53,30 @@ Scope: `apps/web/src/app/portal`
 Status: in progress
 Notes: Portal layout + placeholder sections for tickets, bids, receipts, recurring, profile.
 
+## WS-AUC-ITEMS - Auction items + procurement
+Owner: codex
+Scope: `apps/web/src/app/admin/auctions`, `apps/web/src/app/api/admin/auctions`, `apps/web/src/app/api/admin/procurement`
+Status: in progress
+Notes: Auction item list + create flow, procurement submissions UI + API.
+
+## WS-CHECKIN - Event check-in
+Owner: codex
+Scope: `apps/web/src/app/admin/check-in`, `apps/web/src/app/api/admin/checkin`
+Status: in progress
+Notes: Search + check-in UI and API endpoints.
+
+## WS-GROW - Raffles, voting, store
+Owner: codex
+Scope: `apps/web/src/app/admin/raffles`, `apps/web/src/app/admin/voting`, `apps/web/src/app/admin/store`, `apps/web/src/app/api/admin/*`
+Status: in progress
+Notes: Admin shells + CRUD endpoints for raffles, contests, and store products.
+
+## WS-RPT - Reporting
+Owner: codex
+Scope: `apps/web/src/app/admin/reports`, `apps/web/src/app/api/admin/reports`
+Status: in progress
+Notes: Finance report page and CSV export endpoint stubbed.
+
 ## WS-QA - Testing + perf
 Owner: codex
 Scope: `packages/tests`

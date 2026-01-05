@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 
-export default async function AuctionsPage() {
-  const auctions = await prisma.auction.findMany({
+export default async function ProcurementPage() {
+  const submissions = await prisma.procurementSubmission.findMany({
     include: {
+      procurementDonor: true,
       campaign: { select: { name: true } },
     },
     orderBy: { createdAt: "desc" },
@@ -12,17 +13,19 @@ export default async function AuctionsPage() {
   return (
     <div className="space-y-6">
       <header className="flex flex-wrap items-center justify-between gap-4">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-semibold text-zinc-900">Auctions</h1>
+        <div>
+          <h1 className="text-2xl font-semibold text-zinc-900">
+            Procurement
+          </h1>
           <p className="text-sm text-zinc-600">
-            Configure auction catalogs, bidding rules, and live closeouts.
+            Track incoming auction donations and item status.
           </p>
         </div>
         <Link
           className="inline-flex h-10 items-center justify-center rounded-full bg-zinc-900 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-800"
-          href="/admin/auctions/new"
+          href="/admin/auctions/procurement/new"
         >
-          New auction
+          New submission
         </Link>
       </header>
 
@@ -30,37 +33,32 @@ export default async function AuctionsPage() {
         <table className="w-full text-left text-sm">
           <thead className="border-b border-zinc-200 bg-zinc-50">
             <tr>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Name</th>
+              <th className="px-4 py-3 font-semibold text-zinc-700">Item</th>
+              <th className="px-4 py-3 font-semibold text-zinc-700">Donor</th>
               <th className="px-4 py-3 font-semibold text-zinc-700">Campaign</th>
               <th className="px-4 py-3 font-semibold text-zinc-700">Status</th>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Opens</th>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Closes</th>
+              <th className="px-4 py-3 font-semibold text-zinc-700">FMV</th>
             </tr>
           </thead>
           <tbody>
-            {auctions.length ? (
-              auctions.map((auction) => (
-                <tr key={auction.id} className="border-b border-zinc-100">
+            {submissions.length ? (
+              submissions.map((submission) => (
+                <tr key={submission.id} className="border-b border-zinc-100">
                   <td className="px-4 py-3 font-semibold text-zinc-900">
-                    <Link
-                      className="text-zinc-900 hover:text-zinc-700"
-                      href={`/admin/auctions/${auction.id}`}
-                    >
-                      {auction.name}
-                    </Link>
+                    {submission.itemTitle ?? "—"}
                   </td>
                   <td className="px-4 py-3 text-zinc-600">
-                    {auction.campaign?.name ?? "—"}
-                  </td>
-                  <td className="px-4 py-3 text-zinc-600">{auction.status}</td>
-                  <td className="px-4 py-3 text-zinc-600">
-                    {auction.opensAt
-                      ? new Date(auction.opensAt).toLocaleString()
-                      : "—"}
+                    {submission.procurementDonor?.name ?? "—"}
                   </td>
                   <td className="px-4 py-3 text-zinc-600">
-                    {auction.closesAt
-                      ? new Date(auction.closesAt).toLocaleString()
+                    {submission.campaign?.name ?? "—"}
+                  </td>
+                  <td className="px-4 py-3 text-zinc-600">
+                    {submission.status}
+                  </td>
+                  <td className="px-4 py-3 text-zinc-600">
+                    {submission.fmvAmount
+                      ? `$${(submission.fmvAmount / 100).toFixed(2)}`
                       : "—"}
                   </td>
                 </tr>
@@ -71,7 +69,7 @@ export default async function AuctionsPage() {
                   className="px-4 py-6 text-center text-zinc-500"
                   colSpan={5}
                 >
-                  No auctions yet.
+                  No submissions yet.
                 </td>
               </tr>
             )}

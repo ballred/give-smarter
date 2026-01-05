@@ -1304,6 +1304,7 @@ model ProcurementDonor {
 model ProcurementSubmission {
   id         String            @id @default(cuid())
   orgId      String            @map("org_id")
+  campaignId String?           @map("campaign_id")
   procurementDonorId String?   @map("procurement_donor_id")
   status     ProcurementStatus @default(PLEDGED)
   itemTitle  String?           @map("item_title")
@@ -1316,6 +1317,7 @@ model ProcurementSubmission {
   updatedAt  DateTime          @updatedAt @map("updated_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
+  campaign Campaign? @relation(fields: [campaignId], references: [id])
   procurementDonor ProcurementDonor? @relation(fields: [procurementDonorId], references: [id])
   auctionItems AuctionItem[]
 
@@ -1606,6 +1608,7 @@ model StoreProduct {
   description String?
   status      StoreProductStatus @default(ACTIVE)
   price       Int
+  currency    String            @default("USD")
   sku         String?
   inventoryCount Int?           @map("inventory_count")
   shippingRequired Boolean      @default(false) @map("shipping_required")

@@ -1,23 +1,24 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { TicketVisibility } from "@prisma/client";
+import { StoreProductStatus } from "@prisma/client";
 import { prisma } from "@/lib/db";
 
 export const runtime = "nodejs";
 
-type TicketTypeUpdatePayload = {
+type StoreProductUpdatePayload = {
   name?: string;
   description?: string | null;
   price?: number;
   priceCents?: number;
-  capacity?: number | null;
-  visibility?: TicketVisibility;
-  isComp?: boolean;
+  sku?: string | null;
+  inventoryCount?: number | null;
+  shippingRequired?: boolean;
+  status?: StoreProductStatus;
 };
 
 export async function GET(
   _request: Request,
-  { params }: { params: { ticketTypeId: string } },
+  { params }: { params: { productId: string } },
 ) {
   const { userId } = auth();
 
@@ -25,20 +26,20 @@ export async function GET(
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  const ticketType = await prisma.ticketType.findUnique({
-    where: { id: params.ticketTypeId },
+  const product = await prisma.storeProduct.findUnique({
+    where: { id: params.productId },
   });
 
-  if (!ticketType) {
+  if (!product) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
 
-  return NextResponse.json({ data: ticketType });
+  return NextResponse.json({ data: product });
 }
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { ticketTypeId: string } },
+  { params }: { params: { productId: string } },
 ) {
   const { userId } = auth();
 
@@ -46,23 +47,26 @@ export async function PATCH(
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  let body: TicketTypeUpdatePayload;
+  let body: StoreProductUpdatePayload;
 
   try {
-    body = (await request.json()) as TicketTypeUpdatePayload;
+    body = (await request.json()) as StoreProductUpdatePayload;
   } catch {
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
   const data: Record<string, unknown> = {};
 
-  if (body.name !== undefined) {
-    data.name = body.name;
+  if (body.name !== undefined) data.name = body.name;
+  if (body.description !== undefined) data.description = body.description;
+  if (body.sku !== undefined) data.sku = body.sku;
+  if (body.inventoryCount !== undefined) {
+    data.inventoryCount = body.inventoryCount;
   }
-
-  if (body.description !== undefined) {
-    data.description = body.description;
+  if (body.shippingRequired !== undefined) {
+    data.shippingRequired = body.shippingRequired;
   }
+  if (body.status !== undefined) data.status = body.status;
 
   if (body.price !== undefined || body.priceCents !== undefined) {
     const cents =
@@ -71,38 +75,23 @@ export async function PATCH(
         : typeof body.price === "number"
           ? Math.round(body.price * 100)
           : null;
-
-    if (cents === null || !Number.isFinite(cents) || cents < 0) {
+    if (cents === null || cents < 0) {
       return NextResponse.json({ error: "invalid_price" }, { status: 400 });
     }
-
     data.price = cents;
   }
 
-  if (body.capacity !== undefined) {
-    data.capacity =
-      body.capacity === null || body.capacity > 0 ? body.capacity : null;
-  }
-
-  if (body.visibility !== undefined) {
-    data.visibility = body.visibility;
-  }
-
-  if (body.isComp !== undefined) {
-    data.isComp = body.isComp;
-  }
-
-  const ticketType = await prisma.ticketType.update({
-    where: { id: params.ticketTypeId },
+  const product = await prisma.storeProduct.update({
+    where: { id: params.productId },
     data,
   });
 
-  return NextResponse.json({ data: ticketType });
+  return NextResponse.json({ data: product });
 }
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { ticketTypeId: string } },
+  { params }: { params: { productId: string } },
 ) {
   const { userId } = auth();
 
@@ -110,9 +99,7 @@ export async function DELETE(
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  await prisma.ticketType.delete({
-    where: { id: params.ticketTypeId },
-  });
+  await prisma.storeProduct.delete({ where: { id: params.productId } });
 
   return NextResponse.json({ ok: true });
 }

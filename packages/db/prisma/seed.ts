@@ -35,6 +35,9 @@ async function main() {
           { orgId: organization.id, type: "TICKETING", isEnabled: true },
           { orgId: organization.id, type: "AUCTION", isEnabled: true },
           { orgId: organization.id, type: "PADDLE_RAISE", isEnabled: true },
+          { orgId: organization.id, type: "RAFFLE", isEnabled: true },
+          { orgId: organization.id, type: "STORE", isEnabled: true },
+          { orgId: organization.id, type: "VOTING", isEnabled: true },
         ],
       },
       pages: {
@@ -130,7 +133,7 @@ async function main() {
     },
   });
 
-  await prisma.auction.upsert({
+  const auction = await prisma.auction.upsert({
     where: { id: "auction_demo" },
     update: {},
     create: {
@@ -140,6 +143,96 @@ async function main() {
       name: "Spring Gala Auction",
       timezone: "America/Los_Angeles",
       status: "DRAFT",
+    },
+  });
+
+  const category = await prisma.auctionCategory.upsert({
+    where: { id: "auction_category_demo" },
+    update: {},
+    create: {
+      id: "auction_category_demo",
+      orgId: organization.id,
+      auctionId: auction.id,
+      name: "Experiences",
+      sortOrder: 0,
+    },
+  });
+
+  await prisma.auctionItem.upsert({
+    where: { id: "auction_item_demo" },
+    update: {},
+    create: {
+      id: "auction_item_demo",
+      orgId: organization.id,
+      auctionId: auction.id,
+      categoryId: category.id,
+      title: "Weekend Retreat Package",
+      description: "Two-night stay plus dinner for two.",
+      fmvAmount: 120000,
+      startingBid: 25000,
+      buyNowPrice: 200000,
+      quantity: 1,
+      status: "PUBLISHED",
+      isFeatured: true,
+    },
+  });
+
+  await prisma.paddleRaiseLevel.upsert({
+    where: { id: "paddle_level_demo" },
+    update: {},
+    create: {
+      id: "paddle_level_demo",
+      orgId: organization.id,
+      campaignId: campaign.id,
+      amount: 25000,
+      label: "Funds a classroom library refresh",
+      sortOrder: 0,
+      isActive: true,
+    },
+  });
+
+  await prisma.raffle.upsert({
+    where: { id: "raffle_demo" },
+    update: {},
+    create: {
+      id: "raffle_demo",
+      orgId: organization.id,
+      campaignId: campaign.id,
+      name: "Golden Ticket Raffle",
+      status: "ACTIVE",
+      ticketPrice: 1000,
+      bundleRules: { label: "5 tickets for $40" },
+      maxTicketsPerPerson: 50,
+    },
+  });
+
+  await prisma.storeProduct.upsert({
+    where: { id: "store_product_demo" },
+    update: {},
+    create: {
+      id: "store_product_demo",
+      orgId: organization.id,
+      campaignId: campaign.id,
+      name: "Spirit Tee",
+      description: "Limited edition fundraiser tee.",
+      status: "ACTIVE",
+      price: 2500,
+      currency: "USD",
+      sku: "TEE-2026",
+      inventoryCount: 120,
+      shippingRequired: false,
+    },
+  });
+
+  await prisma.votingContest.upsert({
+    where: { id: "voting_demo" },
+    update: {},
+    create: {
+      id: "voting_demo",
+      orgId: organization.id,
+      campaignId: campaign.id,
+      name: "Principal for a Day",
+      status: "ACTIVE",
     },
   });
 }
