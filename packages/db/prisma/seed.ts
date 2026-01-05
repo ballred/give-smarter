@@ -175,6 +175,39 @@ async function main() {
               ],
             },
           },
+          {
+            orgId: organization.id,
+            type: "TICKETS",
+            slug: "tickets",
+            title: "Tickets",
+            isPublished: true,
+            blocks: {
+              create: [
+                {
+                  orgId: organization.id,
+                  type: "story",
+                  sortOrder: 0,
+                  data: {
+                    title: "Join the event",
+                    body: [
+                      "Reserve your seats and bring the whole community together.",
+                      "Tickets include dinner and access to the live auction.",
+                    ],
+                  },
+                },
+                {
+                  orgId: organization.id,
+                  type: "cta",
+                  sortOrder: 1,
+                  data: {
+                    title: "Ready to attend?",
+                    body: "Select your ticket type and checkout securely.",
+                    primaryCta: { label: "Get tickets", href: "#tickets" },
+                  },
+                },
+              ],
+            },
+          },
         ],
       },
     },

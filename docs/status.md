@@ -93,7 +93,7 @@ Notes: Playwright config and smoke tests added with Clerk-aware skip.
 Owner: codex
 Scope: `apps/web/src/app/admin/ticketing`, `apps/web/src/app/api/admin/ticket-types`
 Status: in progress
-Notes: Admin ticketing list + create form and CRUD API routes added.
+Notes: Admin ticketing list + create form and CRUD API routes added; public ticket checkout flow added.
 
 ## WS-MSG - Messaging templates
 Owner: codex

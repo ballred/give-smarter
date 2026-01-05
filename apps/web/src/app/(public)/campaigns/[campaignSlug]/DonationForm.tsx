@@ -28,7 +28,7 @@ export function DonationForm({
   const defaultTier = config.tiers[0];
 
   return (
-    <section className="px-6 pb-16 pt-8 sm:px-10">
+    <section id="donate" className="px-6 pb-16 pt-8 sm:px-10">
       <div className="mx-auto w-full max-w-4xl space-y-6 rounded-3xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] p-8 shadow-[0_20px_60px_rgba(18,15,12,0.08)]">
         <header className="space-y-2">
           <h2 className="text-3xl font-semibold text-[color:var(--campaign-ink)]">

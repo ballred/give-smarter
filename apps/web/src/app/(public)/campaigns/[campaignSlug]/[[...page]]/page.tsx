@@ -5,6 +5,7 @@ import { BlockRenderer, CampaignThemeProvider } from "@give-smarter/ui";
 import { moduleTypeLabels } from "@give-smarter/core";
 import { getCampaignBySlug } from "../campaign-data";
 import { DonationForm } from "../DonationForm";
+import { TicketPurchaseForm } from "../TicketPurchaseForm";
 import styles from "../campaign-page.module.css";
 
 type CampaignPageParams = {
@@ -61,6 +62,7 @@ export default async function CampaignPage({
     ? `/campaigns/${campaign.slug}/${donatePage.slug}`
     : "#donate";
   const showDonationForm = page.slug === "donate";
+  const showTicketForm = page.slug === "tickets";
   const showSuccess = searchParams?.success === "1";
   const showCanceled = searchParams?.canceled === "1";
 
@@ -125,6 +127,13 @@ export default async function CampaignPage({
           <BlockRenderer blocks={page.blocks} />
           {showDonationForm ? (
             <DonationForm
+              campaign={campaign}
+              showSuccess={showSuccess}
+              showCanceled={showCanceled}
+            />
+          ) : null}
+          {showTicketForm ? (
+            <TicketPurchaseForm
               campaign={campaign}
               showSuccess={showSuccess}
               showCanceled={showCanceled}
