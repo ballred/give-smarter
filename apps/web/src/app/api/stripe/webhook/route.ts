@@ -85,6 +85,7 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
   const orderId = metadataValue(metadata, "orderId");
   const paymentId = metadataValue(metadata, "paymentId");
   const donorId = metadataValue(metadata, "donorId");
+  const auctionItemId = metadataValue(metadata, "auctionItemId");
 
   if (!orgId) {
     return;
@@ -157,6 +158,13 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
       paymentId: payment.id,
       paymentIntentId: paymentIntent.id,
       receiptEmail: paymentIntent.receipt_email ?? undefined,
+    });
+  }
+
+  if (auctionItemId) {
+    await prisma.auctionItem.updateMany({
+      where: { id: auctionItemId },
+      data: { status: "CLOSED", closesAt: occurredAt },
     });
   }
 }

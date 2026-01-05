@@ -1,7 +1,15 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import {
+  OrderStatus,
+  PaymentProvider,
+  PaymentStatus,
+  type LineItemType,
+} from "@prisma/client";
 import { getBidIncrement, type BidIncrementRule } from "@give-smarter/core";
 import { prisma } from "@/lib/db";
+import { createOrderNumber, normalizeLineItems } from "@/lib/orders";
+import { getStripeClient } from "@/lib/stripe";
 
 function parseNumber(value: FormDataEntryValue | null) {
   if (!value) return null;
@@ -105,6 +113,10 @@ export async function placeBid(formData: FormData) {
     throw new Error("Item not found.");
   }
 
+  if (item.status === "CLOSED") {
+    throw new Error("Bidding is closed for this item.");
+  }
+
   const now = new Date();
   if (item.auction.opensAt && now < item.auction.opensAt) {
     throw new Error("Auction has not opened yet.");
@@ -204,4 +216,173 @@ export async function placeBid(formData: FormData) {
   }
 
   redirect(`/campaigns/${item.auction.campaign.slug}/auction/${item.id}`);
+}
+
+export async function buyNow(formData: FormData) {
+  "use server";
+
+  const itemId = String(formData.get("itemId") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim();
+  const firstName = String(formData.get("firstName") ?? "").trim();
+  const lastName = String(formData.get("lastName") ?? "").trim();
+
+  if (!itemId) {
+    throw new Error("Item is required.");
+  }
+
+  const item = await prisma.auctionItem.findUnique({
+    where: { id: itemId },
+    include: {
+      auction: {
+        include: {
+          campaign: {
+            select: { id: true, slug: true, orgId: true, organization: { select: { defaultCurrency: true } } },
+          },
+        },
+      },
+    },
+  });
+
+  if (!item) {
+    throw new Error("Item not found.");
+  }
+
+  if (item.status === "CLOSED") {
+    throw new Error("This item is no longer available.");
+  }
+
+  if (!item.buyNowPrice) {
+    throw new Error("Buy now is not enabled for this item.");
+  }
+
+  const now = new Date();
+  if (item.auction.opensAt && now < item.auction.opensAt) {
+    throw new Error("Auction has not opened yet.");
+  }
+  if (item.auction.closesAt && now > item.auction.closesAt) {
+    throw new Error("Auction has closed.");
+  }
+
+  const donorId = await resolveDonor({
+    orgId: item.orgId,
+    email: email || undefined,
+    firstName: firstName || undefined,
+    lastName: lastName || undefined,
+  });
+
+  if (!donorId) {
+    throw new Error("Email is required to buy now.");
+  }
+
+  const currency =
+    item.auction.campaign.organization.defaultCurrency ?? "USD";
+  const amount = item.buyNowPrice;
+  const benefitAmount = item.fmvAmount;
+  const taxDeductibleAmount = Math.max(0, amount - benefitAmount);
+
+  const normalized = normalizeLineItems(
+    [
+      {
+        type: "AUCTION_WIN" as LineItemType,
+        sourceId: item.id,
+        description: item.title,
+        quantity: 1,
+        unitAmount: amount,
+        totalAmount: amount,
+        fmvAmount: item.fmvAmount,
+        benefitAmount,
+        taxDeductibleAmount,
+      },
+    ],
+    currency,
+  );
+
+  const order = await prisma.order.create({
+    data: {
+      orgId: item.orgId,
+      campaignId: item.auction.campaign.id,
+      donorId,
+      orderNumber: createOrderNumber(),
+      status: OrderStatus.PENDING,
+      totalAmount: normalized.totalAmount,
+      currency,
+      coverFeesAmount: 0,
+      lineItems: {
+        create: normalized.items.map((lineItem) => ({
+          orgId: item.orgId,
+          type: lineItem.type,
+          sourceId: lineItem.sourceId,
+          description: lineItem.description,
+          quantity: lineItem.quantity,
+          unitAmount: lineItem.unitAmount,
+          totalAmount: lineItem.totalAmount,
+          currency: lineItem.currency,
+          fmvAmount: lineItem.fmvAmount,
+          benefitAmount: lineItem.benefitAmount,
+          taxDeductibleAmount: lineItem.taxDeductibleAmount,
+          metadata: lineItem.metadata,
+        })),
+      },
+    },
+  });
+
+  const payment = await prisma.payment.create({
+    data: {
+      orgId: item.orgId,
+      orderId: order.id,
+      provider: PaymentProvider.STRIPE,
+      status: PaymentStatus.REQUIRES_PAYMENT,
+      amount: normalized.totalAmount,
+      currency,
+      netAmount: normalized.totalAmount,
+    },
+  });
+
+  await prisma.auctionItem.update({
+    where: { id: item.id },
+    data: { status: "CLOSED", closesAt: now },
+  });
+
+  const origin = resolveOrigin();
+  if (!origin) {
+    throw new Error("Missing request origin.");
+  }
+
+  const successUrl = `${origin}/campaigns/${item.auction.campaign.slug}/auction/${item.id}?success=1&orderId=${order.id}`;
+  const cancelUrl = `${origin}/campaigns/${item.auction.campaign.slug}/auction/${item.id}?canceled=1`;
+
+  const session = await getStripeClient().checkout.sessions.create({
+    mode: "payment",
+    submit_type: "pay",
+    customer_email: email || undefined,
+    line_items: normalized.items.map((lineItem) => ({
+      price_data: {
+        currency: lineItem.currency.toLowerCase(),
+        product_data: {
+          name: lineItem.description ?? "Auction item",
+        },
+        unit_amount: lineItem.unitAmount,
+      },
+      quantity: lineItem.quantity,
+    })),
+    success_url: successUrl,
+    cancel_url: cancelUrl,
+    client_reference_id: order.id,
+    payment_intent_data: {
+      metadata: {
+        orgId: item.orgId,
+        orderId: order.id,
+        paymentId: payment.id,
+        campaignId: item.auction.campaign.id,
+        auctionItemId: item.id,
+        ...(donorId ? { donorId } : {}),
+      },
+    },
+  });
+
+  if (!session.url) {
+    throw new Error("Unable to start checkout session.");
+  }
+
+  redirect(session.url);
 }

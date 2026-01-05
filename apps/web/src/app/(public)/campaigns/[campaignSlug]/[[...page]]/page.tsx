@@ -197,6 +197,8 @@ export default async function CampaignPage({
             <AuctionItemDetail
               itemId={auctionItemId}
               currency={campaign.currency ?? "USD"}
+              showSuccess={showSuccess}
+              showCanceled={showCanceled}
             />
           ) : null}
           {showVolunteerForm ? (

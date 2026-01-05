@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getBidIncrement, type BidIncrementRule } from "@give-smarter/core";
 import { prisma } from "@/lib/db";
-import { placeBid } from "./auction-actions";
+import { buyNow, placeBid } from "./auction-actions";
 
 function formatCurrency(amount: number, currency: string) {
   const hasCents = amount % 100 !== 0;
@@ -38,11 +38,15 @@ function parseRules(input: unknown): BidIncrementRule[] | undefined {
 type AuctionItemDetailProps = {
   itemId: string;
   currency: string;
+  showSuccess?: boolean;
+  showCanceled?: boolean;
 };
 
 export async function AuctionItemDetail({
   itemId,
   currency,
+  showSuccess,
+  showCanceled,
 }: AuctionItemDetailProps) {
   const item = await prisma.auctionItem.findUnique({
     where: { id: itemId },
@@ -80,6 +84,18 @@ export async function AuctionItemDetail({
             </p>
           ) : null}
         </header>
+
+        {showSuccess ? (
+          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+            Thanks for your purchase! Your buy-now checkout is complete.
+          </div>
+        ) : null}
+
+        {showCanceled ? (
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+            Checkout was canceled. You can try again any time.
+          </div>
+        ) : null}
 
         <div className="grid gap-4 md:grid-cols-3">
           <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] px-4 py-3">
@@ -175,6 +191,15 @@ export async function AuctionItemDetail({
           >
             Place bid
           </button>
+          {item.buyNowPrice ? (
+            <button
+              type="submit"
+              formAction={buyNow}
+              className="inline-flex h-12 w-full items-center justify-center rounded-full border border-[color:var(--campaign-border)] bg-white px-6 text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--campaign-ink)] transition hover:bg-[color:var(--campaign-surface)]"
+            >
+              Buy now
+            </button>
+          ) : null}
         </form>
       </div>
     </section>
