@@ -274,6 +274,39 @@ async function main() {
               ],
             },
           },
+          {
+            orgId: organization.id,
+            type: "RAFFLE",
+            slug: "raffle",
+            title: "Raffle",
+            isPublished: true,
+            blocks: {
+              create: [
+                {
+                  orgId: organization.id,
+                  type: "story",
+                  sortOrder: 0,
+                  data: {
+                    title: "Enter the raffle",
+                    body: [
+                      "Every ticket helps fund student programs.",
+                      "Winners announced during the gala.",
+                    ],
+                  },
+                },
+                {
+                  orgId: organization.id,
+                  type: "cta",
+                  sortOrder: 1,
+                  data: {
+                    title: "Grab your tickets",
+                    body: "Choose a bundle and checkout securely.",
+                    primaryCta: { label: "Buy tickets", href: \"#raffle\" },
+                  },
+                },
+              ],
+            },
+          },
         ],
       },
     },
