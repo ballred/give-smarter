@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getBidIncrement, type BidIncrementRule } from "@give-smarter/core";
 import { prisma } from "@/lib/db";
@@ -28,6 +29,14 @@ function parseRules(input: unknown): BidIncrementRule[] | undefined {
   }
 
   return rules.length ? rules : undefined;
+}
+
+function resolveOrigin() {
+  const headerList = headers();
+  const host = headerList.get("host");
+  if (!host) return null;
+  const proto = headerList.get("x-forwarded-proto") ?? "https";
+  return `${proto}://${host}`;
 }
 
 async function resolveDonor({
@@ -105,7 +114,7 @@ export async function placeBid(formData: FormData) {
   }
 
   const topBid = await prisma.bid.findFirst({
-    where: { auctionItemId: item.id, status: "ACTIVE" },
+    where: { auctionItemId: item.id },
     orderBy: [{ amount: "desc" }, { createdAt: "asc" }],
   });
 
@@ -138,7 +147,7 @@ export async function placeBid(formData: FormData) {
   const maxBidCents =
     maxBidInput && maxBidInput > 0 ? Math.round(maxBidInput * 100) : null;
 
-  await prisma.bid.create({
+  const newBid = await prisma.bid.create({
     data: {
       orgId: item.orgId,
       auctionItemId: item.id,
@@ -147,6 +156,52 @@ export async function placeBid(formData: FormData) {
       maxBidAmount: maxBidCents,
     },
   });
+
+  await prisma.bid.updateMany({
+    where: { auctionItemId: item.id },
+    data: { status: "OUTBID" },
+  });
+
+  await prisma.bid.update({
+    where: { id: newBid.id },
+    data: { status: "WINNING" },
+  });
+
+  if (topBid && topBid.donorId !== donorId) {
+    const outbidDonor = await prisma.donor.findUnique({
+      where: { id: topBid.donorId },
+      select: { primaryPhone: true, primaryEmail: true },
+    });
+
+    const origin = resolveOrigin();
+    const link = origin
+      ? `${origin}/campaigns/${item.auction.campaign.slug}/auction/${item.id}`
+      : `/campaigns/${item.auction.campaign.slug}/auction/${item.id}`;
+    const body = `You have been outbid on ${item.title}. Bid again: ${link}`;
+
+    if (outbidDonor?.primaryPhone) {
+      await prisma.messageSend.create({
+        data: {
+          orgId: item.orgId,
+          channel: "SMS",
+          to: outbidDonor.primaryPhone,
+          body,
+          status: "QUEUED",
+        },
+      });
+    } else if (outbidDonor?.primaryEmail) {
+      await prisma.messageSend.create({
+        data: {
+          orgId: item.orgId,
+          channel: "EMAIL",
+          to: outbidDonor.primaryEmail,
+          subject: `Outbid on ${item.title}`,
+          body,
+          status: "QUEUED",
+        },
+      });
+    }
+  }
 
   redirect(`/campaigns/${item.auction.campaign.slug}/auction/${item.id}`);
 }
