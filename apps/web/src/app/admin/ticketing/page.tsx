@@ -33,6 +33,12 @@ export default async function TicketingPage() {
           </Link>
           <Link
             className="inline-flex h-10 items-center justify-center rounded-full border border-zinc-200 bg-white px-5 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-700 transition hover:bg-zinc-100"
+            href="/admin/ticketing/promo-codes"
+          >
+            Promo codes
+          </Link>
+          <Link
+            className="inline-flex h-10 items-center justify-center rounded-full border border-zinc-200 bg-white px-5 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-700 transition hover:bg-zinc-100"
             href="/admin/ticketing/seating"
           >
             Manage seating
