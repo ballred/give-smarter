@@ -1,28 +1,41 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 
-export default async function VotingPage() {
-  const contests = await prisma.votingContest.findMany({
+export default async function VotingContestDetailPage({
+  params,
+}: {
+  params: { contestId: string };
+}) {
+  const contest = await prisma.votingContest.findUnique({
+    where: { id: params.contestId },
     include: {
       campaign: { select: { name: true } },
+      candidates: { orderBy: { createdAt: "desc" } },
     },
-    orderBy: { createdAt: "desc" },
   });
+
+  if (!contest) {
+    notFound();
+  }
 
   return (
     <div className="space-y-6">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-zinc-900">Voting</h1>
-          <p className="text-sm text-zinc-600">
-            Configure donation-based voting contests.
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">
+            {contest.campaign?.name ?? "Campaign"}
           </p>
+          <h1 className="text-2xl font-semibold text-zinc-900">
+            {contest.name}
+          </h1>
+          <p className="text-sm text-zinc-600">Status: {contest.status}</p>
         </div>
         <Link
           className="inline-flex h-10 items-center justify-center rounded-full bg-zinc-900 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-800"
-          href="/admin/voting/new"
+          href={`/admin/voting/${contest.id}/candidates/new`}
         >
-          New contest
+          New candidate
         </Link>
       </header>
 
@@ -31,33 +44,24 @@ export default async function VotingPage() {
           <thead className="border-b border-zinc-200 bg-zinc-50">
             <tr>
               <th className="px-4 py-3 font-semibold text-zinc-700">Name</th>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Campaign</th>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Status</th>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Window</th>
+              <th className="px-4 py-3 font-semibold text-zinc-700">
+                Sponsor
+              </th>
+              <th className="px-4 py-3 font-semibold text-zinc-700">Photo</th>
             </tr>
           </thead>
           <tbody>
-            {contests.length ? (
-              contests.map((contest) => (
-                <tr key={contest.id} className="border-b border-zinc-100">
+            {contest.candidates.length ? (
+              contest.candidates.map((candidate) => (
+                <tr key={candidate.id} className="border-b border-zinc-100">
                   <td className="px-4 py-3 font-semibold text-zinc-900">
-                    <Link
-                      className="text-zinc-900 hover:text-zinc-700"
-                      href={`/admin/voting/${contest.id}`}
-                    >
-                      {contest.name}
-                    </Link>
+                    {candidate.name}
                   </td>
                   <td className="px-4 py-3 text-zinc-600">
-                    {contest.campaign?.name ?? "—"}
+                    {candidate.sponsorName ?? "—"}
                   </td>
                   <td className="px-4 py-3 text-zinc-600">
-                    {contest.status}
-                  </td>
-                  <td className="px-4 py-3 text-zinc-600">
-                    {contest.startsAt
-                      ? new Date(contest.startsAt).toLocaleDateString()
-                      : "—"}
+                    {candidate.photoUrl ? "Yes" : "—"}
                   </td>
                 </tr>
               ))
@@ -65,9 +69,9 @@ export default async function VotingPage() {
               <tr>
                 <td
                   className="px-4 py-6 text-center text-zinc-500"
-                  colSpan={4}
+                  colSpan={3}
                 >
-                  No contests yet.
+                  No candidates yet.
                 </td>
               </tr>
             )}

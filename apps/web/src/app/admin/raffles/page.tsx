@@ -41,7 +41,12 @@ export default async function RafflesPage() {
               raffles.map((raffle) => (
                 <tr key={raffle.id} className="border-b border-zinc-100">
                   <td className="px-4 py-3 font-semibold text-zinc-900">
-                    {raffle.name}
+                    <Link
+                      className="text-zinc-900 hover:text-zinc-700"
+                      href={`/admin/raffles/${raffle.id}`}
+                    >
+                      {raffle.name}
+                    </Link>
                   </td>
                   <td className="px-4 py-3 text-zinc-600">
                     {raffle.campaign?.name ?? "—"}

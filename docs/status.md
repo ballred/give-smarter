@@ -63,19 +63,25 @@ Notes: Auction item list + create flow, procurement submissions UI + API.
 Owner: codex
 Scope: `apps/web/src/app/admin/check-in`, `apps/web/src/app/api/admin/checkin`
 Status: in progress
-Notes: Search + check-in UI and API endpoints.
+Notes: Search + bulk check-in, QR placeholder, import flow, and check-in APIs.
 
 ## WS-GROW - Raffles, voting, store
 Owner: codex
 Scope: `apps/web/src/app/admin/raffles`, `apps/web/src/app/admin/voting`, `apps/web/src/app/admin/store`, `apps/web/src/app/api/admin/*`
 Status: in progress
-Notes: Admin shells + CRUD endpoints for raffles, contests, and store products.
+Notes: Admin shells + CRUD endpoints for raffles, contests, store products, candidates, variants, and draws.
 
 ## WS-RPT - Reporting
 Owner: codex
 Scope: `apps/web/src/app/admin/reports`, `apps/web/src/app/api/admin/reports`
 Status: in progress
-Notes: Finance report page and CSV export endpoint stubbed.
+Notes: Finance + attendance report pages and CSV export endpoints stubbed.
+
+## WS-AUC-CAT - Auction categories
+Owner: codex
+Scope: `apps/web/src/app/admin/auctions/[auctionId]/categories`, `apps/web/src/app/api/admin/auctions/[auctionId]/categories`
+Status: in progress
+Notes: Category management UI and CRUD endpoints added.
 
 ## WS-QA - Testing + perf
 Owner: codex

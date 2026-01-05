@@ -59,3 +59,23 @@ export async function createProcurementSubmission(formData: FormData) {
 
   return submission.id;
 }
+
+export async function updateProcurementSubmission(
+  submissionId: string,
+  formData: FormData,
+) {
+  const status = String(formData.get("status") ?? "").trim();
+  const itemTitle = String(formData.get("itemTitle") ?? "").trim();
+  const notes = String(formData.get("notes") ?? "").trim();
+
+  const data: Record<string, unknown> = {};
+
+  if (status) data.status = status;
+  if (itemTitle) data.itemTitle = itemTitle;
+  if (notes) data.notes = notes;
+
+  await prisma.procurementSubmission.update({
+    where: { id: submissionId },
+    data,
+  });
+}

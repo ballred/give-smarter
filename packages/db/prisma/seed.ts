@@ -118,6 +118,19 @@ async function main() {
     },
   });
 
+  const donor = await prisma.donor.upsert({
+    where: { id: "donor_demo" },
+    update: {},
+    create: {
+      id: "donor_demo",
+      orgId: organization.id,
+      displayName: "Jamie Rivera",
+      firstName: "Jamie",
+      lastName: "Rivera",
+      primaryEmail: "jamie@example.org",
+    },
+  });
+
   await prisma.ticketType.upsert({
     where: { id: "ticket_demo" },
     update: {},
@@ -130,6 +143,21 @@ async function main() {
       price: 15000,
       currency: "USD",
       capacity: 200,
+    },
+  });
+
+  await prisma.attendee.upsert({
+    where: { id: "attendee_demo" },
+    update: {},
+    create: {
+      id: "attendee_demo",
+      orgId: organization.id,
+      campaignId: campaign.id,
+      donorId: donor.id,
+      firstName: "Jamie",
+      lastName: "Rivera",
+      email: "jamie@example.org",
+      status: "REGISTERED",
     },
   });
 
@@ -206,6 +234,18 @@ async function main() {
     },
   });
 
+  await prisma.raffleTicket.upsert({
+    where: { id: "raffle_ticket_demo" },
+    update: {},
+    create: {
+      id: "raffle_ticket_demo",
+      orgId: organization.id,
+      raffleId: "raffle_demo",
+      donorId: donor.id,
+      quantity: 5,
+    },
+  });
+
   await prisma.storeProduct.upsert({
     where: { id: "store_product_demo" },
     update: {},
@@ -224,6 +264,20 @@ async function main() {
     },
   });
 
+  await prisma.storeVariant.upsert({
+    where: { id: "store_variant_demo" },
+    update: {},
+    create: {
+      id: "store_variant_demo",
+      orgId: organization.id,
+      productId: "store_product_demo",
+      name: "Adult Medium",
+      sku: "TEE-2026-M",
+      price: 2500,
+      inventoryCount: 40,
+    },
+  });
+
   await prisma.votingContest.upsert({
     where: { id: "voting_demo" },
     update: {},
@@ -233,6 +287,45 @@ async function main() {
       campaignId: campaign.id,
       name: "Principal for a Day",
       status: "ACTIVE",
+    },
+  });
+
+  await prisma.voteCandidate.upsert({
+    where: { id: "vote_candidate_demo" },
+    update: {},
+    create: {
+      id: "vote_candidate_demo",
+      orgId: organization.id,
+      contestId: "voting_demo",
+      name: "Principal for a Day",
+      description: "Spend a day leading the school community.",
+      sponsorName: "PTA Council",
+    },
+  });
+
+  const procurementDonor = await prisma.procurementDonor.upsert({
+    where: { id: "procurement_donor_demo" },
+    update: {},
+    create: {
+      id: "procurement_donor_demo",
+      orgId: organization.id,
+      name: "Taylor Family",
+      email: "taylor@example.org",
+    },
+  });
+
+  await prisma.procurementSubmission.upsert({
+    where: { id: "procurement_submission_demo" },
+    update: {},
+    create: {
+      id: "procurement_submission_demo",
+      orgId: organization.id,
+      campaignId: campaign.id,
+      procurementDonorId: procurementDonor.id,
+      status: "PLEDGED",
+      itemTitle: "Family Cooking Class",
+      itemDescription: "Private class for eight guests.",
+      fmvAmount: 50000,
     },
   });
 }

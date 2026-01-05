@@ -19,6 +19,45 @@ export async function checkInAttendee(attendeeId: string) {
   });
 }
 
+export async function bulkCheckIn(formData: FormData) {
+  const attendeeIds = formData.getAll("attendeeIds").map(String);
+
+  if (!attendeeIds.length) {
+    return;
+  }
+
+  const existing = await prisma.checkin.findMany({
+    where: { attendeeId: { in: attendeeIds } },
+    select: { attendeeId: true },
+  });
+
+  const existingIds = new Set(existing.map((item) => item.attendeeId));
+  const pendingIds = attendeeIds.filter((id) => !existingIds.has(id));
+
+  if (!pendingIds.length) {
+    return;
+  }
+
+  const attendees = await prisma.attendee.findMany({
+    where: { id: { in: pendingIds } },
+    select: { id: true, orgId: true },
+  });
+
+  if (!attendees.length) {
+    return;
+  }
+
+  await prisma.checkin.createMany({
+    data: attendees.map((attendee) => ({
+      orgId: attendee.orgId,
+      attendeeId: attendee.id,
+      method: "SEARCH",
+      checkedInAt: new Date(),
+    })),
+    skipDuplicates: true,
+  });
+}
+
 async function resolveOrgId(attendeeId: string) {
   const attendee = await prisma.attendee.findUnique({
     where: { id: attendeeId },

@@ -45,7 +45,12 @@ export default async function ProcurementPage() {
               submissions.map((submission) => (
                 <tr key={submission.id} className="border-b border-zinc-100">
                   <td className="px-4 py-3 font-semibold text-zinc-900">
-                    {submission.itemTitle ?? "—"}
+                    <Link
+                      className="text-zinc-900 hover:text-zinc-700"
+                      href={`/admin/auctions/procurement/${submission.id}`}
+                    >
+                      {submission.itemTitle ?? "—"}
+                    </Link>
                   </td>
                   <td className="px-4 py-3 text-zinc-600">
                     {submission.procurementDonor?.name ?? "—"}

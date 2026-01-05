@@ -44,6 +44,12 @@ export default async function AuctionDetailPage({
             Procurement
           </Link>
           <Link
+            className="inline-flex h-10 items-center justify-center rounded-full border border-zinc-200 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-700 transition hover:border-zinc-300"
+            href={`/admin/auctions/${auction.id}/categories`}
+          >
+            Categories
+          </Link>
+          <Link
             className="inline-flex h-10 items-center justify-center rounded-full bg-zinc-900 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-800"
             href={`/admin/auctions/${auction.id}/items/new`}
           >
