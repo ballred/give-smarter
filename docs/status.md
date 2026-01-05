@@ -39,7 +39,7 @@ Notes: Scaffolding public campaign routes, block schema, and renderer; admin cam
 Owner: codex
 Scope: `apps/web/src/app/admin/auctions`, `apps/web/src/app/api/admin/auctions`, `packages/core/src/auction.ts`
 Status: in progress
-Notes: Admin auction list + create flow + CRUD endpoints and bid increment helpers; public catalog + bid form added; buy-now checkout, proxy bidding logic, and outbid message queueing added.
+Notes: Admin auction list + create flow + CRUD endpoints and bid increment helpers; public catalog + bid form added; buy-now checkout, proxy bidding logic, watchlist signup, and outbid message queueing added.
 
 ## WS-LIVE - Paddle raise
 Owner: codex

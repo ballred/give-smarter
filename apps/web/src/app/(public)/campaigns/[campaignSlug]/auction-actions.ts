@@ -295,6 +295,62 @@ export async function placeBid(formData: FormData) {
   redirect(`/campaigns/${item.auction.campaign.slug}/auction/${item.id}`);
 }
 
+export async function addToWatchlist(formData: FormData) {
+  "use server";
+
+  const itemId = String(formData.get("itemId") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim();
+  const firstName = String(formData.get("firstName") ?? "").trim();
+  const lastName = String(formData.get("lastName") ?? "").trim();
+
+  if (!itemId || !email) {
+    throw new Error("Email is required to watch an item.");
+  }
+
+  const item = await prisma.auctionItem.findUnique({
+    where: { id: itemId },
+    include: {
+      auction: {
+        include: {
+          campaign: { select: { slug: true } },
+        },
+      },
+    },
+  });
+
+  if (!item) {
+    throw new Error("Item not found.");
+  }
+
+  const donorId = await resolveDonor({
+    orgId: item.orgId,
+    email,
+    firstName: firstName || undefined,
+    lastName: lastName || undefined,
+  });
+
+  if (!donorId) {
+    throw new Error("Email is required to watch this item.");
+  }
+
+  await prisma.watchlist.upsert({
+    where: {
+      auctionItemId_donorId: {
+        auctionItemId: item.id,
+        donorId,
+      },
+    },
+    create: {
+      orgId: item.orgId,
+      auctionItemId: item.id,
+      donorId,
+    },
+    update: {},
+  });
+
+  redirect(`/campaigns/${item.auction.campaign.slug}/auction/${item.id}?watch=1`);
+}
+
 export async function buyNow(formData: FormData) {
   "use server";
 

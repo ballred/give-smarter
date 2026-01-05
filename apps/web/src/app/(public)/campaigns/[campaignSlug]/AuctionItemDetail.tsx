@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getBidIncrement, type BidIncrementRule } from "@give-smarter/core";
 import { prisma } from "@/lib/db";
-import { buyNow, placeBid } from "./auction-actions";
+import { addToWatchlist, buyNow, placeBid } from "./auction-actions";
 
 function formatCurrency(amount: number, currency: string) {
   const hasCents = amount % 100 !== 0;
@@ -40,6 +40,7 @@ type AuctionItemDetailProps = {
   currency: string;
   showSuccess?: boolean;
   showCanceled?: boolean;
+  showWatch?: boolean;
 };
 
 export async function AuctionItemDetail({
@@ -47,6 +48,7 @@ export async function AuctionItemDetail({
   currency,
   showSuccess,
   showCanceled,
+  showWatch,
 }: AuctionItemDetailProps) {
   const item = await prisma.auctionItem.findUnique({
     where: { id: itemId },
@@ -94,6 +96,12 @@ export async function AuctionItemDetail({
         {showCanceled ? (
           <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
             Checkout was canceled. You can try again any time.
+          </div>
+        ) : null}
+
+        {showWatch ? (
+          <div className="rounded-2xl border border-sky-200 bg-sky-50 p-4 text-sm text-sky-900">
+            You are now watching this item. We'll alert you if you get outbid.
           </div>
         ) : null}
 
@@ -200,6 +208,55 @@ export async function AuctionItemDetail({
               Buy now
             </button>
           ) : null}
+        </form>
+
+        <form
+          action={addToWatchlist}
+          className="space-y-4 rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] px-5 py-4"
+        >
+          <input type="hidden" name="itemId" value={item.id} />
+          <div>
+            <p className="text-sm font-semibold text-[color:var(--campaign-ink)]">
+              Watch this item
+            </p>
+            <p className="text-xs text-[color:var(--campaign-ink-muted)]">
+              Get SMS or email alerts when bids change.
+            </p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <label className="block text-sm font-semibold text-[color:var(--campaign-ink)]">
+              First name
+              <input
+                name="firstName"
+                type="text"
+                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+              />
+            </label>
+            <label className="block text-sm font-semibold text-[color:var(--campaign-ink)]">
+              Last name
+              <input
+                name="lastName"
+                type="text"
+                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+              />
+            </label>
+          </div>
+          <label className="block text-sm font-semibold text-[color:var(--campaign-ink)]">
+            Email
+            <input
+              name="email"
+              type="email"
+              required
+              className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+              placeholder="you@example.org"
+            />
+          </label>
+          <button
+            type="submit"
+            className="inline-flex h-11 w-full items-center justify-center rounded-full bg-[color:var(--campaign-ink)] px-6 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:bg-[color:var(--campaign-ink-soft)]"
+          >
+            Watch item
+          </button>
         </form>
       </div>
     </section>

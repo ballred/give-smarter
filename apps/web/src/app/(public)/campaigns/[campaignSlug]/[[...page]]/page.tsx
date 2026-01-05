@@ -97,6 +97,7 @@ export default async function CampaignPage({
     Boolean(peerSlug);
   const showSuccess = searchParams?.success === "1";
   const showCanceled = searchParams?.canceled === "1";
+  const showWatch = searchParams?.watch === "1";
 
   return (
     <CampaignThemeProvider theme={campaign.theme} className={styles.page}>
@@ -199,6 +200,7 @@ export default async function CampaignPage({
               currency={campaign.currency ?? "USD"}
               showSuccess={showSuccess}
               showCanceled={showCanceled}
+              showWatch={showWatch}
             />
           ) : null}
           {showVolunteerForm ? (
