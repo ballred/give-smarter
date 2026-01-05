@@ -10,6 +10,7 @@ import { AuctionCatalog } from "../AuctionCatalog";
 import { AuctionItemDetail } from "../AuctionItemDetail";
 import { StorePurchaseForm } from "../StorePurchaseForm";
 import { RafflePurchaseForm } from "../RafflePurchaseForm";
+import { VotingForm } from "../VotingForm";
 import styles from "../campaign-page.module.css";
 
 type CampaignPageParams = {
@@ -70,6 +71,7 @@ export default async function CampaignPage({
   const showTicketForm = page.slug === "tickets";
   const showStoreForm = page.slug === "store";
   const showRaffleForm = page.slug === "raffle";
+  const showVotingForm = page.slug === "voting";
   const showAuctionCatalog = page.slug === "auction" && !auctionItemId;
   const showAuctionItem = page.slug === "auction" && Boolean(auctionItemId);
   const showSuccess = searchParams?.success === "1";
@@ -157,6 +159,13 @@ export default async function CampaignPage({
           ) : null}
           {showRaffleForm ? (
             <RafflePurchaseForm
+              campaign={campaign}
+              showSuccess={showSuccess}
+              showCanceled={showCanceled}
+            />
+          ) : null}
+          {showVotingForm ? (
+            <VotingForm
               campaign={campaign}
               showSuccess={showSuccess}
               showCanceled={showCanceled}

@@ -307,6 +307,39 @@ async function main() {
               ],
             },
           },
+          {
+            orgId: organization.id,
+            type: "VOTING",
+            slug: "voting",
+            title: "Voting",
+            isPublished: true,
+            blocks: {
+              create: [
+                {
+                  orgId: organization.id,
+                  type: "story",
+                  sortOrder: 0,
+                  data: {
+                    title: "Vote to crown a winner",
+                    body: [
+                      "Each dollar is a vote for your favorite candidate.",
+                      "Support the cause while cheering them on.",
+                    ],
+                  },
+                },
+                {
+                  orgId: organization.id,
+                  type: "cta",
+                  sortOrder: 1,
+                  data: {
+                    title: "Cast your vote",
+                    body: "Pick a candidate and submit your gift.",
+                    primaryCta: { label: "Vote now", href: \"#voting\" },
+                  },
+                },
+              ],
+            },
+          },
         ],
       },
     },
