@@ -1,25 +1,41 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
+import { sendNoBidReminders } from "./no-bid-actions";
 
 export default async function AuctionDetailPage({
   params,
+  searchParams,
 }: {
   params: { auctionId: string };
+  searchParams?: { reminder?: string };
 }) {
-  const auction = await prisma.auction.findUnique({
-    where: { id: params.auctionId },
-    include: {
-      campaign: { select: { name: true } },
-      items: {
-        orderBy: { createdAt: "desc" },
+  const [auction, noBidItems] = await Promise.all([
+    prisma.auction.findUnique({
+      where: { id: params.auctionId },
+      include: {
+        campaign: { select: { name: true } },
+        items: {
+          orderBy: { createdAt: "desc" },
+        },
       },
-    },
-  });
+    }),
+    prisma.auctionItem.findMany({
+      where: {
+        auctionId: params.auctionId,
+        status: "PUBLISHED",
+        bids: { none: {} },
+      },
+      orderBy: { createdAt: "desc" },
+      select: { id: true, title: true },
+    }),
+  ]);
 
   if (!auction) {
     notFound();
   }
+
+  const showReminderSent = searchParams?.reminder === "1";
 
   return (
     <div className="space-y-6">
@@ -101,6 +117,57 @@ export default async function AuctionDetailPage({
           </tbody>
         </table>
       </div>
+
+      <section className="rounded-2xl border border-zinc-200 bg-white shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-zinc-200 px-6 py-4">
+          <div>
+            <h2 className="text-lg font-semibold text-zinc-900">
+              No-bid reminders
+            </h2>
+            <p className="text-sm text-zinc-600">
+              {noBidItems.length} items are still waiting for a first bid.
+            </p>
+          </div>
+          <form
+            action={async () => {
+              "use server";
+              await sendNoBidReminders(auction.id);
+              redirect(`/admin/auctions/${auction.id}?reminder=1`);
+            }}
+          >
+            <button
+              type="submit"
+              disabled={!noBidItems.length}
+              className="inline-flex h-10 items-center justify-center rounded-full bg-zinc-900 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-500"
+            >
+              Send reminder
+            </button>
+          </form>
+        </div>
+        {showReminderSent ? (
+          <div className="border-b border-emerald-200 bg-emerald-50 px-6 py-3 text-sm text-emerald-900">
+            Reminder queued.
+          </div>
+        ) : null}
+        <div className="px-6 py-4">
+          {noBidItems.length ? (
+            <ul className="grid gap-2 text-sm text-zinc-700 md:grid-cols-2">
+              {noBidItems.map((item) => (
+                <li
+                  key={item.id}
+                  className="rounded-lg border border-zinc-200 px-3 py-2"
+                >
+                  {item.title}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-zinc-500">
+              All items have bids. Nice work!
+            </p>
+          )}
+        </div>
+      </section>
     </div>
   );
 }
