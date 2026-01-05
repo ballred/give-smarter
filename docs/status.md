@@ -51,7 +51,7 @@ Notes: Admin paddle raise level list + create flow + CRUD endpoints.
 Owner: codex
 Scope: `apps/web/src/app/portal`
 Status: in progress
-Notes: Portal layout + placeholder sections for tickets, bids, receipts, recurring, profile.
+Notes: Portal now loads tickets, bids, receipts, and profile preferences from donor records, with edit flow for contact info and comms prefs.
 
 ## WS-AUC-ITEMS - Auction items + procurement
 Owner: codex
