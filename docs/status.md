@@ -129,7 +129,7 @@ Notes: Volunteer shifts + signups schema, admin shift management, public signup 
 Owner: codex
 Scope: `apps/web/src/app/admin/donors`, `apps/web/src/app/api/admin/donors`
 Status: in progress
-Notes: Donor list + detail UI with update form and donor CRUD API added.
+Notes: Donor list + detail UI with update form and donor CRUD API added; household admin pages + membership endpoints added.
 
 ## WS-P2P - Peer-to-peer fundraising
 Owner: codex

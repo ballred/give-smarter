@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { label: "Volunteers", href: "/admin/volunteers" },
   { label: "Peer-to-Peer", href: "/admin/peer-to-peer" },
   { label: "Donors", href: "/admin/donors" },
+  { label: "Households", href: "/admin/households" },
   { label: "Messaging", href: "/admin/messaging" },
   { label: "Integrations", href: "/admin/integrations" },
   { label: "Reports", href: "/admin/reports" },
