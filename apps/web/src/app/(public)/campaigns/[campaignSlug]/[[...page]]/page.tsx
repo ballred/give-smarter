@@ -8,6 +8,7 @@ import { DonationForm } from "../DonationForm";
 import { TicketPurchaseForm } from "../TicketPurchaseForm";
 import { AuctionCatalog } from "../AuctionCatalog";
 import { AuctionItemDetail } from "../AuctionItemDetail";
+import { StorePurchaseForm } from "../StorePurchaseForm";
 import styles from "../campaign-page.module.css";
 
 type CampaignPageParams = {
@@ -66,6 +67,7 @@ export default async function CampaignPage({
   const auctionItemId = params.page?.[1];
   const showDonationForm = page.slug === "donate";
   const showTicketForm = page.slug === "tickets";
+  const showStoreForm = page.slug === "store";
   const showAuctionCatalog = page.slug === "auction" && !auctionItemId;
   const showAuctionItem = page.slug === "auction" && Boolean(auctionItemId);
   const showSuccess = searchParams?.success === "1";
@@ -139,6 +141,13 @@ export default async function CampaignPage({
           ) : null}
           {showTicketForm ? (
             <TicketPurchaseForm
+              campaign={campaign}
+              showSuccess={showSuccess}
+              showCanceled={showCanceled}
+            />
+          ) : null}
+          {showStoreForm ? (
+            <StorePurchaseForm
               campaign={campaign}
               showSuccess={showSuccess}
               showCanceled={showCanceled}

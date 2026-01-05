@@ -241,6 +241,39 @@ async function main() {
               ],
             },
           },
+          {
+            orgId: organization.id,
+            type: "STORE",
+            slug: "store",
+            title: "Store",
+            isPublished: true,
+            blocks: {
+              create: [
+                {
+                  orgId: organization.id,
+                  type: "story",
+                  sortOrder: 0,
+                  data: {
+                    title: "Shop to support students",
+                    body: [
+                      "Grab limited edition merch and supporter bundles.",
+                      "Every purchase goes directly to programs.",
+                    ],
+                  },
+                },
+                {
+                  orgId: organization.id,
+                  type: "cta",
+                  sortOrder: 1,
+                  data: {
+                    title: "Ready to shop?",
+                    body: "Select an item below and checkout securely.",
+                    primaryCta: { label: "Shop now", href: \"#store\" },
+                  },
+                },
+              ],
+            },
+          },
         ],
       },
     },

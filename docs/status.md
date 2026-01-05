@@ -69,7 +69,7 @@ Notes: Search + bulk check-in, QR placeholder, import flow, and check-in APIs.
 Owner: codex
 Scope: `apps/web/src/app/admin/raffles`, `apps/web/src/app/admin/voting`, `apps/web/src/app/admin/store`, `apps/web/src/app/api/admin/*`
 Status: in progress
-Notes: Admin shells + CRUD endpoints for raffles, contests, store products, candidates, variants, and draws.
+Notes: Admin shells + CRUD endpoints for raffles, contests, store products, candidates, variants, and draws; public store checkout flow added.
 
 ## WS-RPT - Reporting
 Owner: codex
