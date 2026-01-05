@@ -292,6 +292,60 @@ export async function placeBid(formData: FormData) {
     }
   }
 
+  const watchlist = await prisma.watchlist.findMany({
+    where: {
+      auctionItemId: item.id,
+      donorId: {
+        not: donorId,
+      },
+    },
+    include: {
+      donor: { select: { primaryPhone: true, primaryEmail: true } },
+    },
+  });
+
+  if (watchlist.length) {
+    const origin = resolveOrigin();
+    const link = origin
+      ? `${origin}/campaigns/${item.auction.campaign.slug}/auction/${item.id}`
+      : `/campaigns/${item.auction.campaign.slug}/auction/${item.id}`;
+    const currentBidText = `$${(winningBidAmountCents / 100).toFixed(2)}`;
+    const body = `New bid on ${item.title}. Current bid is ${currentBidText}. ${link}`;
+
+    await Promise.all(
+      watchlist
+        .filter((entry) => entry.donorId !== resolution.outbidBidderId)
+        .map((entry) => {
+          if (entry.donor.primaryPhone) {
+            return prisma.messageSend.create({
+              data: {
+                orgId: item.orgId,
+                channel: "SMS",
+                to: entry.donor.primaryPhone,
+                body,
+                status: "QUEUED",
+              },
+            });
+          }
+
+          if (entry.donor.primaryEmail) {
+            return prisma.messageSend.create({
+              data: {
+                orgId: item.orgId,
+                channel: "EMAIL",
+                to: entry.donor.primaryEmail,
+                subject: `New bid on ${item.title}`,
+                body,
+                status: "QUEUED",
+              },
+            });
+          }
+
+          return null;
+        }),
+    );
+  }
+
   redirect(`/campaigns/${item.auction.campaign.slug}/auction/${item.id}`);
 }
 
