@@ -24,19 +24,19 @@ Status: in progress
 Notes: Clerk provider, auth routes, middleware, and RBAC helpers added.
 
 ## WS-PAY - Stripe + receipts
-Owner: unassigned
+Owner: codex
 Scope: `apps/web/src/app/api`, `packages/core`
-Status: not started
-Notes: Will scaffold Payment Intent + webhook handlers.
+Status: complete
+Notes: Payment intent creation persists orders/payments + metadata; webhooks update ledger/refunds/receipts; receipt email/PDF pipeline wired.
 
 ## WS-CAM - Campaign model + CMS
-Owner: unassigned
+Owner: codex
 Scope: `apps/web/src/app/(public)`, `packages/ui`
-Status: not started
-Notes: Public campaign routes and block renderer.
+Status: in progress
+Notes: Scaffolding public campaign routes, block schema, and renderer.
 
 ## WS-QA - Testing + perf
-Owner: unassigned
+Owner: codex
 Scope: `packages/tests`
-Status: not started
-Notes: Playwright config and journey tests.
+Status: in progress
+Notes: Playwright config and smoke tests added with Clerk-aware skip.

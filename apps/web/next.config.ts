@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  transpilePackages: ["@give-smarter/core", "@give-smarter/ui"],
 };
 
 export default nextConfig;

@@ -1,0 +1,48 @@
+.page {
+  background-image:
+    radial-gradient(circle at 10% 10%, rgba(244, 184, 96, 0.15), transparent 55%),
+    radial-gradient(circle at 90% 20%, rgba(31, 122, 122, 0.12), transparent 45%);
+  background-repeat: no-repeat;
+  background-size: 520px 520px, 460px 460px;
+}
+
+.page [data-campaign-block] {
+  opacity: 0;
+  transform: translateY(24px);
+  animation: fadeUp 0.8s ease-out forwards;
+  animation-delay: calc(var(--block-index) * 120ms);
+}
+
+.page [data-campaign-float] {
+  animation: float 12s ease-in-out infinite;
+}
+
+.page [data-campaign-float="slow"] {
+  animation-duration: 18s;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page [data-campaign-block],
+  .page [data-campaign-float] {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
