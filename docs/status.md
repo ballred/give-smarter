@@ -33,7 +33,7 @@ Notes: Payment intent creation persists orders/payments + metadata; webhooks upd
 Owner: codex
 Scope: `apps/web/src/app/(public)`, `packages/ui`
 Status: in progress
-Notes: Scaffolding public campaign routes, block schema, and renderer.
+Notes: Scaffolding public campaign routes, block schema, and renderer; admin campaign list + create/edit UI added.
 
 ## WS-AUC - Auction management
 Owner: codex
