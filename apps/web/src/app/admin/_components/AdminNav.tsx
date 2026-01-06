@@ -19,6 +19,7 @@ const NAV_ITEMS = [
   { label: "Messaging", href: "/admin/messaging" },
   { label: "Integrations", href: "/admin/integrations" },
   { label: "Reports", href: "/admin/reports" },
+  { label: "Audit log", href: "/admin/audit" },
 ];
 
 export function AdminNav() {
