@@ -6,6 +6,7 @@ import {
   type LineItemType,
 } from "@prisma/client";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 import { createOrderNumber, normalizeLineItems } from "@/lib/orders";
 import { getStripeClient } from "@/lib/stripe";
 
@@ -43,6 +44,8 @@ export async function closeAuctionItem(itemId: string) {
   if (item.status === "CLOSED") {
     return;
   }
+
+  const previousStatus = item.status;
 
   const topBid = await prisma.bid.findFirst({
     where: { auctionItemId: item.id },
@@ -129,6 +132,15 @@ export async function closeAuctionItem(itemId: string) {
   await prisma.auctionItem.update({
     where: { id: item.id },
     data: { status: "CLOSED", closesAt: new Date() },
+  });
+
+  await logAuditEntry({
+    orgId: item.orgId,
+    action: "auction_item.closed",
+    targetType: "auction_item",
+    targetId: item.id,
+    beforeData: { status: previousStatus },
+    afterData: { status: "CLOSED", orderId: order.id },
   });
 
   const origin = resolveOrigin();

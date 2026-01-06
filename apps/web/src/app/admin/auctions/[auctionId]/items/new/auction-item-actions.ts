@@ -1,5 +1,6 @@
 import { AuctionItemStatus } from "@prisma/client";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 function parseNumber(value: FormDataEntryValue | null) {
   if (!value) return null;
@@ -65,6 +66,22 @@ export async function createAuctionItem(
       status,
       isFeatured,
       isPreviewOnly,
+    },
+  });
+
+  await logAuditEntry({
+    orgId: auction.orgId,
+    action: "auction_item.created",
+    targetType: "auction_item",
+    targetId: item.id,
+    afterData: {
+      title: item.title,
+      status: item.status,
+      startingBid: item.startingBid,
+      buyNowPrice: item.buyNowPrice,
+      quantity: item.quantity,
+      fmvAmount: item.fmvAmount,
+      categoryId: item.categoryId,
     },
   });
 

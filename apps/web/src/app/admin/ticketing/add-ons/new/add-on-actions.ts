@@ -1,5 +1,6 @@
 import { TicketAddOnScope } from "@prisma/client";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 function parseNumber(value: FormDataEntryValue | null) {
   if (!value) return null;
@@ -55,6 +56,20 @@ export async function createTicketAddOn(formData: FormData) {
       scope,
       capacity,
       isActive,
+    },
+  });
+
+  await logAuditEntry({
+    orgId: campaign.orgId,
+    action: "ticket_add_on.created",
+    targetType: "ticket_add_on",
+    targetId: addOn.id,
+    afterData: {
+      name: addOn.name,
+      price: addOn.price,
+      scope: addOn.scope,
+      capacity: addOn.capacity,
+      isActive: addOn.isActive,
     },
   });
 

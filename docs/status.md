@@ -17,6 +17,12 @@ Scope: `packages/db`
 Status: in progress
 Notes: Expanded schema to cover ticketing, auctions, live giving, growth modules, messaging, and integrations.
 
+## WS-AUDIT - Audit log
+Owner: codex
+Scope: `apps/web/src/lib`, admin actions
+Status: in progress
+Notes: Added audit log helper and instrumented auction closes + ticket/add-on/promo creation.
+
 ## WS-AUTH - Clerk + RBAC
 Owner: codex
 Scope: `apps/web/src` auth + middleware

@@ -1,5 +1,6 @@
 import { PromoCodeType } from "@prisma/client";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 function parseNumber(value: FormDataEntryValue | null) {
   if (!value) return null;
@@ -78,6 +79,22 @@ export async function createPromoCode(formData: FormData) {
       startsAt,
       endsAt,
       isActive,
+    },
+  });
+
+  await logAuditEntry({
+    orgId: campaign.orgId,
+    action: "promo_code.created",
+    targetType: "promo_code",
+    targetId: promo.id,
+    afterData: {
+      code: promo.code,
+      discountType: promo.discountType,
+      amount: promo.amount,
+      maxRedemptions: promo.maxRedemptions,
+      startsAt: promo.startsAt,
+      endsAt: promo.endsAt,
+      isActive: promo.isActive,
     },
   });
 

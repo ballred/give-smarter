@@ -1,5 +1,6 @@
 import { TicketVisibility } from "@prisma/client";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 function parseNumber(value: FormDataEntryValue | null) {
   if (!value) return null;
@@ -56,6 +57,20 @@ export async function createTicketType(formData: FormData) {
       capacity,
       visibility,
       isComp,
+    },
+  });
+
+  await logAuditEntry({
+    orgId: campaign.orgId,
+    action: "ticket_type.created",
+    targetType: "ticket_type",
+    targetId: ticketType.id,
+    afterData: {
+      name: ticketType.name,
+      price: ticketType.price,
+      capacity: ticketType.capacity,
+      visibility: ticketType.visibility,
+      isComp: ticketType.isComp,
     },
   });
 
