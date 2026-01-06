@@ -16,6 +16,11 @@ const MODULES = [
     description: "Classroom fundraising for school campaigns.",
     href: "/admin/peer-to-peer/classrooms",
   },
+  {
+    title: "Exports",
+    description: "Download classroom totals for prizes.",
+    href: "/admin/peer-to-peer/exports",
+  },
 ];
 
 export default function PeerToPeerAdminPage() {

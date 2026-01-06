@@ -135,4 +135,4 @@ Notes: Donor list + detail UI with update form and donor CRUD API added; househo
 Owner: codex
 Scope: `apps/web/src/app/admin/peer-to-peer`, `apps/web/src/app/(public)/campaigns/*`, `packages/db`
 Status: in progress
-Notes: Added schema + seed, public peer-to-peer pages with donation attribution, and admin CRUD for fundraisers/teams/classrooms.
+Notes: Added schema + seed, public peer-to-peer pages with donation attribution, admin CRUD for fundraisers/teams/classrooms, and classroom CSV export.
