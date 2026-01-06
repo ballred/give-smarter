@@ -111,7 +111,7 @@ Notes: Keyword route management UI + API added; donation form config UI and publ
 Owner: codex
 Scope: `apps/web/src/app/admin/sponsors`, `apps/web/src/app/api/admin/sponsors`
 Status: in progress
-Notes: Sponsor CRUD UI + placements form and API endpoints added.
+Notes: Sponsor CRUD UI + placements form and API endpoints added; public sponsor page renders campaign placements.
 
 ## WS-INT - Integrations + API
 Owner: codex

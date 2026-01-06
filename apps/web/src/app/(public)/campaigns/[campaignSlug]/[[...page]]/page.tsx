@@ -18,6 +18,7 @@ import {
   PeerTeamDetail,
 } from "../PeerToPeerDetail";
 import { VolunteerSignupForm } from "../VolunteerSignupForm";
+import { SponsorsPage } from "../SponsorsPage";
 import styles from "../campaign-page.module.css";
 
 type CampaignPageParams = {
@@ -53,7 +54,7 @@ export default async function CampaignPage({
   searchParams,
 }: {
   params: CampaignPageParams;
-  searchParams?: { success?: string; canceled?: string };
+  searchParams?: { success?: string; canceled?: string; watch?: string };
 }) {
   const campaign = await getCampaignBySlug(params.campaignSlug);
 
@@ -84,6 +85,7 @@ export default async function CampaignPage({
   const showAuctionCatalog = page.slug === "auction" && !auctionItemId;
   const showAuctionItem = page.slug === "auction" && Boolean(auctionItemId);
   const showVolunteerForm = page.slug === "volunteer";
+  const showSponsorsPage = page.slug === "sponsors";
   const showPeerOverview = page.slug === "peer-to-peer" && !peerSection;
   const showPeerFundraiser =
     page.slug === "peer-to-peer" &&
@@ -208,6 +210,9 @@ export default async function CampaignPage({
               campaign={campaign}
               showSuccess={showSuccess}
             />
+          ) : null}
+          {showSponsorsPage && campaign.id ? (
+            <SponsorsPage campaignId={campaign.id} />
           ) : null}
           {showPeerOverview ? (
             <PeerToPeerOverview
