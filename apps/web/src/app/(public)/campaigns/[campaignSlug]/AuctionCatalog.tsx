@@ -68,6 +68,7 @@ export async function AuctionCatalog({ campaign }: AuctionCatalogProps) {
               item.status === "CLOSED" || (closesAt && now > closesAt);
             const isPreview =
               item.isPreviewOnly || (opensAt && now < opensAt);
+            const hasBids = item.bids.length > 0;
             return (
               <Link
                 key={item.id}
@@ -94,7 +95,7 @@ export async function AuctionCatalog({ campaign }: AuctionCatalogProps) {
                 </div>
                 <div className="mt-6 flex items-center justify-between text-sm">
                   <span className="text-[color:var(--campaign-ink-muted)]">
-                    Current bid
+                    {hasBids ? "Current bid" : "No bids yet"}
                   </span>
                   <span className="text-lg font-semibold text-[color:var(--campaign-ink)]">
                     {formatCurrency(currentBid, currency)}
