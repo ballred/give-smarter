@@ -105,7 +105,7 @@ Notes: Email/SMS template UI, send history, and template CRUD APIs added.
 Owner: codex
 Scope: `apps/web/src/app/admin/donations`, `apps/web/src/app/api/admin/keyword-routes`
 Status: in progress
-Notes: Keyword route management UI + API added; donation form config UI and public donate checkout flow added; inbound SMS webhook replies with campaign links.
+Notes: Keyword route management UI + API added; donation form config UI and public donate checkout flow added; inbound SMS webhook replies with campaign links + UTM tracking.
 
 ## WS-SPONSOR - Sponsor management
 Owner: codex

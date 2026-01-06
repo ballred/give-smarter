@@ -71,9 +71,16 @@ export async function POST(request: Request) {
 
   const origin = resolveOrigin(request);
   const campaignSlug = route?.campaign?.slug;
-  const link = campaignSlug
+  const baseLink = campaignSlug
     ? `${origin}/campaigns/${campaignSlug}/donate`
     : `${origin}/campaigns`;
+  const utm = new URLSearchParams({
+    utm_source: "sms",
+    utm_medium: "keyword",
+    utm_campaign: campaignSlug ?? "text-to-give",
+    keyword,
+  });
+  const link = `${baseLink}?${utm.toString()}`;
   const reply = buildReply(route?.replyMessage, link);
 
   return NextResponse.json({ reply });
