@@ -93,7 +93,7 @@ Notes: Playwright config and smoke tests added with Clerk-aware skip.
 Owner: codex
 Scope: `apps/web/src/app/admin/ticketing`, `apps/web/src/app/api/admin/ticket-types`
 Status: in progress
-Notes: Admin ticketing list + create form and CRUD API routes added; add-ons + promo code management, seating tables admin + auto seat generation + attendee table assignments added; public ticket checkout supports add-ons and promo codes with attendee QR codes.
+Notes: Admin ticketing list + create form and CRUD API routes added; add-ons + promo code management, seating tables admin + auto seat generation + attendee table assignments added; public ticket checkout supports add-ons, promo codes, cover-fee opt-in, and attendee QR codes.
 
 ## WS-MSG - Messaging templates
 Owner: codex

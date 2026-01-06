@@ -163,6 +163,15 @@ export async function TicketPurchaseForm({
               </div>
             ) : null}
 
+            <label className="flex items-center gap-3 text-sm font-semibold text-[color:var(--campaign-ink)]">
+              <input
+                name="coverFees"
+                type="checkbox"
+                className="h-4 w-4 rounded border-[color:var(--campaign-border)] text-[color:var(--campaign-accent)]"
+              />
+              Cover processing fees
+            </label>
+
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="block text-sm font-semibold text-[color:var(--campaign-ink)]">
                 First name

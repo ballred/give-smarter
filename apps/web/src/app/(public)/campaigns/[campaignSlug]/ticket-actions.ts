@@ -11,6 +11,9 @@ import { prisma } from "@/lib/db";
 import { createOrderNumber, normalizeLineItems } from "@/lib/orders";
 import { getStripeClient } from "@/lib/stripe";
 
+const FEE_RATE = 0.029;
+const FEE_FIXED = 30;
+
 function parseQuantity(value: FormDataEntryValue | null) {
   if (!value) return null;
   const num = Number(value);
@@ -89,6 +92,7 @@ export async function createTicketCheckout(formData: FormData) {
   const promoCodeInput = normalizePromoCode(
     String(formData.get("promoCode") ?? ""),
   );
+  const coverFees = formData.get("coverFees") === "on";
 
   if (!campaignId || !ticketTypeId) {
     throw new Error("Campaign and ticket type are required.");
@@ -229,7 +233,7 @@ export async function createTicketCheckout(formData: FormData) {
     }
   }
 
-  const normalized = normalizeLineItems(
+  const baseItems = normalizeLineItems(
     [
       {
         type: "TICKET" as LineItemType,
@@ -247,6 +251,27 @@ export async function createTicketCheckout(formData: FormData) {
     ],
     currency,
   );
+  let normalized = baseItems;
+  let coverFeesAmount = 0;
+
+  if (coverFees) {
+    coverFeesAmount = Math.round(baseItems.totalAmount * FEE_RATE + FEE_FIXED);
+    if (coverFeesAmount > 0) {
+      normalized = normalizeLineItems(
+        [
+          ...baseItems.items,
+          {
+            type: "FEE_COVERAGE_DONATION" as LineItemType,
+            description: "Fee coverage",
+            quantity: 1,
+            unitAmount: coverFeesAmount,
+            totalAmount: coverFeesAmount,
+          },
+        ],
+        currency,
+      );
+    }
+  }
 
   const donorId = await resolveDonor({
     orgId: campaign.orgId,
@@ -261,10 +286,11 @@ export async function createTicketCheckout(formData: FormData) {
       campaignId: campaign.id,
       donorId,
       orderNumber: createOrderNumber(),
-      status: totalAmount > 0 ? OrderStatus.PENDING : OrderStatus.PAID,
+      status:
+        normalized.totalAmount > 0 ? OrderStatus.PENDING : OrderStatus.PAID,
       totalAmount: normalized.totalAmount,
       currency,
-      coverFeesAmount: 0,
+      coverFeesAmount,
       lineItems: {
         create: normalized.items.map((item) => ({
           orgId: campaign.orgId,
