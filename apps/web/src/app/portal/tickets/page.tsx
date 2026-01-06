@@ -15,6 +15,7 @@ type TicketGroup = {
     label: string;
     status: string;
     tableName?: string | null;
+    qrCode?: string | null;
   }>;
 };
 
@@ -75,6 +76,7 @@ export default async function DonorTicketsPage() {
       label: name,
       status: attendee.status,
       tableName: attendee.table?.name ?? null,
+      qrCode: attendee.qrCode ?? null,
     });
   }
 
@@ -127,7 +129,14 @@ export default async function DonorTicketsPage() {
                     key={attendee.id}
                     className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-zinc-100 bg-zinc-50 px-4 py-2"
                   >
-                    <span className="text-zinc-900">{attendee.label}</span>
+                    <div className="space-y-1">
+                      <span className="text-zinc-900">{attendee.label}</span>
+                      {attendee.qrCode ? (
+                        <span className="block text-xs text-zinc-400">
+                          QR {attendee.qrCode}
+                        </span>
+                      ) : null}
+                    </div>
                     <span className="text-xs uppercase tracking-[0.15em] text-zinc-400">
                       {attendee.tableName
                         ? `Table ${attendee.tableName}`

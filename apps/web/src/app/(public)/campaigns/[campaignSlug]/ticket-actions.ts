@@ -6,6 +6,7 @@ import {
   PaymentStatus,
   type LineItemType,
 } from "@prisma/client";
+import { randomUUID } from "crypto";
 import { prisma } from "@/lib/db";
 import { createOrderNumber, normalizeLineItems } from "@/lib/orders";
 import { getStripeClient } from "@/lib/stripe";
@@ -313,6 +314,7 @@ export async function createTicketCheckout(formData: FormData) {
       firstName: firstName || null,
       lastName: lastName || null,
       email: email || null,
+      qrCode: randomUUID(),
       status: "REGISTERED" as const,
     }));
 
