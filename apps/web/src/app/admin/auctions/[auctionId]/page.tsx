@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
+import { closeAuctionItem } from "./close-item-actions";
 import { sendNoBidReminders } from "./no-bid-actions";
 
 export default async function AuctionDetailPage({
@@ -8,7 +9,7 @@ export default async function AuctionDetailPage({
   searchParams,
 }: {
   params: { auctionId: string };
-  searchParams?: { reminder?: string };
+  searchParams?: { reminder?: string; closed?: string };
 }) {
   const [auction, noBidItems] = await Promise.all([
     prisma.auction.findUnique({
@@ -17,6 +18,7 @@ export default async function AuctionDetailPage({
         campaign: { select: { name: true } },
         items: {
           orderBy: { createdAt: "desc" },
+          include: { _count: { select: { bids: true } } },
         },
       },
     }),
@@ -36,9 +38,15 @@ export default async function AuctionDetailPage({
   }
 
   const showReminderSent = searchParams?.reminder === "1";
+  const showClosed = Boolean(searchParams?.closed);
 
   return (
     <div className="space-y-6">
+      {showClosed ? (
+        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+          Item closed and invoice queued.
+        </div>
+      ) : null}
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div className="space-y-2">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">
@@ -83,6 +91,8 @@ export default async function AuctionDetailPage({
               <th className="px-4 py-3 font-semibold text-zinc-700">Start</th>
               <th className="px-4 py-3 font-semibold text-zinc-700">Buy now</th>
               <th className="px-4 py-3 font-semibold text-zinc-700">Qty</th>
+              <th className="px-4 py-3 font-semibold text-zinc-700">Bids</th>
+              <th className="px-4 py-3 font-semibold text-zinc-700">Close</th>
             </tr>
           </thead>
           <tbody>
@@ -102,13 +112,35 @@ export default async function AuctionDetailPage({
                       : "—"}
                   </td>
                   <td className="px-4 py-3 text-zinc-600">{item.quantity}</td>
+                  <td className="px-4 py-3 text-zinc-600">
+                    {item._count.bids}
+                  </td>
+                  <td className="px-4 py-3">
+                    <form
+                      action={async () => {
+                        "use server";
+                        await closeAuctionItem(item.id);
+                        redirect(
+                          `/admin/auctions/${auction.id}?closed=${item.id}`,
+                        );
+                      }}
+                    >
+                      <button
+                        type="submit"
+                        disabled={item.status === "CLOSED" || item._count.bids === 0}
+                        className="inline-flex h-9 items-center justify-center rounded-full border border-zinc-200 px-3 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-700 transition hover:border-zinc-300 disabled:cursor-not-allowed disabled:bg-zinc-100 disabled:text-zinc-400"
+                      >
+                        Close item
+                      </button>
+                    </form>
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
                 <td
                   className="px-4 py-6 text-center text-zinc-500"
-                  colSpan={5}
+                  colSpan={7}
                 >
                   No items yet.
                 </td>
