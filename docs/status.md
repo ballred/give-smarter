@@ -63,7 +63,7 @@ Notes: Auction item list + create flow, procurement submissions UI + API.
 Owner: codex
 Scope: `apps/web/src/app/admin/check-in`, `apps/web/src/app/api/admin/checkin`
 Status: in progress
-Notes: Search + bulk check-in, QR placeholder, import flow, and check-in APIs.
+Notes: Search + bulk check-in, manual QR entry flow, import flow, and check-in APIs.
 
 ## WS-GROW - Raffles, voting, store
 Owner: codex

@@ -1,4 +1,20 @@
-export default function CheckInQrPage() {
+import { redirect } from "next/navigation";
+import { checkInByQr } from "../checkin-actions";
+
+type SearchParams = {
+  success?: string;
+  error?: string;
+  attendee?: string;
+};
+
+export default function CheckInQrPage({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
+  const showSuccess = searchParams.success === "1";
+  const error = searchParams.error;
+
   return (
     <div className="space-y-6">
       <header className="space-y-2">
@@ -9,7 +25,51 @@ export default function CheckInQrPage() {
           This view will activate the camera scanner once configured.
         </p>
       </header>
-      <div className="flex h-80 items-center justify-center rounded-3xl border border-dashed border-zinc-200 bg-white text-sm text-zinc-500">
+
+      {showSuccess ? (
+        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+          Check-in recorded.
+        </div>
+      ) : null}
+
+      {error ? (
+        <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-900">
+          {error === "missing"
+            ? "Enter a QR code to check in."
+            : "QR code not found."}
+        </div>
+      ) : null}
+
+      <form
+        className="flex flex-wrap items-center gap-3 rounded-3xl border border-dashed border-zinc-200 bg-white p-6"
+        action={async (formData) => {
+          "use server";
+          try {
+            const attendeeId = await checkInByQr(formData);
+            redirect(`/admin/check-in/qr?success=1&attendee=${attendeeId}`);
+          } catch (err) {
+            const message = err instanceof Error ? err.message : "";
+            const code = message.toLowerCase().includes("required")
+              ? "missing"
+              : "not_found";
+            redirect(`/admin/check-in/qr?error=${code}`);
+          }
+        }}
+      >
+        <input
+          name="qrCode"
+          placeholder="Enter or scan QR code"
+          className="h-12 flex-1 rounded-full border border-zinc-200 bg-white px-5 text-sm text-zinc-900"
+        />
+        <button
+          type="submit"
+          className="inline-flex h-12 items-center justify-center rounded-full bg-zinc-900 px-6 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-800"
+        >
+          Check in
+        </button>
+      </form>
+
+      <div className="flex h-64 items-center justify-center rounded-3xl border border-dashed border-zinc-200 bg-white text-sm text-zinc-500">
         Camera scanner placeholder
       </div>
     </div>

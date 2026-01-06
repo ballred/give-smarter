@@ -1,6 +1,9 @@
 import { prisma } from "@/lib/db";
 
-export async function checkInAttendee(attendeeId: string) {
+export async function checkInAttendee(
+  attendeeId: string,
+  method: "SEARCH" | "QR" = "SEARCH",
+) {
   const existing = await prisma.checkin.findFirst({
     where: { attendeeId },
   });
@@ -13,7 +16,7 @@ export async function checkInAttendee(attendeeId: string) {
     data: {
       orgId: existing?.orgId ?? (await resolveOrgId(attendeeId)),
       attendeeId,
-      method: "SEARCH",
+      method,
       checkedInAt: new Date(),
     },
   });
@@ -56,6 +59,27 @@ export async function bulkCheckIn(formData: FormData) {
     })),
     skipDuplicates: true,
   });
+}
+
+export async function checkInByQr(formData: FormData) {
+  const qrCode = String(formData.get("qrCode") ?? "").trim();
+
+  if (!qrCode) {
+    throw new Error("QR code is required.");
+  }
+
+  const attendee = await prisma.attendee.findFirst({
+    where: { qrCode },
+    select: { id: true },
+  });
+
+  if (!attendee) {
+    throw new Error("Attendee not found.");
+  }
+
+  await checkInAttendee(attendee.id, "QR");
+
+  return attendee.id;
 }
 
 async function resolveOrgId(attendeeId: string) {
