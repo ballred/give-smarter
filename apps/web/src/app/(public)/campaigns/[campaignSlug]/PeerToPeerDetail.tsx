@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import type { Campaign } from "@give-smarter/core";
 import { prisma } from "@/lib/db";
@@ -24,6 +25,56 @@ function formatCurrency(amount: number, currency: string) {
 function progressPercent(total: number, goal?: number | null) {
   if (!goal || goal <= 0) return 0;
   return Math.min(100, Math.round((total / goal) * 100));
+}
+
+function resolveOrigin() {
+  const headerList = headers();
+  const host = headerList.get("host");
+  if (!host) return null;
+  const proto = headerList.get("x-forwarded-proto") ?? "https";
+  return `${proto}://${host}`;
+}
+
+function buildShareUrl(path: string) {
+  const origin = resolveOrigin();
+  return origin ? `${origin}${path}` : path;
+}
+
+function ShareLinks({ label, url }: { label: string; url: string }) {
+  const encodedUrl = encodeURIComponent(url);
+  const encodedLabel = encodeURIComponent(`Support ${label}`);
+  return (
+    <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-white p-4">
+      <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--campaign-ink-muted)]">
+        Share this page
+      </p>
+      <div className="mt-3 flex flex-wrap gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--campaign-ink-muted)]">
+        <a
+          href={`mailto:?subject=${encodedLabel}&body=${encodedUrl}`}
+          className="rounded-full border border-[color:var(--campaign-border)] px-4 py-2"
+        >
+          Email
+        </a>
+        <a
+          href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
+          className="rounded-full border border-[color:var(--campaign-border)] px-4 py-2"
+        >
+          Facebook
+        </a>
+        <a
+          href={`https://twitter.com/intent/tweet?text=${encodedLabel}&url=${encodedUrl}`}
+          className="rounded-full border border-[color:var(--campaign-border)] px-4 py-2"
+        >
+          X
+        </a>
+      </div>
+      <input
+        readOnly
+        value={url}
+        className="mt-3 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-xs text-[color:var(--campaign-ink)]"
+      />
+    </div>
+  );
 }
 
 async function getTotalRaised({
@@ -76,6 +127,9 @@ export async function PeerFundraiserDetail({
   const currency = campaign.currency ?? "USD";
   const goal = fundraiser.goalAmount ?? null;
   const percent = progressPercent(totalRaised, goal);
+  const shareUrl = buildShareUrl(
+    `/campaigns/${campaign.slug}/peer-to-peer/fundraisers/${fundraiser.slug}`,
+  );
 
   return (
     <section className="px-6 pb-16 pt-8 sm:px-10">
@@ -142,6 +196,10 @@ export async function PeerFundraiserDetail({
               ) : null}
             </div>
           )}
+
+          <div className="mt-6">
+            <ShareLinks label={fundraiser.name} url={shareUrl} />
+          </div>
         </div>
 
         <DonationForm
@@ -184,6 +242,9 @@ export async function PeerTeamDetail({
   const currency = campaign.currency ?? "USD";
   const goal = team.goalAmount ?? null;
   const percent = progressPercent(totalRaised, goal);
+  const shareUrl = buildShareUrl(
+    `/campaigns/${campaign.slug}/peer-to-peer/teams/${team.slug}`,
+  );
 
   return (
     <section className="px-6 pb-16 pt-8 sm:px-10">
@@ -228,6 +289,10 @@ export async function PeerTeamDetail({
                 {percent}%
               </p>
             </div>
+          </div>
+
+          <div className="mt-6">
+            <ShareLinks label={team.name} url={shareUrl} />
           </div>
 
           {team.fundraisers.length ? (
@@ -286,6 +351,9 @@ export async function PeerClassroomDetail({
   const currency = campaign.currency ?? "USD";
   const goal = classroom.goalAmount ?? null;
   const percent = progressPercent(totalRaised, goal);
+  const shareUrl = buildShareUrl(
+    `/campaigns/${campaign.slug}/peer-to-peer/classrooms/${classroom.slug}`,
+  );
 
   return (
     <section className="px-6 pb-16 pt-8 sm:px-10">
@@ -340,6 +408,10 @@ export async function PeerClassroomDetail({
                 {percent}%
               </p>
             </div>
+          </div>
+
+          <div className="mt-6">
+            <ShareLinks label={classroom.name} url={shareUrl} />
           </div>
 
           {classroom.fundraisers.length ? (
