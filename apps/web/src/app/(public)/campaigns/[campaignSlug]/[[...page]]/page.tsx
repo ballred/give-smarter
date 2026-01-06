@@ -54,7 +54,17 @@ export default async function CampaignPage({
   searchParams,
 }: {
   params: CampaignPageParams;
-  searchParams?: { success?: string; canceled?: string; watch?: string };
+  searchParams?: {
+    success?: string;
+    canceled?: string;
+    watch?: string;
+    utm_source?: string;
+    utm_medium?: string;
+    utm_campaign?: string;
+    utm_content?: string;
+    utm_term?: string;
+    keyword?: string;
+  };
 }) {
   const campaign = await getCampaignBySlug(params.campaignSlug);
 
@@ -100,6 +110,14 @@ export default async function CampaignPage({
   const showSuccess = searchParams?.success === "1";
   const showCanceled = searchParams?.canceled === "1";
   const showWatch = searchParams?.watch === "1";
+  const tracking = {
+    utmSource: searchParams?.utm_source,
+    utmMedium: searchParams?.utm_medium,
+    utmCampaign: searchParams?.utm_campaign,
+    utmContent: searchParams?.utm_content,
+    utmTerm: searchParams?.utm_term,
+    keyword: searchParams?.keyword,
+  };
 
   return (
     <CampaignThemeProvider theme={campaign.theme} className={styles.page}>
@@ -165,6 +183,7 @@ export default async function CampaignPage({
               campaign={campaign}
               showSuccess={showSuccess}
               showCanceled={showCanceled}
+              tracking={tracking}
             />
           ) : null}
           {showTicketForm ? (
@@ -227,6 +246,7 @@ export default async function CampaignPage({
               slug={peerSlug}
               showSuccess={showSuccess}
               showCanceled={showCanceled}
+              tracking={tracking}
             />
           ) : null}
           {showPeerTeam && peerSlug ? (
@@ -235,6 +255,7 @@ export default async function CampaignPage({
               slug={peerSlug}
               showSuccess={showSuccess}
               showCanceled={showCanceled}
+              tracking={tracking}
             />
           ) : null}
           {showPeerClassroom && peerSlug ? (
@@ -243,6 +264,7 @@ export default async function CampaignPage({
               slug={peerSlug}
               showSuccess={showSuccess}
               showCanceled={showCanceled}
+              tracking={tracking}
             />
           ) : null}
         </main>

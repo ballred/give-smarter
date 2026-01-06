@@ -204,6 +204,12 @@ export async function createDonationCheckout(formData: FormData) {
   const fundraiserId = String(formData.get("fundraiserId") ?? "").trim();
   const teamId = String(formData.get("teamId") ?? "").trim();
   const classroomId = String(formData.get("classroomId") ?? "").trim();
+  const utmSource = String(formData.get("utm_source") ?? "").trim();
+  const utmMedium = String(formData.get("utm_medium") ?? "").trim();
+  const utmCampaign = String(formData.get("utm_campaign") ?? "").trim();
+  const utmContent = String(formData.get("utm_content") ?? "").trim();
+  const utmTerm = String(formData.get("utm_term") ?? "").trim();
+  const keyword = String(formData.get("keyword") ?? "").trim();
   const returnPathInput = String(formData.get("returnPath") ?? "").trim();
 
   if (!campaignId) {
@@ -257,6 +263,12 @@ export async function createDonationCheckout(formData: FormData) {
   const metadata: Record<string, string> = {};
   if (designation) metadata.designation = designation;
   if (tribute) metadata.tribute = tribute;
+  if (utmSource) metadata.utm_source = utmSource;
+  if (utmMedium) metadata.utm_medium = utmMedium;
+  if (utmCampaign) metadata.utm_campaign = utmCampaign;
+  if (utmContent) metadata.utm_content = utmContent;
+  if (utmTerm) metadata.utm_term = utmTerm;
+  if (keyword) metadata.keyword = keyword;
 
   const attribution = await resolvePeerAttribution({
     campaignId: campaign.id,

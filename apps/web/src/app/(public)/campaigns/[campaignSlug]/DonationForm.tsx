@@ -22,6 +22,16 @@ type DonationFormProps = {
     classroomId?: string;
   };
   returnPath?: string;
+  tracking?: TrackingParams;
+};
+
+export type TrackingParams = {
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  utmContent?: string;
+  utmTerm?: string;
+  keyword?: string;
 };
 
 export function DonationForm({
@@ -30,6 +40,7 @@ export function DonationForm({
   showCanceled,
   attribution,
   returnPath,
+  tracking,
 }: DonationFormProps) {
   const config = getDonationConfig(campaign.modules);
   const currency = campaign.currency ?? "USD";
@@ -80,6 +91,32 @@ export function DonationForm({
               name="classroomId"
               value={attribution.classroomId}
             />
+          ) : null}
+          {tracking?.utmSource ? (
+            <input type="hidden" name="utm_source" value={tracking.utmSource} />
+          ) : null}
+          {tracking?.utmMedium ? (
+            <input type="hidden" name="utm_medium" value={tracking.utmMedium} />
+          ) : null}
+          {tracking?.utmCampaign ? (
+            <input
+              type="hidden"
+              name="utm_campaign"
+              value={tracking.utmCampaign}
+            />
+          ) : null}
+          {tracking?.utmContent ? (
+            <input
+              type="hidden"
+              name="utm_content"
+              value={tracking.utmContent}
+            />
+          ) : null}
+          {tracking?.utmTerm ? (
+            <input type="hidden" name="utm_term" value={tracking.utmTerm} />
+          ) : null}
+          {tracking?.keyword ? (
+            <input type="hidden" name="keyword" value={tracking.keyword} />
           ) : null}
 
           <div className="space-y-3">

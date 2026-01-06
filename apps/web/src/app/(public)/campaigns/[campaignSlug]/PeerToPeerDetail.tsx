@@ -3,13 +3,14 @@ import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import type { Campaign } from "@give-smarter/core";
 import { prisma } from "@/lib/db";
-import { DonationForm } from "./DonationForm";
+import { DonationForm, type TrackingParams } from "./DonationForm";
 
 type DetailProps = {
   campaign: Campaign;
   slug: string;
   showSuccess?: boolean;
   showCanceled?: boolean;
+  tracking?: TrackingParams;
 };
 
 function formatCurrency(amount: number, currency: string) {
@@ -106,6 +107,7 @@ export async function PeerFundraiserDetail({
   slug,
   showSuccess,
   showCanceled,
+  tracking,
 }: DetailProps) {
   const fundraiser = await prisma.peerFundraiser.findFirst({
     where: {
@@ -212,6 +214,7 @@ export async function PeerFundraiserDetail({
             classroomId: fundraiser.classroomId ?? undefined,
           }}
           returnPath={`/campaigns/${campaign.slug}/peer-to-peer/fundraisers/${fundraiser.slug}`}
+          tracking={tracking}
         />
       </div>
     </section>
@@ -223,6 +226,7 @@ export async function PeerTeamDetail({
   slug,
   showSuccess,
   showCanceled,
+  tracking,
 }: DetailProps) {
   const team = await prisma.peerFundraisingTeam.findFirst({
     where: { campaignId: campaign.id ?? "", slug },
@@ -321,6 +325,7 @@ export async function PeerTeamDetail({
           showCanceled={showCanceled}
           attribution={{ teamId: team.id }}
           returnPath={`/campaigns/${campaign.slug}/peer-to-peer/teams/${team.slug}`}
+          tracking={tracking}
         />
       </div>
     </section>
@@ -332,6 +337,7 @@ export async function PeerClassroomDetail({
   slug,
   showSuccess,
   showCanceled,
+  tracking,
 }: DetailProps) {
   const classroom = await prisma.peerFundraisingClassroom.findFirst({
     where: { campaignId: campaign.id ?? "", slug },
@@ -440,6 +446,7 @@ export async function PeerClassroomDetail({
           showCanceled={showCanceled}
           attribution={{ classroomId: classroom.id }}
           returnPath={`/campaigns/${campaign.slug}/peer-to-peer/classrooms/${classroom.slug}`}
+          tracking={tracking}
         />
       </div>
     </section>
