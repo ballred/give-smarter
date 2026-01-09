@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -59,6 +60,14 @@ export async function PATCH(
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
+  const beforeRaffle = await prisma.raffle.findUnique({
+    where: { id: raffleId },
+  });
+
+  if (!beforeRaffle) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   const data: Record<string, unknown> = {};
 
   if (body.name !== undefined) data.name = body.name;
@@ -93,6 +102,15 @@ export async function PATCH(
     data,
   });
 
+  await logAuditEntry({
+    orgId: raffle.orgId,
+    action: "raffle.update",
+    targetType: "Raffle",
+    targetId: raffleId,
+    beforeData: beforeRaffle,
+    afterData: raffle,
+  });
+
   return NextResponse.json({ data: raffle });
 }
 
@@ -108,7 +126,23 @@ export async function DELETE(
 
   const { raffleId } = await params;
 
+  const raffle = await prisma.raffle.findUnique({
+    where: { id: raffleId },
+  });
+
+  if (!raffle) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   await prisma.raffle.delete({ where: { id: raffleId } });
+
+  await logAuditEntry({
+    orgId: raffle.orgId,
+    action: "raffle.delete",
+    targetType: "Raffle",
+    targetId: raffleId,
+    beforeData: raffle,
+  });
 
   return NextResponse.json({ ok: true });
 }
