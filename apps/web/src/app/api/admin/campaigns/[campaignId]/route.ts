@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -155,12 +156,12 @@ export async function PATCH(
     data.goalAmount = goalAmountCents;
   }
 
-  const campaign = await prisma.campaign.findUnique({
+  const beforeCampaign = await prisma.campaign.findUnique({
     where: { id: campaignId },
-    select: { orgId: true },
+    include: { modules: true },
   });
 
-  if (!campaign) {
+  if (!beforeCampaign) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
 
@@ -186,7 +187,7 @@ export async function PATCH(
     if (toCreate.length) {
       await prisma.campaignModule.createMany({
         data: toCreate.map((module) => ({
-          orgId: campaign.orgId,
+          orgId: beforeCampaign.orgId,
           campaignId,
           type: module as
             | "DONATIONS"
@@ -212,6 +213,20 @@ export async function PATCH(
     }
   }
 
+  const afterCampaign = await prisma.campaign.findUnique({
+    where: { id: campaignId },
+    include: { modules: true },
+  });
+
+  await logAuditEntry({
+    orgId: beforeCampaign.orgId,
+    action: "campaign.update",
+    targetType: "Campaign",
+    targetId: campaignId,
+    beforeData: beforeCampaign,
+    afterData: afterCampaign ?? undefined,
+  });
+
   return NextResponse.json({ data: updated });
 }
 
@@ -227,8 +242,25 @@ export async function DELETE(
 
   const { campaignId } = await params;
 
+  const campaign = await prisma.campaign.findUnique({
+    where: { id: campaignId },
+    include: { modules: true },
+  });
+
+  if (!campaign) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   await prisma.campaign.delete({
     where: { id: campaignId },
+  });
+
+  await logAuditEntry({
+    orgId: campaign.orgId,
+    action: "campaign.delete",
+    targetType: "Campaign",
+    targetId: campaignId,
+    beforeData: campaign,
   });
 
   return NextResponse.json({ ok: true });

@@ -2,6 +2,7 @@ import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -86,6 +87,14 @@ export async function POST(request: Request) {
       tokenHash: hashToken(token),
       scopes,
     },
+  });
+
+  await logAuditEntry({
+    orgId: body.orgId,
+    action: "api_token.create",
+    targetType: "ApiToken",
+    targetId: record.id,
+    afterData: { id: record.id, name: record.name, scopes: record.scopes },
   });
 
   return NextResponse.json({ data: record, token }, { status: 201 });

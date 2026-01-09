@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -81,6 +82,14 @@ export async function POST(request: Request) {
       primaryEmail: body.primaryEmail ?? null,
       primaryPhone: body.primaryPhone ?? null,
     },
+  });
+
+  await logAuditEntry({
+    orgId: body.orgId,
+    action: "donor.create",
+    targetType: "Donor",
+    targetId: donor.id,
+    afterData: donor,
   });
 
   return NextResponse.json({ data: donor }, { status: 201 });

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -56,6 +57,14 @@ export async function PATCH(
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
+  const beforeDonor = await prisma.donor.findUnique({
+    where: { id: donorId },
+  });
+
+  if (!beforeDonor) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   const data: Record<string, unknown> = {};
 
   if (body.displayName !== undefined) data.displayName = body.displayName;
@@ -68,6 +77,15 @@ export async function PATCH(
   const donor = await prisma.donor.update({
     where: { id: donorId },
     data,
+  });
+
+  await logAuditEntry({
+    orgId: donor.orgId,
+    action: "donor.update",
+    targetType: "Donor",
+    targetId: donor.id,
+    beforeData: beforeDonor,
+    afterData: donor,
   });
 
   return NextResponse.json({ data: donor });
@@ -85,8 +103,24 @@ export async function DELETE(
 
   const { donorId } = await params;
 
+  const donor = await prisma.donor.findUnique({
+    where: { id: donorId },
+  });
+
+  if (!donor) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   await prisma.donor.delete({
     where: { id: donorId },
+  });
+
+  await logAuditEntry({
+    orgId: donor.orgId,
+    action: "donor.delete",
+    targetType: "Donor",
+    targetId: donorId,
+    beforeData: donor,
   });
 
   return NextResponse.json({ ok: true });

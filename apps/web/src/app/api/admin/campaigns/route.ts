@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -173,6 +174,14 @@ export async function POST(request: Request) {
       skipDuplicates: true,
     });
   }
+
+  await logAuditEntry({
+    orgId: body.orgId,
+    action: "campaign.create",
+    targetType: "Campaign",
+    targetId: campaign.id,
+    afterData: { ...campaign, modules },
+  });
 
   return NextResponse.json({ data: campaign }, { status: 201 });
 }
