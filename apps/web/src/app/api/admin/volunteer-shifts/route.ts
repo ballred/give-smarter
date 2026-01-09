@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -65,6 +66,14 @@ export async function POST(request: Request) {
       endsAt: body.endsAt ? new Date(body.endsAt) : null,
       capacity: body.capacity ?? null,
     },
+  });
+
+  await logAuditEntry({
+    orgId: campaign.orgId,
+    action: "volunteer_shift.create",
+    targetType: "VolunteerShift",
+    targetId: shift.id,
+    afterData: shift,
   });
 
   return NextResponse.json({ data: shift }, { status: 201 });

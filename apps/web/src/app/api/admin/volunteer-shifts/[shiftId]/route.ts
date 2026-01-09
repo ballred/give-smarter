@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -55,6 +56,14 @@ export async function PUT(
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
+  const beforeShift = await prisma.volunteerShift.findUnique({
+    where: { id: shiftId },
+  });
+
+  if (!beforeShift) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   const shift = await prisma.volunteerShift.update({
     where: { id: shiftId },
     data: {
@@ -64,6 +73,15 @@ export async function PUT(
       endsAt: body.endsAt ? new Date(body.endsAt) : undefined,
       capacity: body.capacity ?? undefined,
     },
+  });
+
+  await logAuditEntry({
+    orgId: shift.orgId,
+    action: "volunteer_shift.update",
+    targetType: "VolunteerShift",
+    targetId: shiftId,
+    beforeData: beforeShift,
+    afterData: shift,
   });
 
   return NextResponse.json({ data: shift });
@@ -81,8 +99,24 @@ export async function DELETE(
 
   const { shiftId } = await params;
 
+  const shift = await prisma.volunteerShift.findUnique({
+    where: { id: shiftId },
+  });
+
+  if (!shift) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   await prisma.volunteerShift.delete({
     where: { id: shiftId },
+  });
+
+  await logAuditEntry({
+    orgId: shift.orgId,
+    action: "volunteer_shift.delete",
+    targetType: "VolunteerShift",
+    targetId: shiftId,
+    beforeData: shift,
   });
 
   return NextResponse.json({ ok: true });
