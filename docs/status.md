@@ -68,13 +68,13 @@ Notes: Auction item list + create flow, procurement submissions UI + API.
 ## WS-CHECKIN - Event check-in
 Owner: codex
 Scope: `apps/web/src/app/admin/check-in`, `apps/web/src/app/api/admin/checkin`
-Status: in progress
+Status: complete
 Notes: Search + bulk check-in, manual QR entry flow, import flow, and check-in APIs.
 
 ## WS-GROW - Raffles, voting, store
 Owner: codex
 Scope: `apps/web/src/app/admin/raffles`, `apps/web/src/app/admin/voting`, `apps/web/src/app/admin/store`, `apps/web/src/app/api/admin/*`
-Status: in progress
+Status: complete
 Notes: Admin shells + CRUD endpoints for raffles, contests, store products, candidates, variants, and draws; public store, raffle, and voting checkout flows added.
 
 ## WS-RPT - Reporting
@@ -98,47 +98,47 @@ Notes: Playwright config and smoke tests added with Clerk-aware skip.
 ## WS-TIX - Ticketing + check-in
 Owner: codex
 Scope: `apps/web/src/app/admin/ticketing`, `apps/web/src/app/api/admin/ticket-types`
-Status: in progress
+Status: complete
 Notes: Admin ticketing list + create form and CRUD API routes added; add-ons + promo code management, seating tables admin + auto seat generation + attendee table assignments added; public ticket checkout supports add-ons, promo codes, cover-fee opt-in, and attendee QR codes.
 
 ## WS-MSG - Messaging templates
 Owner: codex
 Scope: `apps/web/src/app/admin/messaging`, `apps/web/src/app/api/admin/email-templates`, `apps/web/src/app/api/admin/sms-templates`
-Status: in progress
+Status: complete
 Notes: Email/SMS template UI, send history, and template CRUD APIs added.
 
 ## WS-DON - Donations + text-to-give
 Owner: codex
 Scope: `apps/web/src/app/admin/donations`, `apps/web/src/app/api/admin/keyword-routes`
-Status: in progress
+Status: complete
 Notes: Keyword route management UI + API added; donation form config UI and public donate checkout flow added with UTM capture; inbound SMS webhook replies with campaign links + UTM tracking.
 
 ## WS-SPONSOR - Sponsor management
 Owner: codex
 Scope: `apps/web/src/app/admin/sponsors`, `apps/web/src/app/api/admin/sponsors`
-Status: in progress
+Status: complete
 Notes: Sponsor CRUD UI + placements form and API endpoints added; public sponsor page renders campaign placements.
 
 ## WS-INT - Integrations + API
 Owner: codex
 Scope: `apps/web/src/app/admin/integrations`, `apps/web/src/app/api/admin/api-tokens`, `apps/web/src/app/api/admin/webhooks`
-Status: in progress
+Status: complete
 Notes: API token and webhook management UI + CRUD APIs added.
 
 ## WS-VOL - Volunteer signups
 Owner: codex
 Scope: `apps/web/src/app/admin/volunteers`, `apps/web/src/app/(public)/campaigns/*`, `packages/db`
-Status: in progress
+Status: complete
 Notes: Volunteer shifts + signups schema, admin shift management, public signup form, and CSV export endpoint added.
 
 ## WS-CRM - Donor profiles
 Owner: codex
 Scope: `apps/web/src/app/admin/donors`, `apps/web/src/app/api/admin/donors`
-Status: in progress
+Status: complete
 Notes: Donor list + detail UI with update form and donor CRUD API added; household admin pages + membership endpoints added.
 
 ## WS-P2P - Peer-to-peer fundraising
 Owner: codex
 Scope: `apps/web/src/app/admin/peer-to-peer`, `apps/web/src/app/(public)/campaigns/*`, `packages/db`
-Status: in progress
+Status: complete
 Notes: Added schema + seed, public peer-to-peer pages with donation attribution + share links, admin CRUD for fundraisers/teams/classrooms, and classroom CSV export.
