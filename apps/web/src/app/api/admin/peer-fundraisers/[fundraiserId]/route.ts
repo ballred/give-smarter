@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -64,14 +65,15 @@ export async function PUT(
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
-  const existing = await prisma.peerFundraiser.findUnique({
+  const beforeFundraiser = await prisma.peerFundraiser.findUnique({
     where: { id: fundraiserId },
-    select: { campaignId: true },
   });
 
-  if (!existing) {
+  if (!beforeFundraiser) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
+
+  const existing = { campaignId: beforeFundraiser.campaignId };
 
   if (body.teamId) {
     const team = await prisma.peerFundraisingTeam.findUnique({
@@ -115,6 +117,15 @@ export async function PUT(
     },
   });
 
+  await logAuditEntry({
+    orgId: fundraiser.orgId,
+    action: "peer_fundraiser.update",
+    targetType: "PeerFundraiser",
+    targetId: fundraiserId,
+    beforeData: beforeFundraiser,
+    afterData: fundraiser,
+  });
+
   return NextResponse.json({ data: fundraiser });
 }
 
@@ -130,8 +141,24 @@ export async function DELETE(
 
   const { fundraiserId } = await params;
 
+  const fundraiser = await prisma.peerFundraiser.findUnique({
+    where: { id: fundraiserId },
+  });
+
+  if (!fundraiser) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   await prisma.peerFundraiser.delete({
     where: { id: fundraiserId },
+  });
+
+  await logAuditEntry({
+    orgId: fundraiser.orgId,
+    action: "peer_fundraiser.delete",
+    targetType: "PeerFundraiser",
+    targetId: fundraiserId,
+    beforeData: fundraiser,
   });
 
   return NextResponse.json({ ok: true });
