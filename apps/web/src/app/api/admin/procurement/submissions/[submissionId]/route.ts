@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -57,6 +58,14 @@ export async function PATCH(
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
+  const beforeSubmission = await prisma.procurementSubmission.findUnique({
+    where: { id: submissionId },
+  });
+
+  if (!beforeSubmission) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   const data: Record<string, unknown> = {};
 
   if (body.status !== undefined) data.status = body.status;
@@ -79,6 +88,15 @@ export async function PATCH(
     data,
   });
 
+  await logAuditEntry({
+    orgId: submission.orgId,
+    action: "procurement_submission.update",
+    targetType: "ProcurementSubmission",
+    targetId: submissionId,
+    beforeData: beforeSubmission,
+    afterData: submission,
+  });
+
   return NextResponse.json({ data: submission });
 }
 
@@ -94,8 +112,24 @@ export async function DELETE(
 
   const { submissionId } = await params;
 
+  const submission = await prisma.procurementSubmission.findUnique({
+    where: { id: submissionId },
+  });
+
+  if (!submission) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   await prisma.procurementSubmission.delete({
     where: { id: submissionId },
+  });
+
+  await logAuditEntry({
+    orgId: submission.orgId,
+    action: "procurement_submission.delete",
+    targetType: "ProcurementSubmission",
+    targetId: submissionId,
+    beforeData: submission,
   });
 
   return NextResponse.json({ ok: true });
