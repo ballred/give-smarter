@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -63,6 +64,14 @@ export async function PUT(
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
+  const beforeClassroom = await prisma.peerFundraisingClassroom.findUnique({
+    where: { id: classroomId },
+  });
+
+  if (!beforeClassroom) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   const data: PeerClassroomUpdate = {
     ...body,
   };
@@ -84,6 +93,15 @@ export async function PUT(
     },
   });
 
+  await logAuditEntry({
+    orgId: classroom.orgId,
+    action: "peer_classroom.update",
+    targetType: "PeerFundraisingClassroom",
+    targetId: classroomId,
+    beforeData: beforeClassroom,
+    afterData: classroom,
+  });
+
   return NextResponse.json({ data: classroom });
 }
 
@@ -99,8 +117,24 @@ export async function DELETE(
 
   const { classroomId } = await params;
 
+  const classroom = await prisma.peerFundraisingClassroom.findUnique({
+    where: { id: classroomId },
+  });
+
+  if (!classroom) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   await prisma.peerFundraisingClassroom.delete({
     where: { id: classroomId },
+  });
+
+  await logAuditEntry({
+    orgId: classroom.orgId,
+    action: "peer_classroom.delete",
+    targetType: "PeerFundraisingClassroom",
+    targetId: classroomId,
+    beforeData: classroom,
   });
 
   return NextResponse.json({ ok: true });

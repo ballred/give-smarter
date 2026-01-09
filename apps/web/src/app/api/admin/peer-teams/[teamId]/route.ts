@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -61,6 +62,14 @@ export async function PUT(
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
+  const beforeTeam = await prisma.peerFundraisingTeam.findUnique({
+    where: { id: teamId },
+  });
+
+  if (!beforeTeam) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   const data: PeerTeamUpdate = {
     ...body,
   };
@@ -80,6 +89,15 @@ export async function PUT(
     },
   });
 
+  await logAuditEntry({
+    orgId: team.orgId,
+    action: "peer_team.update",
+    targetType: "PeerFundraisingTeam",
+    targetId: teamId,
+    beforeData: beforeTeam,
+    afterData: team,
+  });
+
   return NextResponse.json({ data: team });
 }
 
@@ -95,8 +113,24 @@ export async function DELETE(
 
   const { teamId } = await params;
 
+  const team = await prisma.peerFundraisingTeam.findUnique({
+    where: { id: teamId },
+  });
+
+  if (!team) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   await prisma.peerFundraisingTeam.delete({
     where: { id: teamId },
+  });
+
+  await logAuditEntry({
+    orgId: team.orgId,
+    action: "peer_team.delete",
+    targetType: "PeerFundraisingTeam",
+    targetId: teamId,
+    beforeData: team,
   });
 
   return NextResponse.json({ ok: true });
