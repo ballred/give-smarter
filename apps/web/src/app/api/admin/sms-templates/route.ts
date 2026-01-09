@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -75,6 +76,14 @@ export async function POST(request: Request) {
           ? Math.floor(body.version)
           : 1,
     },
+  });
+
+  await logAuditEntry({
+    orgId: body.orgId,
+    action: "sms_template.create",
+    targetType: "SmsTemplate",
+    targetId: template.id,
+    afterData: template,
   });
 
   return NextResponse.json({ data: template }, { status: 201 });

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -59,6 +60,14 @@ export async function PATCH(
     return NextResponse.json({ error: "invalid_status" }, { status: 400 });
   }
 
+  const beforeTemplate = await prisma.smsTemplate.findUnique({
+    where: { id: templateId },
+  });
+
+  if (!beforeTemplate) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   const data: Record<string, unknown> = {};
   if (body.name !== undefined) data.name = body.name;
   if (body.body !== undefined) data.body = body.body;
@@ -69,6 +78,15 @@ export async function PATCH(
   const template = await prisma.smsTemplate.update({
     where: { id: templateId },
     data,
+  });
+
+  await logAuditEntry({
+    orgId: template.orgId,
+    action: "sms_template.update",
+    targetType: "SmsTemplate",
+    targetId: templateId,
+    beforeData: beforeTemplate,
+    afterData: template,
   });
 
   return NextResponse.json({ data: template });
@@ -86,8 +104,24 @@ export async function DELETE(
 
   const { templateId } = await params;
 
+  const template = await prisma.smsTemplate.findUnique({
+    where: { id: templateId },
+  });
+
+  if (!template) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   await prisma.smsTemplate.delete({
     where: { id: templateId },
+  });
+
+  await logAuditEntry({
+    orgId: template.orgId,
+    action: "sms_template.delete",
+    targetType: "SmsTemplate",
+    targetId: templateId,
+    beforeData: template,
   });
 
   return NextResponse.json({ ok: true });

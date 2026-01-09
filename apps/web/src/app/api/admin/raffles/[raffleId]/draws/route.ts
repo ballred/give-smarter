@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -41,6 +42,14 @@ export async function POST(
       },
     });
 
+    await logAuditEntry({
+      orgId: raffle.orgId,
+      action: "raffle_draw.create",
+      targetType: "RaffleDraw",
+      targetId: draw.id,
+      afterData: draw,
+    });
+
     return NextResponse.json({ data: draw }, { status: 201 });
   }
 
@@ -53,6 +62,14 @@ export async function POST(
       drawnAt,
       winnerDonorId: winnerTicket.donorId ?? null,
     },
+  });
+
+  await logAuditEntry({
+    orgId: raffle.orgId,
+    action: "raffle_draw.create",
+    targetType: "RaffleDraw",
+    targetId: draw.id,
+    afterData: draw,
   });
 
   return NextResponse.json({ data: draw }, { status: 201 });
