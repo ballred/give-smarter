@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -56,12 +57,21 @@ export async function POST(
 
   const household = await prisma.household.findUnique({
     where: { id: householdId },
-    select: { id: true },
+    select: { id: true, orgId: true },
   });
 
   if (!household) {
     return NextResponse.json({ error: "household_not_found" }, { status: 404 });
   }
+
+  const beforeMembership = await prisma.householdMembership.findUnique({
+    where: {
+      householdId_donorId: {
+        householdId,
+        donorId: body.donorId,
+      },
+    },
+  });
 
   const membership = await prisma.householdMembership.upsert({
     where: {
@@ -80,6 +90,17 @@ export async function POST(
       role: body.role ?? "MEMBER",
       relationship: body.relationship ?? null,
     },
+  });
+
+  await logAuditEntry({
+    orgId: household.orgId,
+    action: beforeMembership
+      ? "household_membership.update"
+      : "household_membership.create",
+    targetType: "HouseholdMembership",
+    targetId: membership.id,
+    beforeData: beforeMembership ?? undefined,
+    afterData: membership,
   });
 
   return NextResponse.json({ data: membership }, { status: 201 });
