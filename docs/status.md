@@ -20,8 +20,8 @@ Notes: Expanded schema to cover ticketing, auctions, live giving, growth modules
 ## WS-AUDIT - Audit log
 Owner: codex
 Scope: `apps/web/src/lib`, admin actions
-Status: in progress
-Notes: Audit log helper, admin page + export, and instrumented: auction item closes, ticket/add-on/promo creation, donor CRUD, campaign CRUD, API token CRUD, webhook CRUD, sponsor CRUD, raffle CRUD, auction CRUD, voting contest CRUD, vote candidate CRUD, email template CRUD, paddle raise level CRUD, store product CRUD, keyword route CRUD, peer team CRUD, peer classroom CRUD, store variant CRUD, household CRUD, peer fundraiser CRUD, household membership create/update, sponsor placement create, raffle draw create, SMS template CRUD, volunteer shift CRUD, procurement submission CRUD.
+Status: complete
+Notes: Audit log helper, admin page + export, and instrumented all admin endpoints: auction item closes, ticket/add-on/promo creation, donor CRUD, campaign CRUD, API token CRUD, webhook CRUD, sponsor CRUD, raffle CRUD, auction CRUD, voting contest CRUD, vote candidate CRUD, email template CRUD, paddle raise level CRUD, store product CRUD, keyword route CRUD, peer team CRUD, peer classroom CRUD, store variant CRUD, household CRUD, peer fundraiser CRUD, household membership create/update, sponsor placement create, raffle draw create, SMS template CRUD, volunteer shift CRUD, procurement submission CRUD, message send create, and check-in create.
 
 ## WS-AUTH - Clerk + RBAC
 Owner: codex

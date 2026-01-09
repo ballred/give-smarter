@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -40,6 +41,14 @@ export async function POST(
       method: "SEARCH",
       checkedInAt: new Date(),
     },
+  });
+
+  await logAuditEntry({
+    orgId: attendee.orgId,
+    action: "checkin.create",
+    targetType: "Checkin",
+    targetId: checkin.id,
+    afterData: checkin,
   });
 
   return NextResponse.json({ data: checkin });
