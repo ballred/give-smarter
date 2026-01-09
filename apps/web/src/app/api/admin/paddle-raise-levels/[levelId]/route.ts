@@ -14,16 +14,18 @@ type PaddleRaiseUpdatePayload = {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { levelId: string } },
+  { params }: { params: Promise<{ levelId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { levelId } = await params;
+
   const level = await prisma.paddleRaiseLevel.findUnique({
-    where: { id: params.levelId },
+    where: { id: levelId },
   });
 
   if (!level) {
@@ -35,13 +37,15 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { levelId: string } },
+  { params }: { params: Promise<{ levelId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { levelId } = await params;
 
   let body: PaddleRaiseUpdatePayload;
 
@@ -67,7 +71,7 @@ export async function PATCH(
   if (body.isActive !== undefined) data.isActive = body.isActive;
 
   const level = await prisma.paddleRaiseLevel.update({
-    where: { id: params.levelId },
+    where: { id: levelId },
     data,
   });
 
@@ -76,15 +80,17 @@ export async function PATCH(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { levelId: string } },
+  { params }: { params: Promise<{ levelId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  await prisma.paddleRaiseLevel.delete({ where: { id: params.levelId } });
+  const { levelId } = await params;
+
+  await prisma.paddleRaiseLevel.delete({ where: { id: levelId } });
 
   return NextResponse.json({ ok: true });
 }

@@ -6,11 +6,11 @@ function parseNumber(value: FormDataEntryValue | null) {
   return Number.isFinite(num) ? num : null;
 }
 
-function parseBundleRules(input: string) {
-  if (!input) return null;
+function parseBundleRules(input: string): object | undefined {
+  if (!input) return undefined;
 
   try {
-    return JSON.parse(input) as unknown;
+    return JSON.parse(input) as object;
   } catch {
     return { note: input };
   }

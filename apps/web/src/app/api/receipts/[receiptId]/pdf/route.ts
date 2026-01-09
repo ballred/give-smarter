@@ -5,9 +5,9 @@ import { buildReceiptPdf } from "@/lib/receipt-pdf";
 export const runtime = "nodejs";
 
 type RouteParams = {
-  params: {
+  params: Promise<{
     receiptId: string;
-  };
+  }>;
 };
 
 function buildDonorName(donor: {
@@ -33,7 +33,7 @@ function buildDonorName(donor: {
 }
 
 export async function GET(_request: Request, { params }: RouteParams) {
-  const receiptId = params.receiptId;
+  const { receiptId } = await params;
 
   if (!receiptId) {
     return NextResponse.json({ error: "missing_receipt_id" }, { status: 400 });
@@ -79,7 +79,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
     })),
   });
 
-  return new NextResponse(pdfBytes, {
+  return new NextResponse(Buffer.from(pdfBytes), {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `inline; filename="${receipt.receiptNumber}.pdf"`,

@@ -57,7 +57,7 @@ async function updateRefundedPaymentStatus(paymentId: string) {
     0,
   );
 
-  let status = PaymentStatus.SUCCEEDED;
+  let status: PaymentStatus = PaymentStatus.SUCCEEDED;
   if (refundedAmount >= payment.amount) {
     status = PaymentStatus.REFUNDED;
   } else if (refundedAmount > 0) {
@@ -400,7 +400,6 @@ export async function POST(request: Request) {
       await handlePaymentIntentCanceled(event.data.object as Stripe.PaymentIntent);
       break;
     case "charge.refund.updated":
-    case "charge.refund.created":
       await handleRefund(event.data.object as Stripe.Refund);
       break;
     case "charge.refunded":

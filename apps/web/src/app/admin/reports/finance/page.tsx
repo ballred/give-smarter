@@ -1,22 +1,200 @@
-export default function FinanceReportPage() {
+import Link from "next/link";
+import { prisma } from "@/lib/db";
+import { PaymentStatus } from "@prisma/client";
+
+function formatCurrency(cents: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(cents / 100);
+}
+
+export default async function FinanceReportPage() {
+  const payments = await prisma.payment.findMany({
+    include: {
+      order: {
+        include: {
+          donor: true,
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 100,
+  });
+
+  const succeeded = payments.filter(
+    (p) => p.status === PaymentStatus.SUCCEEDED
+  );
+  const totalCollected = succeeded.reduce((sum, p) => sum + p.amount, 0);
+  const totalFees = succeeded.reduce((sum, p) => sum + (p.feeAmount ?? 0), 0);
+  const totalNet = succeeded.reduce((sum, p) => sum + p.netAmount, 0);
+  const refunded = payments.filter(
+    (p) =>
+      p.status === PaymentStatus.REFUNDED ||
+      p.status === PaymentStatus.PARTIALLY_REFUNDED
+  );
+  const refundCount = refunded.length;
+
   return (
     <div className="space-y-6">
-      <header className="space-y-2">
-        <h1 className="text-2xl font-semibold text-zinc-900">Finance report</h1>
-        <p className="text-sm text-zinc-600">
-          Export ledger-backed transactions and payouts.
-        </p>
-      </header>
-      <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-        <p className="text-sm text-zinc-600">
-          Download a CSV export once data is connected.
-        </p>
+      <header className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold text-zinc-900">
+            Finance Report
+          </h1>
+          <p className="text-sm text-zinc-600">
+            Overview of payments, fees, and net revenue.
+          </p>
+        </div>
         <a
           href="/api/admin/reports/finance?format=csv"
-          className="mt-4 inline-flex h-10 items-center justify-center rounded-full bg-zinc-900 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-800"
+          className="inline-flex h-10 items-center justify-center rounded-full bg-zinc-900 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-800"
         >
-          Download CSV
+          Export CSV
         </a>
+      </header>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+            Total Collected
+          </p>
+          <p className="mt-2 text-2xl font-bold text-zinc-900">
+            {formatCurrency(totalCollected)}
+          </p>
+          <p className="mt-1 text-xs text-zinc-500">
+            {succeeded.length} successful payments
+          </p>
+        </div>
+        <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+            Processing Fees
+          </p>
+          <p className="mt-2 text-2xl font-bold text-zinc-900">
+            {formatCurrency(totalFees)}
+          </p>
+          <p className="mt-1 text-xs text-zinc-500">
+            {totalCollected > 0
+              ? ((totalFees / totalCollected) * 100).toFixed(1)
+              : "0"}
+            % of gross
+          </p>
+        </div>
+        <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+            Net Revenue
+          </p>
+          <p className="mt-2 text-2xl font-bold text-emerald-600">
+            {formatCurrency(totalNet)}
+          </p>
+          <p className="mt-1 text-xs text-zinc-500">After fees</p>
+        </div>
+        <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+            Refunds
+          </p>
+          <p className="mt-2 text-2xl font-bold text-zinc-900">{refundCount}</p>
+          <p className="mt-1 text-xs text-zinc-500">
+            {payments.length > 0
+              ? ((refundCount / payments.length) * 100).toFixed(1)
+              : "0"}
+            % refund rate
+          </p>
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-zinc-200 bg-white shadow-sm">
+        <div className="border-b border-zinc-200 px-5 py-4">
+          <h2 className="font-semibold text-zinc-900">Recent Transactions</h2>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead className="border-b border-zinc-200 bg-zinc-50">
+              <tr>
+                <th className="px-4 py-3 font-semibold text-zinc-700">Date</th>
+                <th className="px-4 py-3 font-semibold text-zinc-700">Order</th>
+                <th className="px-4 py-3 font-semibold text-zinc-700">Donor</th>
+                <th className="px-4 py-3 font-semibold text-zinc-700 text-right">
+                  Amount
+                </th>
+                <th className="px-4 py-3 font-semibold text-zinc-700 text-right">
+                  Fee
+                </th>
+                <th className="px-4 py-3 font-semibold text-zinc-700 text-right">
+                  Net
+                </th>
+                <th className="px-4 py-3 font-semibold text-zinc-700">
+                  Status
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {payments.length > 0 ? (
+                payments.map((payment) => {
+                  const donor = payment.order?.donor;
+                  const donorName =
+                    donor?.displayName ??
+                    [donor?.firstName, donor?.lastName].filter(Boolean).join(" ") ??
+                    "—";
+
+                  return (
+                    <tr key={payment.id} className="border-b border-zinc-100">
+                      <td className="px-4 py-3 text-zinc-600">
+                        {new Date(payment.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-4 py-3">
+                        {payment.orderId ? (
+                          <Link
+                            href={`/admin/orders/${payment.orderId}`}
+                            className="text-zinc-900 hover:text-zinc-700"
+                          >
+                            {payment.order?.orderNumber ?? payment.orderId.slice(0, 8)}
+                          </Link>
+                        ) : (
+                          <span className="text-zinc-500">—</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-zinc-900">{donorName}</td>
+                      <td className="px-4 py-3 text-right text-zinc-900">
+                        {formatCurrency(payment.amount)}
+                      </td>
+                      <td className="px-4 py-3 text-right text-zinc-500">
+                        {formatCurrency(payment.feeAmount ?? 0)}
+                      </td>
+                      <td className="px-4 py-3 text-right font-medium text-zinc-900">
+                        {formatCurrency(payment.netAmount)}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
+                            payment.status === PaymentStatus.SUCCEEDED
+                              ? "bg-emerald-100 text-emerald-700"
+                              : payment.status === PaymentStatus.REFUNDED
+                                ? "bg-amber-100 text-amber-700"
+                                : payment.status === PaymentStatus.FAILED
+                                  ? "bg-red-100 text-red-700"
+                                  : "bg-zinc-100 text-zinc-700"
+                          }`}
+                        >
+                          {payment.status.toLowerCase()}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td
+                    className="px-4 py-8 text-center text-zinc-500"
+                    colSpan={7}
+                  >
+                    No payments yet.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

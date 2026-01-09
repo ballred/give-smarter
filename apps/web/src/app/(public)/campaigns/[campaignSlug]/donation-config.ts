@@ -42,7 +42,7 @@ export function getDonationConfig(modules: CampaignModule[]): DonationConfig {
   const config = donationModule?.config;
 
   const tiers = Array.isArray(config?.tiers)
-    ? config.tiers.map(parseTier).filter(Boolean)
+    ? config.tiers.map(parseTier).filter((tier): tier is DonationTier => tier !== null)
     : [];
 
   const allowCustomAmount =

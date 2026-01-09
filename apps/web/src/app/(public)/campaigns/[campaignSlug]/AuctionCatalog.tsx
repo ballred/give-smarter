@@ -27,7 +27,7 @@ export async function AuctionCatalog({ campaign }: AuctionCatalogProps) {
       status: "PUBLISHED",
     },
     include: {
-      auction: { select: { timezone: true } },
+      auction: { select: { timezone: true, opensAt: true, closesAt: true } },
       category: { select: { name: true } },
       bids: { orderBy: { amount: "desc" }, take: 1 },
     },

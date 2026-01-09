@@ -25,16 +25,17 @@ type ApiTokenUpdatePayload = {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { tokenId: string } },
+  { params }: { params: Promise<{ tokenId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
+  const { tokenId } = await params;
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
   const token = await prisma.apiToken.findUnique({
-    where: { id: params.tokenId },
+    where: { id: tokenId },
   });
 
   if (!token) {
@@ -46,9 +47,10 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { tokenId: string } },
+  { params }: { params: Promise<{ tokenId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
+  const { tokenId } = await params;
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
@@ -77,7 +79,7 @@ export async function PATCH(
   }
 
   const token = await prisma.apiToken.update({
-    where: { id: params.tokenId },
+    where: { id: tokenId },
     data,
   });
 
@@ -86,16 +88,17 @@ export async function PATCH(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { tokenId: string } },
+  { params }: { params: Promise<{ tokenId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
+  const { tokenId } = await params;
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
   await prisma.apiToken.delete({
-    where: { id: params.tokenId },
+    where: { id: tokenId },
   });
 
   return NextResponse.json({ ok: true });

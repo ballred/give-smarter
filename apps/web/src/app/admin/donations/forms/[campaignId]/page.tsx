@@ -50,8 +50,8 @@ export default async function DonationFormDetailPage({
     notFound();
   }
 
-  const module = campaign.modules[0];
-  const config = module?.config as Record<string, unknown> | undefined;
+  const donationModule = campaign.modules[0];
+  const config = donationModule?.config as Record<string, unknown> | undefined;
   const tiers = Array.isArray(config?.tiers)
     ? (config?.tiers as DonationTier[])
     : [];

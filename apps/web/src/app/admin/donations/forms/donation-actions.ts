@@ -84,8 +84,8 @@ export async function updateDonationConfig(
       },
     },
     create: {
-      orgId: campaign.orgId,
-      campaignId,
+      organization: { connect: { id: campaign.orgId } },
+      campaign: { connect: { id: campaignId } },
       type: "DONATIONS",
       isEnabled: true,
       config,

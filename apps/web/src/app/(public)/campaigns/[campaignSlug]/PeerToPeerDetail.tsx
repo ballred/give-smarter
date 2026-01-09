@@ -28,16 +28,16 @@ function progressPercent(total: number, goal?: number | null) {
   return Math.min(100, Math.round((total / goal) * 100));
 }
 
-function resolveOrigin() {
-  const headerList = headers();
+async function resolveOrigin() {
+  const headerList = await headers();
   const host = headerList.get("host");
   if (!host) return null;
   const proto = headerList.get("x-forwarded-proto") ?? "https";
   return `${proto}://${host}`;
 }
 
-function buildShareUrl(path: string) {
-  const origin = resolveOrigin();
+async function buildShareUrl(path: string) {
+  const origin = await resolveOrigin();
   return origin ? `${origin}${path}` : path;
 }
 
@@ -129,7 +129,7 @@ export async function PeerFundraiserDetail({
   const currency = campaign.currency ?? "USD";
   const goal = fundraiser.goalAmount ?? null;
   const percent = progressPercent(totalRaised, goal);
-  const shareUrl = buildShareUrl(
+  const shareUrl = await buildShareUrl(
     `/campaigns/${campaign.slug}/peer-to-peer/fundraisers/${fundraiser.slug}`,
   );
 
@@ -246,7 +246,7 @@ export async function PeerTeamDetail({
   const currency = campaign.currency ?? "USD";
   const goal = team.goalAmount ?? null;
   const percent = progressPercent(totalRaised, goal);
-  const shareUrl = buildShareUrl(
+  const shareUrl = await buildShareUrl(
     `/campaigns/${campaign.slug}/peer-to-peer/teams/${team.slug}`,
   );
 
@@ -357,7 +357,7 @@ export async function PeerClassroomDetail({
   const currency = campaign.currency ?? "USD";
   const goal = classroom.goalAmount ?? null;
   const percent = progressPercent(totalRaised, goal);
-  const shareUrl = buildShareUrl(
+  const shareUrl = await buildShareUrl(
     `/campaigns/${campaign.slug}/peer-to-peer/classrooms/${classroom.slug}`,
   );
 

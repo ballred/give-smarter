@@ -13,16 +13,18 @@ type VotingContestUpdatePayload = {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { contestId: string } },
+  { params }: { params: Promise<{ contestId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { contestId } = await params;
+
   const contest = await prisma.votingContest.findUnique({
-    where: { id: params.contestId },
+    where: { id: contestId },
   });
 
   if (!contest) {
@@ -34,13 +36,15 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { contestId: string } },
+  { params }: { params: Promise<{ contestId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { contestId } = await params;
 
   let body: VotingContestUpdatePayload;
 
@@ -62,7 +66,7 @@ export async function PATCH(
   if (body.status !== undefined) data.status = body.status;
 
   const contest = await prisma.votingContest.update({
-    where: { id: params.contestId },
+    where: { id: contestId },
     data,
   });
 
@@ -71,15 +75,17 @@ export async function PATCH(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { contestId: string } },
+  { params }: { params: Promise<{ contestId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  await prisma.votingContest.delete({ where: { id: params.contestId } });
+  const { contestId } = await params;
+
+  await prisma.votingContest.delete({ where: { id: contestId } });
 
   return NextResponse.json({ ok: true });
 }

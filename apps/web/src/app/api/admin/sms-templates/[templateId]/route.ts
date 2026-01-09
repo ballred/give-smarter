@@ -14,16 +14,18 @@ type SmsTemplateUpdatePayload = {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { templateId: string } },
+  { params }: { params: Promise<{ templateId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { templateId } = await params;
+
   const template = await prisma.smsTemplate.findUnique({
-    where: { id: params.templateId },
+    where: { id: templateId },
   });
 
   if (!template) {
@@ -35,13 +37,15 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { templateId: string } },
+  { params }: { params: Promise<{ templateId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { templateId } = await params;
 
   let body: SmsTemplateUpdatePayload;
 
@@ -63,7 +67,7 @@ export async function PATCH(
   }
 
   const template = await prisma.smsTemplate.update({
-    where: { id: params.templateId },
+    where: { id: templateId },
     data,
   });
 
@@ -72,16 +76,18 @@ export async function PATCH(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { templateId: string } },
+  { params }: { params: Promise<{ templateId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { templateId } = await params;
+
   await prisma.smsTemplate.delete({
-    where: { id: params.templateId },
+    where: { id: templateId },
   });
 
   return NextResponse.json({ ok: true });

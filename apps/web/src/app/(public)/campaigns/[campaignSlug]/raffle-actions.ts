@@ -16,8 +16,8 @@ function parseQuantity(value: FormDataEntryValue | null) {
   return Number.isFinite(num) && num > 0 ? Math.floor(num) : null;
 }
 
-function resolveOrigin() {
-  const headerList = headers();
+async function resolveOrigin() {
+  const headerList = await headers();
   const host = headerList.get("host");
   if (!host) return null;
   const proto = headerList.get("x-forwarded-proto") ?? "https";
@@ -134,7 +134,7 @@ export async function createRaffleCheckout(formData: FormData) {
       coverFeesAmount: 0,
       lineItems: {
         create: normalized.items.map((item) => ({
-          orgId: campaign.orgId,
+          organization: { connect: { id: campaign.orgId } },
           type: item.type,
           sourceId: item.sourceId,
           description: item.description,
@@ -169,7 +169,7 @@ export async function createRaffleCheckout(formData: FormData) {
     },
   });
 
-  const origin = resolveOrigin();
+  const origin = await resolveOrigin();
   if (!origin) {
     throw new Error("Missing request origin.");
   }

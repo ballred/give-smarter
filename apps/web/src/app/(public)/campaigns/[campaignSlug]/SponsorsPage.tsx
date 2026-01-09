@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { prisma } from "@/lib/db";
 
 type SponsorsPageProps = {
@@ -40,10 +41,13 @@ export async function SponsorsPage({ campaignId }: SponsorsPageProps) {
                 className="flex flex-col items-center justify-center gap-3 rounded-3xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-6 py-6 text-center text-sm text-[color:var(--campaign-ink)] transition hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(18,15,12,0.12)]"
               >
                 {sponsor.logoUrl ? (
-                  <img
+                  <Image
                     src={sponsor.logoUrl}
                     alt={sponsor.name}
+                    width={120}
+                    height={48}
                     className="h-12 w-auto object-contain"
+                    unoptimized
                   />
                 ) : (
                   <div className="text-xs uppercase tracking-[0.3em] text-[color:var(--campaign-ink-muted)]">

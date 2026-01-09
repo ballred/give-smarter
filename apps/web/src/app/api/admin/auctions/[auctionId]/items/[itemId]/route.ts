@@ -24,16 +24,18 @@ type AuctionItemUpdatePayload = {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { auctionId: string; itemId: string } },
+  { params }: { params: Promise<{ auctionId: string; itemId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { auctionId, itemId } = await params;
+
   const item = await prisma.auctionItem.findFirst({
-    where: { id: params.itemId, auctionId: params.auctionId },
+    where: { id: itemId, auctionId },
   });
 
   if (!item) {
@@ -45,13 +47,15 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { auctionId: string; itemId: string } },
+  { params }: { params: Promise<{ auctionId: string; itemId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { itemId } = await params;
 
   let body: AuctionItemUpdatePayload;
 
@@ -111,7 +115,7 @@ export async function PATCH(
   }
 
   const item = await prisma.auctionItem.update({
-    where: { id: params.itemId },
+    where: { id: itemId },
     data,
   });
 
@@ -120,16 +124,18 @@ export async function PATCH(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { auctionId: string; itemId: string } },
+  { params }: { params: Promise<{ auctionId: string; itemId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { itemId } = await params;
+
   await prisma.auctionItem.delete({
-    where: { id: params.itemId },
+    where: { id: itemId },
   });
 
   return NextResponse.json({ ok: true });

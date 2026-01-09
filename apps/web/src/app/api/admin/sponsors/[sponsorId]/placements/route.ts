@@ -13,16 +13,18 @@ type PlacementPayload = {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { sponsorId: string } },
+  { params }: { params: Promise<{ sponsorId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { sponsorId } = await params;
+
   const placements = await prisma.sponsorPlacement.findMany({
-    where: { sponsorId: params.sponsorId },
+    where: { sponsorId },
     orderBy: { sortOrder: "asc" },
   });
 
@@ -31,13 +33,15 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: { sponsorId: string } },
+  { params }: { params: Promise<{ sponsorId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { sponsorId } = await params;
 
   let body: PlacementPayload;
 
@@ -52,7 +56,7 @@ export async function POST(
   }
 
   const sponsor = await prisma.sponsor.findUnique({
-    where: { id: params.sponsorId },
+    where: { id: sponsorId },
     select: { orgId: true },
   });
 
@@ -72,7 +76,7 @@ export async function POST(
   const placement = await prisma.sponsorPlacement.create({
     data: {
       orgId: sponsor.orgId,
-      sponsorId: params.sponsorId,
+      sponsorId,
       campaignId: body.campaignId,
       placementType: body.placementType,
       placementRefId: body.placementRefId,

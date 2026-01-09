@@ -12,16 +12,18 @@ type HouseholdMemberPayload = {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { householdId: string } },
+  { params }: { params: Promise<{ householdId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { householdId } = await params;
+
   const members = await prisma.householdMembership.findMany({
-    where: { householdId: params.householdId },
+    where: { householdId },
     orderBy: { createdAt: "desc" },
   });
 
@@ -30,13 +32,15 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: { householdId: string } },
+  { params }: { params: Promise<{ householdId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { householdId } = await params;
 
   let body: HouseholdMemberPayload;
 
@@ -51,7 +55,7 @@ export async function POST(
   }
 
   const household = await prisma.household.findUnique({
-    where: { id: params.householdId },
+    where: { id: householdId },
     select: { id: true },
   });
 
@@ -62,7 +66,7 @@ export async function POST(
   const membership = await prisma.householdMembership.upsert({
     where: {
       householdId_donorId: {
-        householdId: params.householdId,
+        householdId,
         donorId: body.donorId,
       },
     },
@@ -71,7 +75,7 @@ export async function POST(
       relationship: body.relationship ?? null,
     },
     create: {
-      householdId: params.householdId,
+      householdId,
       donorId: body.donorId,
       role: body.role ?? "MEMBER",
       relationship: body.relationship ?? null,

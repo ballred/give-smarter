@@ -60,16 +60,18 @@ function parseDate(value?: string | null) {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { campaignId: string } },
+  { params }: { params: Promise<{ campaignId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { campaignId } = await params;
+
   const campaign = await prisma.campaign.findUnique({
-    where: { id: params.campaignId },
+    where: { id: campaignId },
     include: { modules: true },
   });
 
@@ -82,13 +84,15 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { campaignId: string } },
+  { params }: { params: Promise<{ campaignId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { campaignId } = await params;
 
   let body: CampaignUpdatePayload;
 
@@ -152,7 +156,7 @@ export async function PATCH(
   }
 
   const campaign = await prisma.campaign.findUnique({
-    where: { id: params.campaignId },
+    where: { id: campaignId },
     select: { orgId: true },
   });
 
@@ -161,14 +165,14 @@ export async function PATCH(
   }
 
   const updated = await prisma.campaign.update({
-    where: { id: params.campaignId },
+    where: { id: campaignId },
     data,
   });
 
   if (Array.isArray(body.modules)) {
     const desired = new Set(body.modules.filter((module) => MODULE_TYPES.has(module)));
     const existing = await prisma.campaignModule.findMany({
-      where: { campaignId: params.campaignId },
+      where: { campaignId },
       select: { id: true, type: true },
     });
 
@@ -183,7 +187,7 @@ export async function PATCH(
       await prisma.campaignModule.createMany({
         data: toCreate.map((module) => ({
           orgId: campaign.orgId,
-          campaignId: params.campaignId,
+          campaignId,
           type: module as
             | "DONATIONS"
             | "TICKETING"
@@ -213,16 +217,18 @@ export async function PATCH(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { campaignId: string } },
+  { params }: { params: Promise<{ campaignId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { campaignId } = await params;
+
   await prisma.campaign.delete({
-    where: { id: params.campaignId },
+    where: { id: campaignId },
   });
 
   return NextResponse.json({ ok: true });

@@ -23,16 +23,18 @@ function normalizeSlug(input: string) {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { fundraiserId: string } },
+  { params }: { params: Promise<{ fundraiserId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { fundraiserId } = await params;
+
   const fundraiser = await prisma.peerFundraiser.findUnique({
-    where: { id: params.fundraiserId },
+    where: { id: fundraiserId },
   });
 
   if (!fundraiser) {
@@ -44,13 +46,15 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { fundraiserId: string } },
+  { params }: { params: Promise<{ fundraiserId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { fundraiserId } = await params;
 
   let body: PeerFundraiserUpdate;
 
@@ -61,7 +65,7 @@ export async function PUT(
   }
 
   const existing = await prisma.peerFundraiser.findUnique({
-    where: { id: params.fundraiserId },
+    where: { id: fundraiserId },
     select: { campaignId: true },
   });
 
@@ -99,7 +103,7 @@ export async function PUT(
   }
 
   const fundraiser = await prisma.peerFundraiser.update({
-    where: { id: params.fundraiserId },
+    where: { id: fundraiserId },
     data: {
       name: data.name,
       slug: data.slug,
@@ -116,16 +120,18 @@ export async function PUT(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { fundraiserId: string } },
+  { params }: { params: Promise<{ fundraiserId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { fundraiserId } = await params;
+
   await prisma.peerFundraiser.delete({
-    where: { id: params.fundraiserId },
+    where: { id: fundraiserId },
   });
 
   return NextResponse.json({ ok: true });

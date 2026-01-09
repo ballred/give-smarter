@@ -1,51 +1,8 @@
 "use server";
 
-import {
-  CommunicationCategory,
-  CommunicationChannel,
-} from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { getPortalDonors } from "../portal-data";
-
-export const preferenceOptions = [
-  {
-    channel: CommunicationChannel.EMAIL,
-    category: CommunicationCategory.TRANSACTIONAL,
-    label: "Email receipts and confirmations",
-  },
-  {
-    channel: CommunicationChannel.EMAIL,
-    category: CommunicationCategory.MARKETING,
-    label: "Email campaign updates",
-  },
-  {
-    channel: CommunicationChannel.EMAIL,
-    category: CommunicationCategory.OUTBID_ALERTS,
-    label: "Email outbid alerts",
-  },
-  {
-    channel: CommunicationChannel.SMS,
-    category: CommunicationCategory.TRANSACTIONAL,
-    label: "SMS receipts and confirmations",
-  },
-  {
-    channel: CommunicationChannel.SMS,
-    category: CommunicationCategory.MARKETING,
-    label: "SMS campaign updates",
-  },
-  {
-    channel: CommunicationChannel.SMS,
-    category: CommunicationCategory.OUTBID_ALERTS,
-    label: "SMS outbid alerts",
-  },
-];
-
-export function preferenceKey(
-  channel: CommunicationChannel,
-  category: CommunicationCategory,
-) {
-  return `pref_${channel}_${category}`;
-}
+import { preferenceKey, preferenceOptions } from "./profile-utils";
 
 export async function updateDonorProfile(formData: FormData) {
   const donorId = String(formData.get("donorId") ?? "").trim();
@@ -84,8 +41,8 @@ export async function updateDonorProfile(formData: FormData) {
         },
         update: { optedIn: formData.get(preferenceKey(pref.channel, pref.category)) === "on" },
         create: {
-          orgId: donor.orgId,
-          donorId: donor.id,
+          organization: { connect: { id: donor.orgId } },
+          donor: { connect: { id: donor.id } },
           channel: pref.channel,
           category: pref.category,
           optedIn: formData.get(preferenceKey(pref.channel, pref.category)) === "on",

@@ -7,12 +7,12 @@ type AuditInput = {
   action: string;
   targetType: string;
   targetId: string;
-  beforeData?: unknown;
-  afterData?: unknown;
+  beforeData?: object;
+  afterData?: object;
 };
 
-function resolveIpAddress() {
-  const headerList = headers();
+async function resolveIpAddress() {
+  const headerList = await headers();
   const forwardedFor = headerList.get("x-forwarded-for");
   if (forwardedFor) {
     return forwardedFor.split(",")[0]?.trim() ?? null;
@@ -28,15 +28,15 @@ export async function logAuditEntry({
   beforeData,
   afterData,
 }: AuditInput) {
-  const { userId } = auth();
+  const { userId } = await auth();
   const actor = userId
     ? await prisma.user.findUnique({
         where: { clerkUserId: userId },
         select: { id: true },
       })
     : null;
-  const headerList = headers();
-  const ipAddress = resolveIpAddress();
+  const headerList = await headers();
+  const ipAddress = await resolveIpAddress();
   const userAgent = headerList.get("user-agent");
 
   return prisma.auditLogEntry.create({

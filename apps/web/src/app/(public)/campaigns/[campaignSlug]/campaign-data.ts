@@ -95,8 +95,8 @@ function mapBlock(block: PageBlockRecord): CampaignBlock | null {
   return {
     id: block.id,
     type: blockType,
-    data: block.data as CampaignBlock["data"],
-  };
+    data: block.data,
+  } as CampaignBlock;
 }
 
 function mapPages(pages: CampaignRecord["pages"]): CampaignPage[] {

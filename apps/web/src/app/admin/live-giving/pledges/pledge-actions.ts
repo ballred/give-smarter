@@ -100,7 +100,7 @@ export async function createPaddleRaisePledge(formData: FormData) {
     lastName: lastName || undefined,
   });
 
-  const { userId } = auth();
+  const { userId } = await auth();
   const enteredBy = userId
     ? await prisma.user.findUnique({
         where: { clerkUserId: userId },

@@ -19,8 +19,8 @@ function parseAmount(value: FormDataEntryValue | null) {
   return Number.isFinite(num) ? num : null;
 }
 
-function resolveOrigin() {
-  const headerList = headers();
+async function resolveOrigin() {
+  const headerList = await headers();
   const host = headerList.get("host");
   if (!host) return null;
   const proto = headerList.get("x-forwarded-proto") ?? "https";
@@ -289,7 +289,7 @@ export async function createDonationCheckout(formData: FormData) {
       coverFeesAmount,
       lineItems: {
         create: normalized.items.map((item) => ({
-          orgId: campaign.orgId,
+          organization: { connect: { id: campaign.orgId } },
           type: item.type,
           description: item.description,
           quantity: item.quantity,
@@ -297,7 +297,7 @@ export async function createDonationCheckout(formData: FormData) {
           totalAmount: item.totalAmount,
           currency: item.currency,
           metadata: Object.keys(metadata).length ? metadata : undefined,
-          })),
+        })),
       },
     },
     include: { lineItems: true },
@@ -334,7 +334,7 @@ export async function createDonationCheckout(formData: FormData) {
     },
   });
 
-  const origin = resolveOrigin();
+  const origin = await resolveOrigin();
   if (!origin) {
     throw new Error("Missing request origin.");
   }

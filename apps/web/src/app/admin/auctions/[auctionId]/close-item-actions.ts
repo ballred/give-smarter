@@ -10,8 +10,8 @@ import { logAuditEntry } from "@/lib/audit";
 import { createOrderNumber, normalizeLineItems } from "@/lib/orders";
 import { getStripeClient } from "@/lib/stripe";
 
-function resolveOrigin() {
-  const headerList = headers();
+async function resolveOrigin() {
+  const headerList = await headers();
   const host = headerList.get("host");
   if (!host) return null;
   const proto = headerList.get("x-forwarded-proto") ?? "https";
@@ -100,7 +100,7 @@ export async function closeAuctionItem(itemId: string) {
       coverFeesAmount: 0,
       lineItems: {
         create: normalized.items.map((lineItem) => ({
-          orgId: item.orgId,
+          organization: { connect: { id: item.orgId } },
           type: lineItem.type,
           sourceId: lineItem.sourceId,
           description: lineItem.description,
@@ -111,7 +111,7 @@ export async function closeAuctionItem(itemId: string) {
           fmvAmount: lineItem.fmvAmount,
           benefitAmount: lineItem.benefitAmount,
           taxDeductibleAmount: lineItem.taxDeductibleAmount,
-          metadata: lineItem.metadata,
+          metadata: lineItem.metadata as object | undefined,
         })),
       },
     },
@@ -143,7 +143,7 @@ export async function closeAuctionItem(itemId: string) {
     afterData: { status: "CLOSED", orderId: order.id },
   });
 
-  const origin = resolveOrigin();
+  const origin = await resolveOrigin();
   if (!origin) {
     throw new Error("Missing request origin.");
   }

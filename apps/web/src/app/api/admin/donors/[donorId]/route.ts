@@ -15,16 +15,18 @@ type DonorUpdatePayload = {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { donorId: string } },
+  { params }: { params: Promise<{ donorId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { donorId } = await params;
+
   const donor = await prisma.donor.findUnique({
-    where: { id: params.donorId },
+    where: { id: donorId },
   });
 
   if (!donor) {
@@ -36,13 +38,15 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { donorId: string } },
+  { params }: { params: Promise<{ donorId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { donorId } = await params;
 
   let body: DonorUpdatePayload;
 
@@ -62,7 +66,7 @@ export async function PATCH(
   if (body.primaryPhone !== undefined) data.primaryPhone = body.primaryPhone;
 
   const donor = await prisma.donor.update({
-    where: { id: params.donorId },
+    where: { id: donorId },
     data,
   });
 
@@ -71,16 +75,18 @@ export async function PATCH(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { donorId: string } },
+  { params }: { params: Promise<{ donorId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { donorId } = await params;
+
   await prisma.donor.delete({
-    where: { id: params.donorId },
+    where: { id: donorId },
   });
 
   return NextResponse.json({ ok: true });

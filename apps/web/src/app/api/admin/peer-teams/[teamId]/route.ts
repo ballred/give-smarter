@@ -20,16 +20,18 @@ function normalizeSlug(input: string) {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { teamId: string } },
+  { params }: { params: Promise<{ teamId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { teamId } = await params;
+
   const team = await prisma.peerFundraisingTeam.findUnique({
-    where: { id: params.teamId },
+    where: { id: teamId },
   });
 
   if (!team) {
@@ -41,13 +43,15 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { teamId: string } },
+  { params }: { params: Promise<{ teamId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { teamId } = await params;
 
   let body: PeerTeamUpdate;
 
@@ -67,7 +71,7 @@ export async function PUT(
   }
 
   const team = await prisma.peerFundraisingTeam.update({
-    where: { id: params.teamId },
+    where: { id: teamId },
     data: {
       name: data.name,
       slug: data.slug,
@@ -81,16 +85,18 @@ export async function PUT(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { teamId: string } },
+  { params }: { params: Promise<{ teamId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { teamId } = await params;
+
   await prisma.peerFundraisingTeam.delete({
-    where: { id: params.teamId },
+    where: { id: teamId },
   });
 
   return NextResponse.json({ ok: true });

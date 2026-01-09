@@ -13,16 +13,18 @@ type AuctionCategoryUpdatePayload = {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { auctionId: string; categoryId: string } },
+  { params }: { params: Promise<{ auctionId: string; categoryId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { auctionId, categoryId } = await params;
+
   const category = await prisma.auctionCategory.findFirst({
-    where: { id: params.categoryId, auctionId: params.auctionId },
+    where: { id: categoryId, auctionId },
   });
 
   if (!category) {
@@ -34,13 +36,15 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { auctionId: string; categoryId: string } },
+  { params }: { params: Promise<{ auctionId: string; categoryId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { categoryId } = await params;
 
   let body: AuctionCategoryUpdatePayload;
 
@@ -58,7 +62,7 @@ export async function PATCH(
   if (body.parentId !== undefined) data.parentId = body.parentId;
 
   const category = await prisma.auctionCategory.update({
-    where: { id: params.categoryId },
+    where: { id: categoryId },
     data,
   });
 
@@ -67,16 +71,18 @@ export async function PATCH(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { auctionId: string; categoryId: string } },
+  { params }: { params: Promise<{ auctionId: string; categoryId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { categoryId } = await params;
+
   await prisma.auctionCategory.delete({
-    where: { id: params.categoryId },
+    where: { id: categoryId },
   });
 
   return NextResponse.json({ ok: true });

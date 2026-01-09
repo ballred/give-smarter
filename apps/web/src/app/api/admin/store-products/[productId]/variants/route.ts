@@ -14,16 +14,18 @@ type VariantPayload = {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { productId: string } },
+  { params }: { params: Promise<{ productId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { productId } = await params;
+
   const variants = await prisma.storeVariant.findMany({
-    where: { productId: params.productId },
+    where: { productId },
     orderBy: { createdAt: "desc" },
   });
 
@@ -32,13 +34,15 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: { productId: string } },
+  { params }: { params: Promise<{ productId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { productId } = await params;
 
   let body: VariantPayload;
 
@@ -53,7 +57,7 @@ export async function POST(
   }
 
   const product = await prisma.storeProduct.findUnique({
-    where: { id: params.productId },
+    where: { id: productId },
     select: { orgId: true },
   });
 
@@ -71,7 +75,7 @@ export async function POST(
   const variant = await prisma.storeVariant.create({
     data: {
       orgId: product.orgId,
-      productId: params.productId,
+      productId,
       name: body.name,
       sku: body.sku ?? null,
       price: priceCents !== null && priceCents > 0 ? priceCents : null,

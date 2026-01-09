@@ -6,8 +6,8 @@ export type SessionUser = {
   roles: RoleKey[];
 };
 
-export function getSessionUser(): SessionUser | null {
-  const { userId } = auth();
+export async function getSessionUser(): Promise<SessionUser | null> {
+  const { userId } = await auth();
 
   if (!userId) {
     return null;

@@ -151,58 +151,109 @@ enum HouseholdMembershipRole {
 }
 
 model Organization {
-  id              String       @id @default(cuid())
+  id              String    @id @default(cuid())
   legalName       String
   publicName      String
-  einTaxId        String?      @map("ein_tax_id")
+  einTaxId        String?   @map("ein_tax_id")
   timezone        String
-  logoUrl         String?      @map("logo_url")
-  defaultCurrency String       @default("USD") @map("default_currency")
-  createdAt       DateTime     @default(now()) @map("created_at")
-  updatedAt       DateTime     @updatedAt @map("updated_at")
-  deletedAt       DateTime?    @map("deleted_at")
+  logoUrl         String?   @map("logo_url")
+  defaultCurrency String    @default("USD") @map("default_currency")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  deletedAt       DateTime? @map("deleted_at")
 
-  domains                  OrgDomain[]
-  brandTheme               OrgBrandTheme?
-  users                    User[]
-  roles                    Role[]
-  donors                   Donor[]
-  campaigns                Campaign[]
-  ledgerAccounts           LedgerAccount[]
-  ledgerTransactions       LedgerTransaction[]
-  ledgerEntries            LedgerEntry[]
-  carts                    Cart[]
-  orders                   Order[]
-  payments                 Payment[]
-  refunds                  Refund[]
-  payouts                  Payout[]
-  receipts                 Receipt[]
-  sponsors                 Sponsor[]
-  auditLogEntries          AuditLogEntry[]
-  communicationPreferences CommunicationPreference[]
-  customFields             CustomField[]
-  donorTags                DonorTag[]
-  households               Household[]
-  peerFundraisers          PeerFundraiser[]
-  peerFundraisingTeams     PeerFundraisingTeam[]
-  peerFundraisingClassrooms PeerFundraisingClassroom[]
+  domains                     OrgDomain[]
+  brandTheme                  OrgBrandTheme?
+  users                       User[]
+  roles                       Role[]
+  donors                      Donor[]
+  campaigns                   Campaign[]
+  ledgerAccounts              LedgerAccount[]
+  ledgerTransactions          LedgerTransaction[]
+  ledgerEntries               LedgerEntry[]
+  carts                       Cart[]
+  orders                      Order[]
+  payments                    Payment[]
+  refunds                     Refund[]
+  payouts                     Payout[]
+  receipts                    Receipt[]
+  sponsors                    Sponsor[]
+  auditLogEntries             AuditLogEntry[]
+  communicationPreferences    CommunicationPreference[]
+  customFields                CustomField[]
+  donorTags                   DonorTag[]
+  households                  Household[]
+  peerFundraisers             PeerFundraiser[]
+  peerFundraisingTeams        PeerFundraisingTeam[]
+  peerFundraisingClassrooms   PeerFundraisingClassroom[]
   peerFundraisingAttributions PeerFundraisingAttribution[]
-  volunteerShifts          VolunteerShift[]
-  volunteerSignups         VolunteerSignup[]
+  volunteerShifts             VolunteerShift[]
+  volunteerSignups            VolunteerSignup[]
+  donorEmails                 DonorEmail[]
+  donorPhones                 DonorPhone[]
+  donorAddresses              DonorAddress[]
+  campaignPages               CampaignPage[]
+  pageBlocks                  PageBlock[]
+  campaignModules             CampaignModule[]
+  sponsorPlacements           SponsorPlacement[]
+  cartItems                   CartItem[]
+  orderLineItems              OrderLineItem[]
+  ticketTypes                 TicketType[]
+  ticketAddOns                TicketAddOn[]
+  promoCodes                  PromoCode[]
+  ticketOrders                TicketOrder[]
+  attendees                   Attendee[]
+  attendeeAnswers             AttendeeAnswer[]
+  tables                      Table[]
+  seats                       Seat[]
+  checkins                    Checkin[]
+  auctions                    Auction[]
+  auctionCategories           AuctionCategory[]
+  auctionItems                AuctionItem[]
+  auctionItemMedia            AuctionItemMedia[]
+  procurementDonors           ProcurementDonor[]
+  procurementSubmissions      ProcurementSubmission[]
+  bids                        Bid[]
+  watchlists                  Watchlist[]
+  invoices                    Invoice[]
+  invoiceItems                InvoiceItem[]
+  fulfillmentRecords          FulfillmentRecord[]
+  paddleRaiseLevels           PaddleRaiseLevel[]
+  paddleRaisePledges          PaddleRaisePledge[]
+  liveDisplayScenes           LiveDisplayScene[]
+  raffles                     Raffle[]
+  raffleTickets               RaffleTicket[]
+  raffleDraws                 RaffleDraw[]
+  votingContests              VotingContest[]
+  voteCandidates              VoteCandidate[]
+  votes                       Vote[]
+  storeProducts               StoreProduct[]
+  storeVariants               StoreVariant[]
+  storeOrders                 StoreOrder[]
+  emailTemplates              EmailTemplate[]
+  smsTemplates                SmsTemplate[]
+  messageSends                MessageSend[]
+  messageEvents               MessageEvent[]
+  keywordRoutes               KeywordRoute[]
+  apiTokens                   ApiToken[]
+  webhookEndpoints            WebhookEndpoint[]
+  webhookDeliveries           WebhookDelivery[]
+  crmMappings                 CrmMapping[]
+  integrationSyncJobs         IntegrationSyncJob[]
 
   @@map("organizations")
 }
 
 model OrgDomain {
-  id         String         @id @default(cuid())
-  orgId      String         @map("org_id")
+  id         String          @id @default(cuid())
+  orgId      String          @map("org_id")
   domain     String
-  isPrimary  Boolean        @default(false) @map("is_primary")
-  isCustom   Boolean        @default(false) @map("is_custom")
+  isPrimary  Boolean         @default(false) @map("is_primary")
+  isCustom   Boolean         @default(false) @map("is_custom")
   status     OrgDomainStatus @default(PENDING)
-  verifiedAt DateTime?      @map("verified_at")
-  createdAt  DateTime       @default(now()) @map("created_at")
-  updatedAt  DateTime       @updatedAt @map("updated_at")
+  verifiedAt DateTime?       @map("verified_at")
+  createdAt  DateTime        @default(now()) @map("created_at")
+  updatedAt  DateTime        @updatedAt @map("updated_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
 
@@ -226,19 +277,21 @@ model OrgBrandTheme {
 }
 
 model User {
-  id           String     @id @default(cuid())
-  orgId        String     @map("org_id")
-  clerkUserId  String     @unique @map("clerk_user_id")
-  email        String
-  displayName  String?    @map("display_name")
-  status       UserStatus @default(INVITED)
-  lastLoginAt  DateTime?  @map("last_login_at")
-  createdAt    DateTime   @default(now()) @map("created_at")
-  updatedAt    DateTime   @updatedAt @map("updated_at")
+  id          String     @id @default(cuid())
+  orgId       String     @map("org_id")
+  clerkUserId String     @unique @map("clerk_user_id")
+  email       String
+  displayName String?    @map("display_name")
+  status      UserStatus @default(INVITED)
+  lastLoginAt DateTime?  @map("last_login_at")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  roleAssignments UserRoleAssignment[]
-  auditLogEntries AuditLogEntry[] @relation("AuditLogActor")
+  organization       Organization         @relation(fields: [orgId], references: [id])
+  roleAssignments    UserRoleAssignment[]
+  auditLogEntries    AuditLogEntry[]      @relation("AuditLogActor")
+  checkins           Checkin[]            @relation("CheckinCreator")
+  paddleRaisePledges PaddleRaisePledge[]  @relation("PaddleRaisePledgeEnteredBy")
 
   @@index([orgId, status])
   @@map("users")
@@ -254,7 +307,7 @@ model Role {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
+  organization Organization         @relation(fields: [orgId], references: [id])
   assignments  UserRoleAssignment[]
 
   @@unique([orgId, key])
@@ -288,37 +341,47 @@ model AuditLogEntry {
   createdAt   DateTime @default(now()) @map("created_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  actor         User?       @relation("AuditLogActor", fields: [actorUserId], references: [id])
+  actor        User?        @relation("AuditLogActor", fields: [actorUserId], references: [id])
 
   @@index([orgId, createdAt])
   @@map("audit_log_entries")
 }
 
 model Donor {
-  id            String   @id @default(cuid())
-  orgId         String   @map("org_id")
-  clerkUserId   String?  @map("clerk_user_id")
-  displayName   String?  @map("display_name")
-  firstName     String?  @map("first_name")
-  lastName      String?  @map("last_name")
-  preferredName String?  @map("preferred_name")
-  primaryEmail  String?  @map("primary_email")
-  primaryPhone  String?  @map("primary_phone")
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
+  id            String    @id @default(cuid())
+  orgId         String    @map("org_id")
+  clerkUserId   String?   @map("clerk_user_id")
+  displayName   String?   @map("display_name")
+  firstName     String?   @map("first_name")
+  lastName      String?   @map("last_name")
+  preferredName String?   @map("preferred_name")
+  primaryEmail  String?   @map("primary_email")
+  primaryPhone  String?   @map("primary_phone")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
   deletedAt     DateTime? @map("deleted_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  emails        DonorEmail[]
-  phones        DonorPhone[]
-  addresses     DonorAddress[]
-  tagAssignments DonorTagAssignment[]
-  customFieldValues DonorCustomFieldValue[]
-  householdMemberships HouseholdMembership[]
+  organization             Organization              @relation(fields: [orgId], references: [id])
+  emails                   DonorEmail[]
+  phones                   DonorPhone[]
+  addresses                DonorAddress[]
+  tagAssignments           DonorTagAssignment[]
+  customFieldValues        DonorCustomFieldValue[]
+  householdMemberships     HouseholdMembership[]
   communicationPreferences CommunicationPreference[]
-  carts         Cart[]
-  orders        Order[]
-  receipts      Receipt[]
+  carts                    Cart[]
+  orders                   Order[]
+  receipts                 Receipt[]
+  attendees                Attendee[]
+  bids                     Bid[]
+  watchlists               Watchlist[]
+  invoices                 Invoice[]
+  paddleRaisePledges       PaddleRaisePledge[]
+  raffleTickets            RaffleTicket[]
+  raffleDraws              RaffleDraw[]
+  votes                    Vote[]
+  peerFundraisers          PeerFundraiser[]
+  volunteerSignups         VolunteerSignup[]
 
   @@index([orgId, primaryEmail])
   @@index([orgId, primaryPhone])
@@ -326,16 +389,16 @@ model Donor {
 }
 
 model DonorEmail {
-  id        String   @id @default(cuid())
-  orgId     String   @map("org_id")
-  donorId   String   @map("donor_id")
-  email     String
-  isPrimary Boolean  @default(false) @map("is_primary")
-  isVerified Boolean @default(false) @map("is_verified")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id         String   @id @default(cuid())
+  orgId      String   @map("org_id")
+  donorId    String   @map("donor_id")
+  email      String
+  isPrimary  Boolean  @default(false) @map("is_primary")
+  isVerified Boolean  @default(false) @map("is_verified")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
 
-  donor Donor @relation(fields: [donorId], references: [id])
+  donor        Donor        @relation(fields: [donorId], references: [id])
   organization Organization @relation(fields: [orgId], references: [id])
 
   @@unique([orgId, email])
@@ -344,16 +407,16 @@ model DonorEmail {
 }
 
 model DonorPhone {
-  id        String   @id @default(cuid())
-  orgId     String   @map("org_id")
-  donorId   String   @map("donor_id")
-  phoneE164 String   @map("phone_e164")
-  isPrimary Boolean  @default(false) @map("is_primary")
-  isVerified Boolean @default(false) @map("is_verified")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id         String   @id @default(cuid())
+  orgId      String   @map("org_id")
+  donorId    String   @map("donor_id")
+  phoneE164  String   @map("phone_e164")
+  isPrimary  Boolean  @default(false) @map("is_primary")
+  isVerified Boolean  @default(false) @map("is_verified")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
 
-  donor Donor @relation(fields: [donorId], references: [id])
+  donor        Donor        @relation(fields: [donorId], references: [id])
   organization Organization @relation(fields: [orgId], references: [id])
 
   @@unique([orgId, phoneE164])
@@ -375,7 +438,7 @@ model DonorAddress {
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 
-  donor Donor @relation(fields: [donorId], references: [id])
+  donor        Donor        @relation(fields: [donorId], references: [id])
   organization Organization @relation(fields: [orgId], references: [id])
 
   @@index([donorId])
@@ -389,20 +452,20 @@ model Household {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  memberships HouseholdMembership[]
+  organization Organization          @relation(fields: [orgId], references: [id])
+  memberships  HouseholdMembership[]
 
   @@index([orgId, name])
   @@map("households")
 }
 
 model HouseholdMembership {
-  id            String                   @id @default(cuid())
-  householdId   String                   @map("household_id")
-  donorId       String                   @map("donor_id")
-  role          HouseholdMembershipRole  @default(MEMBER)
-  relationship  String?
-  createdAt     DateTime                 @default(now()) @map("created_at")
+  id           String                  @id @default(cuid())
+  householdId  String                  @map("household_id")
+  donorId      String                  @map("donor_id")
+  role         HouseholdMembershipRole @default(MEMBER)
+  relationship String?
+  createdAt    DateTime                @default(now()) @map("created_at")
 
   household Household @relation(fields: [householdId], references: [id])
   donor     Donor     @relation(fields: [donorId], references: [id])
@@ -419,20 +482,20 @@ model DonorTag {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  assignments DonorTagAssignment[]
+  organization Organization         @relation(fields: [orgId], references: [id])
+  assignments  DonorTagAssignment[]
 
   @@unique([orgId, name])
   @@map("donor_tags")
 }
 
 model DonorTagAssignment {
-  id        String   @id @default(cuid())
-  donorId   String   @map("donor_id")
-  donorTagId String  @map("donor_tag_id")
-  createdAt DateTime @default(now()) @map("created_at")
+  id         String   @id @default(cuid())
+  donorId    String   @map("donor_id")
+  donorTagId String   @map("donor_tag_id")
+  createdAt  DateTime @default(now()) @map("created_at")
 
-  donor Donor @relation(fields: [donorId], references: [id])
+  donor    Donor    @relation(fields: [donorId], references: [id])
   donorTag DonorTag @relation(fields: [donorTagId], references: [id])
 
   @@unique([donorId, donorTagId])
@@ -449,8 +512,8 @@ model CustomField {
   createdAt DateTime         @default(now()) @map("created_at")
   updatedAt DateTime         @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  values DonorCustomFieldValue[]
+  organization Organization            @relation(fields: [orgId], references: [id])
+  values       DonorCustomFieldValue[]
 
   @@unique([orgId, scope, name])
   @@map("custom_fields")
@@ -465,7 +528,7 @@ model DonorCustomFieldValue {
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
-  donor Donor @relation(fields: [donorId], references: [id])
+  donor       Donor       @relation(fields: [donorId], references: [id])
   customField CustomField @relation(fields: [customFieldId], references: [id])
 
   @@unique([donorId, customFieldId])
@@ -473,55 +536,72 @@ model DonorCustomFieldValue {
 }
 
 model CommunicationPreference {
-  id        String                 @id @default(cuid())
-  orgId     String                 @map("org_id")
-  donorId   String                 @map("donor_id")
+  id        String                @id @default(cuid())
+  orgId     String                @map("org_id")
+  donorId   String                @map("donor_id")
   channel   CommunicationChannel
   category  CommunicationCategory
-  optedIn   Boolean                @default(true) @map("opted_in")
-  createdAt DateTime               @default(now()) @map("created_at")
-  updatedAt DateTime               @updatedAt @map("updated_at")
+  optedIn   Boolean               @default(true) @map("opted_in")
+  createdAt DateTime              @default(now()) @map("created_at")
+  updatedAt DateTime              @updatedAt @map("updated_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  donor Donor @relation(fields: [donorId], references: [id])
+  donor        Donor        @relation(fields: [donorId], references: [id])
 
   @@unique([donorId, channel, category])
   @@map("communication_preferences")
 }
 
 model Campaign {
-  id               String         @id @default(cuid())
-  orgId            String         @map("org_id")
-  name             String
-  slug             String
-  description      String?
-  type             CampaignType
-  status           CampaignStatus @default(DRAFT)
-  startsAt         DateTime?      @map("starts_at")
-  endsAt           DateTime?      @map("ends_at")
-  goalAmount       Int?           @map("goal_amount")
-  heroTitle        String?        @map("hero_title")
-  heroMediaUrl     String?        @map("hero_media_url")
-  storyContent     String?        @map("story_content")
-  seoTitle         String?        @map("seo_title")
-  seoDescription   String?        @map("seo_description")
-  socialShareImageUrl String?     @map("social_share_image_url")
-  themeOverrides   Json?          @map("theme_overrides")
-  createdAt        DateTime       @default(now()) @map("created_at")
-  updatedAt        DateTime       @updatedAt @map("updated_at")
+  id                  String         @id @default(cuid())
+  orgId               String         @map("org_id")
+  name                String
+  slug                String
+  description         String?
+  type                CampaignType
+  status              CampaignStatus @default(DRAFT)
+  startsAt            DateTime?      @map("starts_at")
+  endsAt              DateTime?      @map("ends_at")
+  goalAmount          Int?           @map("goal_amount")
+  heroTitle           String?        @map("hero_title")
+  heroMediaUrl        String?        @map("hero_media_url")
+  storyContent        String?        @map("story_content")
+  seoTitle            String?        @map("seo_title")
+  seoDescription      String?        @map("seo_description")
+  socialShareImageUrl String?        @map("social_share_image_url")
+  themeOverrides      Json?          @map("theme_overrides")
+  createdAt           DateTime       @default(now()) @map("created_at")
+  updatedAt           DateTime       @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  pages CampaignPage[]
-  modules CampaignModule[]
-  sponsorPlacements SponsorPlacement[]
-  carts Cart[]
-  orders Order[]
-  peerFundraisers PeerFundraiser[]
-  peerFundraisingTeams PeerFundraisingTeam[]
-  peerFundraisingClassrooms PeerFundraisingClassroom[]
+  organization                Organization                 @relation(fields: [orgId], references: [id])
+  pages                       CampaignPage[]
+  modules                     CampaignModule[]
+  sponsorPlacements           SponsorPlacement[]
+  carts                       Cart[]
+  orders                      Order[]
+  peerFundraisers             PeerFundraiser[]
+  peerFundraisingTeams        PeerFundraisingTeam[]
+  peerFundraisingClassrooms   PeerFundraisingClassroom[]
   peerFundraisingAttributions PeerFundraisingAttribution[]
-  volunteerShifts VolunteerShift[]
-  volunteerSignups VolunteerSignup[]
+  volunteerShifts             VolunteerShift[]
+  volunteerSignups            VolunteerSignup[]
+  ticketTypes                 TicketType[]
+  ticketAddOns                TicketAddOn[]
+  promoCodes                  PromoCode[]
+  ticketOrders                TicketOrder[]
+  attendees                   Attendee[]
+  tables                      Table[]
+  auctions                    Auction[]
+  procurementSubmissions      ProcurementSubmission[]
+  invoices                    Invoice[]
+  paddleRaiseLevels           PaddleRaiseLevel[]
+  paddleRaisePledges          PaddleRaisePledge[]
+  liveDisplayScenes           LiveDisplayScene[]
+  raffles                     Raffle[]
+  votingContests              VotingContest[]
+  storeProducts               StoreProduct[]
+  storeOrders                 StoreOrder[]
+  keywordRoutes               KeywordRoute[]
 
   @@unique([orgId, slug])
   @@index([orgId, status])
@@ -540,8 +620,8 @@ model CampaignPage {
   updatedAt   DateTime         @updatedAt @map("updated_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign @relation(fields: [campaignId], references: [id])
-  blocks   PageBlock[]
+  campaign     Campaign     @relation(fields: [campaignId], references: [id])
+  blocks       PageBlock[]
 
   @@unique([campaignId, slug])
   @@map("campaign_pages")
@@ -558,7 +638,7 @@ model PageBlock {
   updatedAt      DateTime @updatedAt @map("updated_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  page CampaignPage @relation(fields: [campaignPageId], references: [id])
+  page         CampaignPage @relation(fields: [campaignPageId], references: [id])
 
   @@index([campaignPageId, sortOrder])
   @@map("page_blocks")
@@ -575,42 +655,42 @@ model CampaignModule {
   updatedAt  DateTime   @updatedAt @map("updated_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign @relation(fields: [campaignId], references: [id])
+  campaign     Campaign     @relation(fields: [campaignId], references: [id])
 
   @@unique([campaignId, type])
   @@map("campaign_modules")
 }
 
 model Sponsor {
-  id        String   @id @default(cuid())
-  orgId     String   @map("org_id")
-  name      String
-  level     String?
-  logoUrl   String?  @map("logo_url")
-  websiteUrl String? @map("website_url")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id         String   @id @default(cuid())
+  orgId      String   @map("org_id")
+  name       String
+  level      String?
+  logoUrl    String?  @map("logo_url")
+  websiteUrl String?  @map("website_url")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  placements SponsorPlacement[]
+  organization Organization       @relation(fields: [orgId], references: [id])
+  placements   SponsorPlacement[]
 
   @@index([orgId, level])
   @@map("sponsors")
 }
 
 model SponsorPlacement {
-  id            String   @id @default(cuid())
-  orgId         String   @map("org_id")
-  sponsorId     String   @map("sponsor_id")
-  campaignId    String   @map("campaign_id")
-  placementType String   @map("placement_type")
-  placementRefId String  @map("placement_ref_id")
-  sortOrder     Int      @default(0) @map("sort_order")
-  createdAt     DateTime @default(now()) @map("created_at")
+  id             String   @id @default(cuid())
+  orgId          String   @map("org_id")
+  sponsorId      String   @map("sponsor_id")
+  campaignId     String   @map("campaign_id")
+  placementType  String   @map("placement_type")
+  placementRefId String   @map("placement_ref_id")
+  sortOrder      Int      @default(0) @map("sort_order")
+  createdAt      DateTime @default(now()) @map("created_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  sponsor Sponsor @relation(fields: [sponsorId], references: [id])
-  campaign Campaign @relation(fields: [campaignId], references: [id])
+  sponsor      Sponsor      @relation(fields: [sponsorId], references: [id])
+  campaign     Campaign     @relation(fields: [campaignId], references: [id])
 
   @@index([campaignId, placementType])
   @@map("sponsor_placements")
@@ -627,29 +707,29 @@ model Cart {
   updatedAt  DateTime   @updatedAt @map("updated_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign? @relation(fields: [campaignId], references: [id])
-  donor Donor? @relation(fields: [donorId], references: [id])
-  items CartItem[]
+  campaign     Campaign?    @relation(fields: [campaignId], references: [id])
+  donor        Donor?       @relation(fields: [donorId], references: [id])
+  items        CartItem[]
 
   @@index([orgId, status])
   @@map("carts")
 }
 
 model CartItem {
-  id         String      @id @default(cuid())
-  orgId      String      @map("org_id")
-  cartId     String      @map("cart_id")
+  id         String       @id @default(cuid())
+  orgId      String       @map("org_id")
+  cartId     String       @map("cart_id")
   type       LineItemType
-  sourceId   String?     @map("source_id")
+  sourceId   String?      @map("source_id")
   name       String
-  quantity   Int         @default(1)
-  unitAmount Int         @map("unit_amount")
-  currency   String      @default("USD")
+  quantity   Int          @default(1)
+  unitAmount Int          @map("unit_amount")
+  currency   String       @default("USD")
   metadata   Json?
-  createdAt  DateTime    @default(now()) @map("created_at")
-  updatedAt  DateTime    @updatedAt @map("updated_at")
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @updatedAt @map("updated_at")
 
-  cart Cart @relation(fields: [cartId], references: [id])
+  cart         Cart         @relation(fields: [cartId], references: [id])
   organization Organization @relation(fields: [orgId], references: [id])
 
   @@index([cartId])
@@ -657,25 +737,30 @@ model CartItem {
 }
 
 model Order {
-  id         String      @id @default(cuid())
-  orgId      String      @map("org_id")
-  campaignId String?     @map("campaign_id")
-  donorId    String?     @map("donor_id")
-  orderNumber String     @map("order_number")
-  status     OrderStatus @default(PENDING)
-  totalAmount Int        @map("total_amount")
-  currency   String      @default("USD")
-  coverFeesAmount Int    @default(0) @map("cover_fees_amount")
-  stripePaymentIntentId String? @map("stripe_payment_intent_id")
-  createdAt  DateTime    @default(now()) @map("created_at")
-  updatedAt  DateTime    @updatedAt @map("updated_at")
+  id                    String      @id @default(cuid())
+  orgId                 String      @map("org_id")
+  campaignId            String?     @map("campaign_id")
+  donorId               String?     @map("donor_id")
+  orderNumber           String      @map("order_number")
+  status                OrderStatus @default(PENDING)
+  totalAmount           Int         @map("total_amount")
+  currency              String      @default("USD")
+  coverFeesAmount       Int         @default(0) @map("cover_fees_amount")
+  stripePaymentIntentId String?     @map("stripe_payment_intent_id")
+  createdAt             DateTime    @default(now()) @map("created_at")
+  updatedAt             DateTime    @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign? @relation(fields: [campaignId], references: [id])
-  donor Donor? @relation(fields: [donorId], references: [id])
-  lineItems OrderLineItem[]
-  payments Payment[]
-  receipts Receipt[]
+  organization  Organization    @relation(fields: [orgId], references: [id])
+  campaign      Campaign?       @relation(fields: [campaignId], references: [id])
+  donor         Donor?          @relation(fields: [donorId], references: [id])
+  lineItems     OrderLineItem[]
+  payments      Payment[]
+  receipts      Receipt[]
+  ticketOrders  TicketOrder[]
+  attendees     Attendee[]
+  invoices      Invoice[]
+  raffleTickets RaffleTicket[]
+  storeOrders   StoreOrder[]
 
   @@unique([orgId, orderNumber])
   @@index([orgId, status])
@@ -683,25 +768,25 @@ model Order {
 }
 
 model OrderLineItem {
-  id          String      @id @default(cuid())
-  orgId       String      @map("org_id")
-  orderId     String      @map("order_id")
-  type        LineItemType
-  sourceId    String?     @map("source_id")
-  description String?
-  quantity    Int         @default(1)
-  unitAmount  Int         @map("unit_amount")
-  totalAmount Int         @map("total_amount")
-  currency    String      @default("USD")
-  fmvAmount   Int         @default(0) @map("fmv_amount")
-  benefitAmount Int       @default(0) @map("benefit_amount")
-  taxDeductibleAmount Int @default(0) @map("tax_deductible_amount")
-  metadata    Json?
-  createdAt   DateTime    @default(now()) @map("created_at")
-  updatedAt   DateTime    @updatedAt @map("updated_at")
+  id                  String       @id @default(cuid())
+  orgId               String       @map("org_id")
+  orderId             String       @map("order_id")
+  type                LineItemType
+  sourceId            String?      @map("source_id")
+  description         String?
+  quantity            Int          @default(1)
+  unitAmount          Int          @map("unit_amount")
+  totalAmount         Int          @map("total_amount")
+  currency            String       @default("USD")
+  fmvAmount           Int          @default(0) @map("fmv_amount")
+  benefitAmount       Int          @default(0) @map("benefit_amount")
+  taxDeductibleAmount Int          @default(0) @map("tax_deductible_amount")
+  metadata            Json?
+  createdAt           DateTime     @default(now()) @map("created_at")
+  updatedAt           DateTime     @updatedAt @map("updated_at")
 
-  order Order @relation(fields: [orderId], references: [id])
-  organization Organization @relation(fields: [orgId], references: [id])
+  order           Order                       @relation(fields: [orderId], references: [id])
+  organization    Organization                @relation(fields: [orgId], references: [id])
   peerAttribution PeerFundraisingAttribution?
 
   @@index([orderId])
@@ -709,23 +794,23 @@ model OrderLineItem {
 }
 
 model Payment {
-  id               String        @id @default(cuid())
-  orgId            String        @map("org_id")
-  orderId          String?       @map("order_id")
-  provider         PaymentProvider
-  providerPaymentId String?      @map("provider_payment_id")
-  status           PaymentStatus
-  amount           Int
-  currency         String        @default("USD")
-  feeAmount        Int           @default(0) @map("fee_amount")
-  netAmount        Int           @default(0) @map("net_amount")
-  capturedAt       DateTime?     @map("captured_at")
-  createdAt        DateTime      @default(now()) @map("created_at")
-  updatedAt        DateTime      @updatedAt @map("updated_at")
+  id                String          @id @default(cuid())
+  orgId             String          @map("org_id")
+  orderId           String?         @map("order_id")
+  provider          PaymentProvider
+  providerPaymentId String?         @map("provider_payment_id")
+  status            PaymentStatus
+  amount            Int
+  currency          String          @default("USD")
+  feeAmount         Int             @default(0) @map("fee_amount")
+  netAmount         Int             @default(0) @map("net_amount")
+  capturedAt        DateTime?       @map("captured_at")
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  order Order? @relation(fields: [orderId], references: [id])
-  refunds Refund[]
+  organization       Organization        @relation(fields: [orgId], references: [id])
+  order              Order?              @relation(fields: [orderId], references: [id])
+  refunds            Refund[]
   ledgerTransactions LedgerTransaction[]
 
   @@index([orgId, status])
@@ -733,18 +818,18 @@ model Payment {
 }
 
 model Refund {
-  id               String   @id @default(cuid())
-  orgId            String   @map("org_id")
-  paymentId        String   @map("payment_id")
-  providerRefundId String?  @map("provider_refund_id")
+  id               String    @id @default(cuid())
+  orgId            String    @map("org_id")
+  paymentId        String    @map("payment_id")
+  providerRefundId String?   @map("provider_refund_id")
   status           String
   amount           Int
-  currency         String   @default("USD")
-  createdAt        DateTime @default(now()) @map("created_at")
+  currency         String    @default("USD")
+  createdAt        DateTime  @default(now()) @map("created_at")
   processedAt      DateTime? @map("processed_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  payment Payment @relation(fields: [paymentId], references: [id])
+  organization       Organization        @relation(fields: [orgId], references: [id])
+  payment            Payment             @relation(fields: [paymentId], references: [id])
   ledgerTransactions LedgerTransaction[]
 
   @@index([orgId, status])
@@ -752,16 +837,16 @@ model Refund {
 }
 
 model Payout {
-  id               String   @id @default(cuid())
-  orgId            String   @map("org_id")
-  providerPayoutId String?  @map("provider_payout_id")
+  id               String    @id @default(cuid())
+  orgId            String    @map("org_id")
+  providerPayoutId String?   @map("provider_payout_id")
   status           String
   amount           Int
-  currency         String   @default("USD")
+  currency         String    @default("USD")
   arrivalDate      DateTime? @map("arrival_date")
-  createdAt        DateTime @default(now()) @map("created_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
+  organization       Organization        @relation(fields: [orgId], references: [id])
   ledgerTransactions LedgerTransaction[]
 
   @@index([orgId, arrivalDate])
@@ -778,51 +863,51 @@ model LedgerAccount {
   createdAt DateTime          @default(now()) @map("created_at")
   updatedAt DateTime          @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  entries LedgerEntry[]
+  organization Organization  @relation(fields: [orgId], references: [id])
+  entries      LedgerEntry[]
 
   @@unique([orgId, name])
   @@map("ledger_accounts")
 }
 
 model LedgerTransaction {
-  id        String   @id @default(cuid())
-  orgId     String   @map("org_id")
-  paymentId String?  @map("payment_id")
-  refundId  String?  @map("refund_id")
-  payoutId  String?  @map("payout_id")
-  type      String
-  amount    Int
-  currency  String   @default("USD")
+  id         String   @id @default(cuid())
+  orgId      String   @map("org_id")
+  paymentId  String?  @map("payment_id")
+  refundId   String?  @map("refund_id")
+  payoutId   String?  @map("payout_id")
+  type       String
+  amount     Int
+  currency   String   @default("USD")
   occurredAt DateTime @default(now()) @map("occurred_at")
-  createdAt DateTime  @default(now()) @map("created_at")
+  createdAt  DateTime @default(now()) @map("created_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  payment Payment? @relation(fields: [paymentId], references: [id])
-  refund Refund? @relation(fields: [refundId], references: [id])
-  payout Payout? @relation(fields: [payoutId], references: [id])
-  entries LedgerEntry[]
+  organization Organization  @relation(fields: [orgId], references: [id])
+  payment      Payment?      @relation(fields: [paymentId], references: [id])
+  refund       Refund?       @relation(fields: [refundId], references: [id])
+  payout       Payout?       @relation(fields: [payoutId], references: [id])
+  entries      LedgerEntry[]
 
   @@index([orgId, occurredAt])
   @@map("ledger_transactions")
 }
 
 model LedgerEntry {
-  id                 String          @id @default(cuid())
-  orgId              String          @map("org_id")
-  ledgerAccountId    String          @map("ledger_account_id")
-  ledgerTransactionId String         @map("ledger_transaction_id")
-  entryType          LedgerEntryType @map("entry_type")
-  amount             Int
-  currency           String          @default("USD")
-  occurredAt         DateTime        @map("occurred_at")
-  referenceType      String?         @map("reference_type")
-  referenceId        String?         @map("reference_id")
-  memo               String?
-  createdAt          DateTime        @default(now()) @map("created_at")
+  id                  String          @id @default(cuid())
+  orgId               String          @map("org_id")
+  ledgerAccountId     String          @map("ledger_account_id")
+  ledgerTransactionId String          @map("ledger_transaction_id")
+  entryType           LedgerEntryType @map("entry_type")
+  amount              Int
+  currency            String          @default("USD")
+  occurredAt          DateTime        @map("occurred_at")
+  referenceType       String?         @map("reference_type")
+  referenceId         String?         @map("reference_id")
+  memo                String?
+  createdAt           DateTime        @default(now()) @map("created_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  ledgerAccount LedgerAccount @relation(fields: [ledgerAccountId], references: [id])
+  organization      Organization      @relation(fields: [orgId], references: [id])
+  ledgerAccount     LedgerAccount     @relation(fields: [ledgerAccountId], references: [id])
   ledgerTransaction LedgerTransaction @relation(fields: [ledgerTransactionId], references: [id])
 
   @@index([ledgerAccountId, occurredAt])
@@ -843,8 +928,8 @@ model Receipt {
   createdAt     DateTime    @default(now()) @map("created_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  donor Donor? @relation(fields: [donorId], references: [id])
-  order Order? @relation(fields: [orderId], references: [id])
+  donor        Donor?       @relation(fields: [donorId], references: [id])
+  order        Order?       @relation(fields: [orderId], references: [id])
 
   @@unique([orgId, receiptNumber])
   @@index([donorId])
@@ -1016,29 +1101,29 @@ enum SyncJobStatus {
 }
 
 model TicketType {
-  id          String           @id @default(cuid())
-  orgId       String           @map("org_id")
-  campaignId  String           @map("campaign_id")
-  name        String
-  description String?
-  price       Int
-  currency    String           @default("USD")
-  capacity    Int?
-  saleStartAt DateTime?        @map("sale_start_at")
-  saleEndAt   DateTime?        @map("sale_end_at")
-  minPerOrder Int?             @map("min_per_order")
-  maxPerOrder Int?             @map("max_per_order")
-  visibility  TicketVisibility @default(PUBLIC)
-  isComp      Boolean          @default(false) @map("is_comp")
-  fmvAmount   Int              @default(0) @map("fmv_amount")
-  benefitAmount Int            @default(0) @map("benefit_amount")
-  createdAt   DateTime         @default(now()) @map("created_at")
-  updatedAt   DateTime         @updatedAt @map("updated_at")
+  id            String           @id @default(cuid())
+  orgId         String           @map("org_id")
+  campaignId    String           @map("campaign_id")
+  name          String
+  description   String?
+  price         Int
+  currency      String           @default("USD")
+  capacity      Int?
+  saleStartAt   DateTime?        @map("sale_start_at")
+  saleEndAt     DateTime?        @map("sale_end_at")
+  minPerOrder   Int?             @map("min_per_order")
+  maxPerOrder   Int?             @map("max_per_order")
+  visibility    TicketVisibility @default(PUBLIC)
+  isComp        Boolean          @default(false) @map("is_comp")
+  fmvAmount     Int              @default(0) @map("fmv_amount")
+  benefitAmount Int              @default(0) @map("benefit_amount")
+  createdAt     DateTime         @default(now()) @map("created_at")
+  updatedAt     DateTime         @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign @relation(fields: [campaignId], references: [id])
+  organization Organization  @relation(fields: [orgId], references: [id])
+  campaign     Campaign      @relation(fields: [campaignId], references: [id])
   ticketOrders TicketOrder[]
-  attendees Attendee[]
+  attendees    Attendee[]
 
   @@index([campaignId])
   @@map("ticket_types")
@@ -1058,7 +1143,7 @@ model TicketAddOn {
   updatedAt   DateTime         @updatedAt @map("updated_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign @relation(fields: [campaignId], references: [id])
+  campaign     Campaign     @relation(fields: [campaignId], references: [id])
 
   @@index([campaignId])
   @@map("ticket_add_ons")
@@ -1080,7 +1165,7 @@ model PromoCode {
   updatedAt      DateTime      @updatedAt @map("updated_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign @relation(fields: [campaignId], references: [id])
+  campaign     Campaign     @relation(fields: [campaignId], references: [id])
 
   @@unique([campaignId, code])
   @@map("promo_codes")
@@ -1098,10 +1183,10 @@ model TicketOrder {
   createdAt    DateTime @default(now()) @map("created_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign @relation(fields: [campaignId], references: [id])
-  order Order @relation(fields: [orderId], references: [id])
-  ticketType TicketType @relation(fields: [ticketTypeId], references: [id])
-  attendees Attendee[]
+  campaign     Campaign     @relation(fields: [campaignId], references: [id])
+  order        Order        @relation(fields: [orderId], references: [id])
+  ticketType   TicketType   @relation(fields: [ticketTypeId], references: [id])
+  attendees    Attendee[]
 
   @@index([orderId])
   @@map("ticket_orders")
@@ -1126,16 +1211,16 @@ model Attendee {
   createdAt     DateTime       @default(now()) @map("created_at")
   updatedAt     DateTime       @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign @relation(fields: [campaignId], references: [id])
-  order Order? @relation(fields: [orderId], references: [id])
-  ticketOrder TicketOrder? @relation(fields: [ticketOrderId], references: [id])
-  ticketType TicketType? @relation(fields: [ticketTypeId], references: [id])
-  donor Donor? @relation(fields: [donorId], references: [id])
-  table Table? @relation(fields: [tableId], references: [id])
-  seat Seat? @relation(fields: [seatId], references: [id])
-  answers AttendeeAnswer[]
-  checkins Checkin[]
+  organization Organization     @relation(fields: [orgId], references: [id])
+  campaign     Campaign         @relation(fields: [campaignId], references: [id])
+  order        Order?           @relation(fields: [orderId], references: [id])
+  ticketOrder  TicketOrder?     @relation(fields: [ticketOrderId], references: [id])
+  ticketType   TicketType?      @relation(fields: [ticketTypeId], references: [id])
+  donor        Donor?           @relation(fields: [donorId], references: [id])
+  table        Table?           @relation(fields: [tableId], references: [id])
+  seat         Seat?            @relation(fields: [seatId], references: [id])
+  answers      AttendeeAnswer[]
+  checkins     Checkin[]
 
   @@index([campaignId])
   @@index([ticketTypeId])
@@ -1154,7 +1239,7 @@ model AttendeeAnswer {
   updatedAt  DateTime @updatedAt @map("updated_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  attendee Attendee @relation(fields: [attendeeId], references: [id])
+  attendee     Attendee     @relation(fields: [attendeeId], references: [id])
 
   @@index([attendeeId])
   @@map("attendee_answers")
@@ -1172,9 +1257,9 @@ model Table {
   updatedAt  DateTime @updatedAt @map("updated_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign @relation(fields: [campaignId], references: [id])
-  seats Seat[]
-  attendees Attendee[]
+  campaign     Campaign     @relation(fields: [campaignId], references: [id])
+  seats        Seat[]
+  attendees    Attendee[]
 
   @@index([campaignId])
   @@map("tables")
@@ -1189,106 +1274,108 @@ model Seat {
   updatedAt  DateTime @updatedAt @map("updated_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  table Table @relation(fields: [tableId], references: [id])
+  table        Table        @relation(fields: [tableId], references: [id])
+  attendee     Attendee?
 
   @@unique([tableId, seatNumber])
   @@map("seats")
 }
 
 model Checkin {
-  id            String        @id @default(cuid())
-  orgId         String        @map("org_id")
-  attendeeId    String        @map("attendee_id")
-  method        CheckinMethod
-  checkedInAt   DateTime      @map("checked_in_at")
-  createdByUserId String?     @map("created_by_user_id")
-  createdAt     DateTime      @default(now()) @map("created_at")
+  id              String        @id @default(cuid())
+  orgId           String        @map("org_id")
+  attendeeId      String        @map("attendee_id")
+  method          CheckinMethod
+  checkedInAt     DateTime      @map("checked_in_at")
+  createdByUserId String?       @map("created_by_user_id")
+  createdAt       DateTime      @default(now()) @map("created_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  attendee Attendee @relation(fields: [attendeeId], references: [id])
-  createdBy User? @relation(fields: [createdByUserId], references: [id])
+  attendee     Attendee     @relation(fields: [attendeeId], references: [id])
+  createdBy    User?        @relation("CheckinCreator", fields: [createdByUserId], references: [id])
 
   @@index([attendeeId])
   @@map("checkins")
 }
 
 model Auction {
-  id              String        @id @default(cuid())
-  orgId           String        @map("org_id")
-  campaignId      String        @map("campaign_id")
-  name            String
-  timezone        String
-  opensAt         DateTime?     @map("opens_at")
-  closesAt        DateTime?     @map("closes_at")
-  status          AuctionStatus @default(DRAFT)
-  bidIncrementRules Json?       @map("bid_increment_rules")
-  allowMaxBid     Boolean       @default(true) @map("allow_max_bid")
-  allowBuyNow     Boolean       @default(false) @map("allow_buy_now")
-  antiSnipingMinutes Int?       @map("anti_sniping_minutes")
-  createdAt       DateTime      @default(now()) @map("created_at")
-  updatedAt       DateTime      @updatedAt @map("updated_at")
+  id                 String        @id @default(cuid())
+  orgId              String        @map("org_id")
+  campaignId         String        @map("campaign_id")
+  name               String
+  timezone           String
+  opensAt            DateTime?     @map("opens_at")
+  closesAt           DateTime?     @map("closes_at")
+  status             AuctionStatus @default(DRAFT)
+  bidIncrementRules  Json?         @map("bid_increment_rules")
+  allowMaxBid        Boolean       @default(true) @map("allow_max_bid")
+  allowBuyNow        Boolean       @default(false) @map("allow_buy_now")
+  antiSnipingMinutes Int?          @map("anti_sniping_minutes")
+  createdAt          DateTime      @default(now()) @map("created_at")
+  updatedAt          DateTime      @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign @relation(fields: [campaignId], references: [id])
-  categories AuctionCategory[]
-  items AuctionItem[]
+  organization Organization      @relation(fields: [orgId], references: [id])
+  campaign     Campaign          @relation(fields: [campaignId], references: [id])
+  categories   AuctionCategory[]
+  items        AuctionItem[]
 
   @@index([campaignId])
   @@map("auctions")
 }
 
 model AuctionCategory {
-  id         String   @id @default(cuid())
-  orgId      String   @map("org_id")
-  auctionId  String   @map("auction_id")
-  name       String
+  id          String   @id @default(cuid())
+  orgId       String   @map("org_id")
+  auctionId   String   @map("auction_id")
+  name        String
   description String?
-  parentId   String?  @map("parent_id")
-  sortOrder  Int      @default(0) @map("sort_order")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  parentId    String?  @map("parent_id")
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  auction Auction @relation(fields: [auctionId], references: [id])
-  parent AuctionCategory? @relation("AuctionCategoryHierarchy", fields: [parentId], references: [id])
-  children AuctionCategory[] @relation("AuctionCategoryHierarchy")
-  items AuctionItem[]
+  organization Organization      @relation(fields: [orgId], references: [id])
+  auction      Auction           @relation(fields: [auctionId], references: [id])
+  parent       AuctionCategory?  @relation("AuctionCategoryHierarchy", fields: [parentId], references: [id])
+  children     AuctionCategory[] @relation("AuctionCategoryHierarchy")
+  items        AuctionItem[]
 
   @@index([auctionId])
   @@map("auction_categories")
 }
 
 model AuctionItem {
-  id            String            @id @default(cuid())
-  orgId         String            @map("org_id")
-  auctionId     String            @map("auction_id")
-  categoryId    String?           @map("category_id")
-  title         String
-  description   String?
-  fmvAmount     Int               @default(0) @map("fmv_amount")
-  startingBid   Int               @default(0) @map("starting_bid")
-  bidIncrementOverride Json?      @map("bid_increment_override")
-  buyNowPrice   Int?              @map("buy_now_price")
-  quantity      Int               @default(1)
-  status        AuctionItemStatus @default(DRAFT)
-  isFeatured    Boolean           @default(false) @map("is_featured")
-  isPreviewOnly Boolean           @default(false) @map("is_preview_only")
-  opensAt       DateTime?         @map("opens_at")
-  closesAt      DateTime?         @map("closes_at")
-  fulfillmentMethod String?       @map("fulfillment_method")
-  shippingAmount Int?             @map("shipping_amount")
-  procurementSubmissionId String? @map("procurement_submission_id")
-  createdAt     DateTime          @default(now()) @map("created_at")
-  updatedAt     DateTime          @updatedAt @map("updated_at")
+  id                      String            @id @default(cuid())
+  orgId                   String            @map("org_id")
+  auctionId               String            @map("auction_id")
+  categoryId              String?           @map("category_id")
+  title                   String
+  description             String?
+  fmvAmount               Int               @default(0) @map("fmv_amount")
+  startingBid             Int               @default(0) @map("starting_bid")
+  bidIncrementOverride    Json?             @map("bid_increment_override")
+  buyNowPrice             Int?              @map("buy_now_price")
+  quantity                Int               @default(1)
+  status                  AuctionItemStatus @default(DRAFT)
+  isFeatured              Boolean           @default(false) @map("is_featured")
+  isPreviewOnly           Boolean           @default(false) @map("is_preview_only")
+  opensAt                 DateTime?         @map("opens_at")
+  closesAt                DateTime?         @map("closes_at")
+  fulfillmentMethod       String?           @map("fulfillment_method")
+  shippingAmount          Int?              @map("shipping_amount")
+  procurementSubmissionId String?           @map("procurement_submission_id")
+  createdAt               DateTime          @default(now()) @map("created_at")
+  updatedAt               DateTime          @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  auction Auction @relation(fields: [auctionId], references: [id])
-  category AuctionCategory? @relation(fields: [categoryId], references: [id])
+  organization          Organization           @relation(fields: [orgId], references: [id])
+  auction               Auction                @relation(fields: [auctionId], references: [id])
+  category              AuctionCategory?       @relation(fields: [categoryId], references: [id])
   procurementSubmission ProcurementSubmission? @relation(fields: [procurementSubmissionId], references: [id])
-  media AuctionItemMedia[]
-  bids Bid[]
-  watchlist Watchlist[]
-  fulfillmentRecords FulfillmentRecord[]
+  media                 AuctionItemMedia[]
+  bids                  Bid[]
+  watchlist             Watchlist[]
+  fulfillmentRecords    FulfillmentRecord[]
+  invoiceItems          InvoiceItem[]
 
   @@index([auctionId])
   @@map("auction_items")
@@ -1304,7 +1391,7 @@ model AuctionItemMedia {
   createdAt     DateTime         @default(now()) @map("created_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  auctionItem AuctionItem @relation(fields: [auctionItemId], references: [id])
+  auctionItem  AuctionItem  @relation(fields: [auctionItemId], references: [id])
 
   @@index([auctionItemId])
   @@map("auction_item_media")
@@ -1320,50 +1407,50 @@ model ProcurementDonor {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  submissions ProcurementSubmission[]
+  organization Organization            @relation(fields: [orgId], references: [id])
+  submissions  ProcurementSubmission[]
 
   @@index([orgId, name])
   @@map("procurement_donors")
 }
 
 model ProcurementSubmission {
-  id         String            @id @default(cuid())
-  orgId      String            @map("org_id")
-  campaignId String?           @map("campaign_id")
-  procurementDonorId String?   @map("procurement_donor_id")
-  status     ProcurementStatus @default(PLEDGED)
-  itemTitle  String?           @map("item_title")
-  itemDescription String?      @map("item_description")
-  fmvAmount  Int?              @map("fmv_amount")
-  restrictions String?         @map("restrictions")
-  notes      String?
-  receivedAt DateTime?         @map("received_at")
-  createdAt  DateTime          @default(now()) @map("created_at")
-  updatedAt  DateTime          @updatedAt @map("updated_at")
+  id                 String            @id @default(cuid())
+  orgId              String            @map("org_id")
+  campaignId         String?           @map("campaign_id")
+  procurementDonorId String?           @map("procurement_donor_id")
+  status             ProcurementStatus @default(PLEDGED)
+  itemTitle          String?           @map("item_title")
+  itemDescription    String?           @map("item_description")
+  fmvAmount          Int?              @map("fmv_amount")
+  restrictions       String?           @map("restrictions")
+  notes              String?
+  receivedAt         DateTime?         @map("received_at")
+  createdAt          DateTime          @default(now()) @map("created_at")
+  updatedAt          DateTime          @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign? @relation(fields: [campaignId], references: [id])
+  organization     Organization      @relation(fields: [orgId], references: [id])
+  campaign         Campaign?         @relation(fields: [campaignId], references: [id])
   procurementDonor ProcurementDonor? @relation(fields: [procurementDonorId], references: [id])
-  auctionItems AuctionItem[]
+  auctionItems     AuctionItem[]
 
   @@map("procurement_submissions")
 }
 
 model Bid {
-  id            String   @id @default(cuid())
-  orgId         String   @map("org_id")
-  auctionItemId String   @map("auction_item_id")
-  donorId       String   @map("donor_id")
+  id            String    @id @default(cuid())
+  orgId         String    @map("org_id")
+  auctionItemId String    @map("auction_item_id")
+  donorId       String    @map("donor_id")
   amount        Int
-  maxBidAmount  Int?     @map("max_bid_amount")
-  isAuto        Boolean  @default(false) @map("is_auto")
+  maxBidAmount  Int?      @map("max_bid_amount")
+  isAuto        Boolean   @default(false) @map("is_auto")
   status        BidStatus @default(ACTIVE)
-  createdAt     DateTime @default(now()) @map("created_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  auctionItem AuctionItem @relation(fields: [auctionItemId], references: [id])
-  donor Donor @relation(fields: [donorId], references: [id])
+  auctionItem  AuctionItem  @relation(fields: [auctionItemId], references: [id])
+  donor        Donor        @relation(fields: [donorId], references: [id])
 
   @@index([auctionItemId])
   @@index([donorId])
@@ -1378,50 +1465,50 @@ model Watchlist {
   createdAt     DateTime @default(now()) @map("created_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  auctionItem AuctionItem @relation(fields: [auctionItemId], references: [id])
-  donor Donor @relation(fields: [donorId], references: [id])
+  auctionItem  AuctionItem  @relation(fields: [auctionItemId], references: [id])
+  donor        Donor        @relation(fields: [donorId], references: [id])
 
   @@unique([auctionItemId, donorId])
   @@map("watchlists")
 }
 
 model Invoice {
-  id         String        @id @default(cuid())
-  orgId      String        @map("org_id")
-  campaignId String?       @map("campaign_id")
-  donorId    String?       @map("donor_id")
-  orderId    String?       @map("order_id")
-  status     InvoiceStatus @default(OPEN)
-  totalAmount Int          @map("total_amount")
-  currency   String        @default("USD")
-  createdAt  DateTime      @default(now()) @map("created_at")
-  updatedAt  DateTime      @updatedAt @map("updated_at")
+  id          String        @id @default(cuid())
+  orgId       String        @map("org_id")
+  campaignId  String?       @map("campaign_id")
+  donorId     String?       @map("donor_id")
+  orderId     String?       @map("order_id")
+  status      InvoiceStatus @default(OPEN)
+  totalAmount Int           @map("total_amount")
+  currency    String        @default("USD")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign? @relation(fields: [campaignId], references: [id])
-  donor Donor? @relation(fields: [donorId], references: [id])
-  order Order? @relation(fields: [orderId], references: [id])
-  items InvoiceItem[]
+  organization Organization  @relation(fields: [orgId], references: [id])
+  campaign     Campaign?     @relation(fields: [campaignId], references: [id])
+  donor        Donor?        @relation(fields: [donorId], references: [id])
+  order        Order?        @relation(fields: [orderId], references: [id])
+  items        InvoiceItem[]
 
   @@index([campaignId])
   @@map("invoices")
 }
 
 model InvoiceItem {
-  id           String      @id @default(cuid())
-  orgId        String      @map("org_id")
-  invoiceId    String      @map("invoice_id")
-  type         LineItemType
-  description  String?
-  quantity     Int         @default(1)
-  unitAmount   Int         @map("unit_amount")
-  totalAmount  Int         @map("total_amount")
-  auctionItemId String?    @map("auction_item_id")
-  createdAt    DateTime    @default(now()) @map("created_at")
+  id            String       @id @default(cuid())
+  orgId         String       @map("org_id")
+  invoiceId     String       @map("invoice_id")
+  type          LineItemType
+  description   String?
+  quantity      Int          @default(1)
+  unitAmount    Int          @map("unit_amount")
+  totalAmount   Int          @map("total_amount")
+  auctionItemId String?      @map("auction_item_id")
+  createdAt     DateTime     @default(now()) @map("created_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  invoice Invoice @relation(fields: [invoiceId], references: [id])
-  auctionItem AuctionItem? @relation(fields: [auctionItemId], references: [id])
+  organization       Organization        @relation(fields: [orgId], references: [id])
+  invoice            Invoice             @relation(fields: [invoiceId], references: [id])
+  auctionItem        AuctionItem?        @relation(fields: [auctionItemId], references: [id])
   fulfillmentRecords FulfillmentRecord[]
 
   @@index([invoiceId])
@@ -1429,62 +1516,62 @@ model InvoiceItem {
 }
 
 model FulfillmentRecord {
-  id            String            @id @default(cuid())
-  orgId         String            @map("org_id")
-  auctionItemId String?           @map("auction_item_id")
-  invoiceItemId String?           @map("invoice_item_id")
-  status        FulfillmentStatus @default(PENDING)
-  method        String?
-  trackingNumber String?          @map("tracking_number")
-  fulfilledAt   DateTime?         @map("fulfilled_at")
-  createdAt     DateTime          @default(now()) @map("created_at")
+  id             String            @id @default(cuid())
+  orgId          String            @map("org_id")
+  auctionItemId  String?           @map("auction_item_id")
+  invoiceItemId  String?           @map("invoice_item_id")
+  status         FulfillmentStatus @default(PENDING)
+  method         String?
+  trackingNumber String?           @map("tracking_number")
+  fulfilledAt    DateTime?         @map("fulfilled_at")
+  createdAt      DateTime          @default(now()) @map("created_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  auctionItem AuctionItem? @relation(fields: [auctionItemId], references: [id])
-  invoiceItem InvoiceItem? @relation(fields: [invoiceItemId], references: [id])
+  auctionItem  AuctionItem? @relation(fields: [auctionItemId], references: [id])
+  invoiceItem  InvoiceItem? @relation(fields: [invoiceItemId], references: [id])
 
   @@index([auctionItemId])
   @@map("fulfillment_records")
 }
 
 model PaddleRaiseLevel {
-  id         String   @id @default(cuid())
-  orgId      String   @map("org_id")
-  campaignId String   @map("campaign_id")
-  amount     Int
-  label      String
-  matchSponsorName String? @map("match_sponsor_name")
-  sortOrder  Int      @default(0) @map("sort_order")
-  isActive   Boolean  @default(true) @map("is_active")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  id               String   @id @default(cuid())
+  orgId            String   @map("org_id")
+  campaignId       String   @map("campaign_id")
+  amount           Int
+  label            String
+  matchSponsorName String?  @map("match_sponsor_name")
+  sortOrder        Int      @default(0) @map("sort_order")
+  isActive         Boolean  @default(true) @map("is_active")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign @relation(fields: [campaignId], references: [id])
-  pledges PaddleRaisePledge[]
+  organization Organization        @relation(fields: [orgId], references: [id])
+  campaign     Campaign            @relation(fields: [campaignId], references: [id])
+  pledges      PaddleRaisePledge[]
 
   @@index([campaignId])
   @@map("paddle_raise_levels")
 }
 
 model PaddleRaisePledge {
-  id         String           @id @default(cuid())
-  orgId      String           @map("org_id")
-  campaignId String           @map("campaign_id")
-  donorId    String?          @map("donor_id")
-  levelId    String?          @map("level_id")
-  amount     Int
-  paddleNumber String?        @map("paddle_number")
-  status     PaddleRaiseStatus @default(PLEDGED)
-  enteredByUserId String?     @map("entered_by_user_id")
-  createdAt  DateTime         @default(now()) @map("created_at")
-  updatedAt  DateTime         @updatedAt @map("updated_at")
+  id              String            @id @default(cuid())
+  orgId           String            @map("org_id")
+  campaignId      String            @map("campaign_id")
+  donorId         String?           @map("donor_id")
+  levelId         String?           @map("level_id")
+  amount          Int
+  paddleNumber    String?           @map("paddle_number")
+  status          PaddleRaiseStatus @default(PLEDGED)
+  enteredByUserId String?           @map("entered_by_user_id")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign @relation(fields: [campaignId], references: [id])
-  donor Donor? @relation(fields: [donorId], references: [id])
-  level PaddleRaiseLevel? @relation(fields: [levelId], references: [id])
-  enteredBy User? @relation(fields: [enteredByUserId], references: [id])
+  organization Organization      @relation(fields: [orgId], references: [id])
+  campaign     Campaign          @relation(fields: [campaignId], references: [id])
+  donor        Donor?            @relation(fields: [donorId], references: [id])
+  level        PaddleRaiseLevel? @relation(fields: [levelId], references: [id])
+  enteredBy    User?             @relation("PaddleRaisePledgeEnteredBy", fields: [enteredByUserId], references: [id])
 
   @@index([campaignId])
   @@map("paddle_raise_pledges")
@@ -1503,31 +1590,31 @@ model LiveDisplayScene {
   updatedAt  DateTime      @updatedAt @map("updated_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign @relation(fields: [campaignId], references: [id])
+  campaign     Campaign     @relation(fields: [campaignId], references: [id])
 
   @@index([campaignId])
   @@map("live_display_scenes")
 }
 
 model Raffle {
-  id         String       @id @default(cuid())
-  orgId      String       @map("org_id")
-  campaignId String       @map("campaign_id")
-  name       String
-  status     RaffleStatus @default(DRAFT)
-  ticketPrice Int         @map("ticket_price")
-  bundleRules Json?       @map("bundle_rules")
-  maxTicketsPerPerson Int? @map("max_tickets_per_person")
-  startsAt   DateTime?    @map("starts_at")
-  endsAt     DateTime?    @map("ends_at")
-  rulesUrl   String?      @map("rules_url")
-  createdAt  DateTime     @default(now()) @map("created_at")
-  updatedAt  DateTime     @updatedAt @map("updated_at")
+  id                  String       @id @default(cuid())
+  orgId               String       @map("org_id")
+  campaignId          String       @map("campaign_id")
+  name                String
+  status              RaffleStatus @default(DRAFT)
+  ticketPrice         Int          @map("ticket_price")
+  bundleRules         Json?        @map("bundle_rules")
+  maxTicketsPerPerson Int?         @map("max_tickets_per_person")
+  startsAt            DateTime?    @map("starts_at")
+  endsAt              DateTime?    @map("ends_at")
+  rulesUrl            String?      @map("rules_url")
+  createdAt           DateTime     @default(now()) @map("created_at")
+  updatedAt           DateTime     @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign @relation(fields: [campaignId], references: [id])
-  tickets RaffleTicket[]
-  draws RaffleDraw[]
+  organization Organization   @relation(fields: [orgId], references: [id])
+  campaign     Campaign       @relation(fields: [campaignId], references: [id])
+  tickets      RaffleTicket[]
+  draws        RaffleDraw[]
 
   @@index([campaignId])
   @@map("raffles")
@@ -1543,26 +1630,26 @@ model RaffleTicket {
   createdAt DateTime @default(now()) @map("created_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  raffle Raffle @relation(fields: [raffleId], references: [id])
-  donor Donor? @relation(fields: [donorId], references: [id])
-  order Order? @relation(fields: [orderId], references: [id])
+  raffle       Raffle       @relation(fields: [raffleId], references: [id])
+  donor        Donor?       @relation(fields: [donorId], references: [id])
+  order        Order?       @relation(fields: [orderId], references: [id])
 
   @@index([raffleId])
   @@map("raffle_tickets")
 }
 
 model RaffleDraw {
-  id        String   @id @default(cuid())
-  orgId     String   @map("org_id")
-  raffleId  String   @map("raffle_id")
-  drawnAt   DateTime @map("drawn_at")
-  winnerDonorId String? @map("winner_donor_id")
-  notes     String?
-  createdAt DateTime @default(now()) @map("created_at")
+  id            String   @id @default(cuid())
+  orgId         String   @map("org_id")
+  raffleId      String   @map("raffle_id")
+  drawnAt       DateTime @map("drawn_at")
+  winnerDonorId String?  @map("winner_donor_id")
+  notes         String?
+  createdAt     DateTime @default(now()) @map("created_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  raffle Raffle @relation(fields: [raffleId], references: [id])
-  winnerDonor Donor? @relation(fields: [winnerDonorId], references: [id])
+  raffle       Raffle       @relation(fields: [raffleId], references: [id])
+  winnerDonor  Donor?       @relation(fields: [winnerDonorId], references: [id])
 
   @@index([raffleId])
   @@map("raffle_draws")
@@ -1579,10 +1666,10 @@ model VotingContest {
   createdAt  DateTime            @default(now()) @map("created_at")
   updatedAt  DateTime            @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign @relation(fields: [campaignId], references: [id])
-  candidates VoteCandidate[]
-  votes Vote[]
+  organization Organization    @relation(fields: [orgId], references: [id])
+  campaign     Campaign        @relation(fields: [campaignId], references: [id])
+  candidates   VoteCandidate[]
+  votes        Vote[]
 
   @@index([campaignId])
   @@map("voting_contests")
@@ -1599,9 +1686,9 @@ model VoteCandidate {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  contest VotingContest @relation(fields: [contestId], references: [id])
-  votes Vote[]
+  organization Organization  @relation(fields: [orgId], references: [id])
+  contest      VotingContest @relation(fields: [contestId], references: [id])
+  votes        Vote[]
 
   @@index([contestId])
   @@map("vote_candidates")
@@ -1617,10 +1704,10 @@ model Vote {
   voteCount   Int      @default(0) @map("vote_count")
   createdAt   DateTime @default(now()) @map("created_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  contest VotingContest @relation(fields: [contestId], references: [id])
-  candidate VoteCandidate @relation(fields: [candidateId], references: [id])
-  donor Donor? @relation(fields: [donorId], references: [id])
+  organization Organization  @relation(fields: [orgId], references: [id])
+  contest      VotingContest @relation(fields: [contestId], references: [id])
+  candidate    VoteCandidate @relation(fields: [candidateId], references: [id])
+  donor        Donor?        @relation(fields: [donorId], references: [id])
 
   @@index([contestId])
   @@map("votes")
@@ -1637,9 +1724,9 @@ model PeerFundraisingTeam {
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign @relation(fields: [campaignId], references: [id])
-  fundraisers PeerFundraiser[]
+  organization Organization                 @relation(fields: [orgId], references: [id])
+  campaign     Campaign                     @relation(fields: [campaignId], references: [id])
+  fundraisers  PeerFundraiser[]
   attributions PeerFundraisingAttribution[]
 
   @@unique([campaignId, slug])
@@ -1648,21 +1735,21 @@ model PeerFundraisingTeam {
 }
 
 model PeerFundraisingClassroom {
-  id         String   @id @default(cuid())
-  orgId      String   @map("org_id")
-  campaignId String   @map("campaign_id")
-  name       String
-  slug       String
-  grade      String?
-  teacherName String? @map("teacher_name")
-  story      String?
-  goalAmount Int?     @map("goal_amount")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  id          String   @id @default(cuid())
+  orgId       String   @map("org_id")
+  campaignId  String   @map("campaign_id")
+  name        String
+  slug        String
+  grade       String?
+  teacherName String?  @map("teacher_name")
+  story       String?
+  goalAmount  Int?     @map("goal_amount")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign @relation(fields: [campaignId], references: [id])
-  fundraisers PeerFundraiser[]
+  organization Organization                 @relation(fields: [orgId], references: [id])
+  campaign     Campaign                     @relation(fields: [campaignId], references: [id])
+  fundraisers  PeerFundraiser[]
   attributions PeerFundraisingAttribution[]
 
   @@unique([campaignId, slug])
@@ -1671,26 +1758,26 @@ model PeerFundraisingClassroom {
 }
 
 model PeerFundraiser {
-  id         String             @id @default(cuid())
-  orgId      String             @map("org_id")
-  campaignId String             @map("campaign_id")
-  donorId    String?            @map("donor_id")
-  teamId     String?            @map("team_id")
-  classroomId String?           @map("classroom_id")
-  name       String
-  slug       String
-  story      String?
-  photoUrl   String?            @map("photo_url")
-  goalAmount Int?               @map("goal_amount")
-  status     PeerFundraiserStatus @default(PUBLISHED)
-  createdAt  DateTime           @default(now()) @map("created_at")
-  updatedAt  DateTime           @updatedAt @map("updated_at")
+  id          String               @id @default(cuid())
+  orgId       String               @map("org_id")
+  campaignId  String               @map("campaign_id")
+  donorId     String?              @map("donor_id")
+  teamId      String?              @map("team_id")
+  classroomId String?              @map("classroom_id")
+  name        String
+  slug        String
+  story       String?
+  photoUrl    String?              @map("photo_url")
+  goalAmount  Int?                 @map("goal_amount")
+  status      PeerFundraiserStatus @default(PUBLISHED)
+  createdAt   DateTime             @default(now()) @map("created_at")
+  updatedAt   DateTime             @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign @relation(fields: [campaignId], references: [id])
-  donor Donor? @relation(fields: [donorId], references: [id])
-  team PeerFundraisingTeam? @relation(fields: [teamId], references: [id])
-  classroom PeerFundraisingClassroom? @relation(fields: [classroomId], references: [id])
+  organization Organization                 @relation(fields: [orgId], references: [id])
+  campaign     Campaign                     @relation(fields: [campaignId], references: [id])
+  donor        Donor?                       @relation(fields: [donorId], references: [id])
+  team         PeerFundraisingTeam?         @relation(fields: [teamId], references: [id])
+  classroom    PeerFundraisingClassroom?    @relation(fields: [classroomId], references: [id])
   attributions PeerFundraisingAttribution[]
 
   @@unique([campaignId, slug])
@@ -1699,21 +1786,21 @@ model PeerFundraiser {
 }
 
 model PeerFundraisingAttribution {
-  id         String   @id @default(cuid())
-  orgId      String   @map("org_id")
-  campaignId String   @map("campaign_id")
-  orderLineItemId String @map("order_line_item_id")
-  fundraiserId String? @map("fundraiser_id")
-  teamId     String?   @map("team_id")
-  classroomId String?  @map("classroom_id")
-  createdAt  DateTime @default(now()) @map("created_at")
+  id              String   @id @default(cuid())
+  orgId           String   @map("org_id")
+  campaignId      String   @map("campaign_id")
+  orderLineItemId String   @map("order_line_item_id")
+  fundraiserId    String?  @map("fundraiser_id")
+  teamId          String?  @map("team_id")
+  classroomId     String?  @map("classroom_id")
+  createdAt       DateTime @default(now()) @map("created_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign @relation(fields: [campaignId], references: [id])
-  orderLineItem OrderLineItem @relation(fields: [orderLineItemId], references: [id])
-  fundraiser PeerFundraiser? @relation(fields: [fundraiserId], references: [id])
-  team PeerFundraisingTeam? @relation(fields: [teamId], references: [id])
-  classroom PeerFundraisingClassroom? @relation(fields: [classroomId], references: [id])
+  organization  Organization              @relation(fields: [orgId], references: [id])
+  campaign      Campaign                  @relation(fields: [campaignId], references: [id])
+  orderLineItem OrderLineItem             @relation(fields: [orderLineItemId], references: [id])
+  fundraiser    PeerFundraiser?           @relation(fields: [fundraiserId], references: [id])
+  team          PeerFundraisingTeam?      @relation(fields: [teamId], references: [id])
+  classroom     PeerFundraisingClassroom? @relation(fields: [classroomId], references: [id])
 
   @@unique([orderLineItemId])
   @@index([campaignId])
@@ -1724,41 +1811,41 @@ model PeerFundraisingAttribution {
 }
 
 model VolunteerShift {
-  id         String   @id @default(cuid())
-  orgId      String   @map("org_id")
-  campaignId String   @map("campaign_id")
-  name       String
+  id          String    @id @default(cuid())
+  orgId       String    @map("org_id")
+  campaignId  String    @map("campaign_id")
+  name        String
   description String?
-  startsAt   DateTime? @map("starts_at")
-  endsAt     DateTime? @map("ends_at")
-  capacity   Int?
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  startsAt    DateTime? @map("starts_at")
+  endsAt      DateTime? @map("ends_at")
+  capacity    Int?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign @relation(fields: [campaignId], references: [id])
-  signups VolunteerSignup[]
+  organization Organization      @relation(fields: [orgId], references: [id])
+  campaign     Campaign          @relation(fields: [campaignId], references: [id])
+  signups      VolunteerSignup[]
 
   @@index([campaignId])
   @@map("volunteer_shifts")
 }
 
 model VolunteerSignup {
-  id         String   @id @default(cuid())
-  orgId      String   @map("org_id")
-  campaignId String   @map("campaign_id")
-  shiftId    String   @map("shift_id")
-  donorId    String?  @map("donor_id")
+  id         String                @id @default(cuid())
+  orgId      String                @map("org_id")
+  campaignId String                @map("campaign_id")
+  shiftId    String                @map("shift_id")
+  donorId    String?               @map("donor_id")
   name       String
   email      String?
   phone      String?
   status     VolunteerSignupStatus @default(CONFIRMED)
-  createdAt  DateTime @default(now()) @map("created_at")
+  createdAt  DateTime              @default(now()) @map("created_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign @relation(fields: [campaignId], references: [id])
-  shift VolunteerShift @relation(fields: [shiftId], references: [id])
-  donor Donor? @relation(fields: [donorId], references: [id])
+  organization Organization   @relation(fields: [orgId], references: [id])
+  campaign     Campaign       @relation(fields: [campaignId], references: [id])
+  shift        VolunteerShift @relation(fields: [shiftId], references: [id])
+  donor        Donor?         @relation(fields: [donorId], references: [id])
 
   @@index([shiftId])
   @@index([campaignId])
@@ -1766,57 +1853,57 @@ model VolunteerSignup {
 }
 
 model StoreProduct {
-  id          String            @id @default(cuid())
-  orgId       String            @map("org_id")
-  campaignId  String            @map("campaign_id")
-  name        String
-  description String?
-  status      StoreProductStatus @default(ACTIVE)
-  price       Int
-  currency    String            @default("USD")
-  sku         String?
-  inventoryCount Int?           @map("inventory_count")
-  shippingRequired Boolean      @default(false) @map("shipping_required")
-  createdAt   DateTime          @default(now()) @map("created_at")
-  updatedAt   DateTime          @updatedAt @map("updated_at")
+  id               String             @id @default(cuid())
+  orgId            String             @map("org_id")
+  campaignId       String             @map("campaign_id")
+  name             String
+  description      String?
+  status           StoreProductStatus @default(ACTIVE)
+  price            Int
+  currency         String             @default("USD")
+  sku              String?
+  inventoryCount   Int?               @map("inventory_count")
+  shippingRequired Boolean            @default(false) @map("shipping_required")
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign @relation(fields: [campaignId], references: [id])
-  variants StoreVariant[]
+  organization Organization   @relation(fields: [orgId], references: [id])
+  campaign     Campaign       @relation(fields: [campaignId], references: [id])
+  variants     StoreVariant[]
 
   @@index([campaignId])
   @@map("store_products")
 }
 
 model StoreVariant {
-  id          String   @id @default(cuid())
-  orgId       String   @map("org_id")
-  productId   String   @map("product_id")
-  name        String
-  sku         String?
-  price       Int?
-  inventoryCount Int? @map("inventory_count")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  id             String   @id @default(cuid())
+  orgId          String   @map("org_id")
+  productId      String   @map("product_id")
+  name           String
+  sku            String?
+  price          Int?
+  inventoryCount Int?     @map("inventory_count")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  product StoreProduct @relation(fields: [productId], references: [id])
+  product      StoreProduct @relation(fields: [productId], references: [id])
 
   @@index([productId])
   @@map("store_variants")
 }
 
 model StoreOrder {
-  id         String     @id @default(cuid())
-  orgId      String     @map("org_id")
-  campaignId String?    @map("campaign_id")
-  orderId    String     @map("order_id")
+  id         String      @id @default(cuid())
+  orgId      String      @map("org_id")
+  campaignId String?     @map("campaign_id")
+  orderId    String      @map("order_id")
   status     OrderStatus @default(PENDING)
-  createdAt  DateTime   @default(now()) @map("created_at")
+  createdAt  DateTime    @default(now()) @map("created_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign? @relation(fields: [campaignId], references: [id])
-  order Order @relation(fields: [orderId], references: [id])
+  campaign     Campaign?    @relation(fields: [campaignId], references: [id])
+  order        Order        @relation(fields: [orderId], references: [id])
 
   @@index([orderId])
   @@map("store_orders")
@@ -1833,7 +1920,7 @@ model EmailTemplate {
   createdAt DateTime       @default(now()) @map("created_at")
   updatedAt DateTime       @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
+  organization Organization  @relation(fields: [orgId], references: [id])
   messageSends MessageSend[]
 
   @@unique([orgId, name, version])
@@ -1850,7 +1937,7 @@ model SmsTemplate {
   createdAt DateTime       @default(now()) @map("created_at")
   updatedAt DateTime       @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
+  organization Organization  @relation(fields: [orgId], references: [id])
   messageSends MessageSend[]
 
   @@unique([orgId, name, version])
@@ -1858,71 +1945,71 @@ model SmsTemplate {
 }
 
 model MessageSend {
-  id             String             @id @default(cuid())
-  orgId          String             @map("org_id")
-  channel        CommunicationChannel
-  emailTemplateId String?           @map("email_template_id")
-  smsTemplateId  String?            @map("sms_template_id")
-  to             String
-  subject        String?
-  body           String
-  status         MessageSendStatus  @default(QUEUED)
-  providerMessageId String?         @map("provider_message_id")
-  scheduledAt    DateTime?          @map("scheduled_at")
-  sentAt         DateTime?          @map("sent_at")
-  createdAt      DateTime           @default(now()) @map("created_at")
-  updatedAt      DateTime           @updatedAt @map("updated_at")
+  id                String               @id @default(cuid())
+  orgId             String               @map("org_id")
+  channel           CommunicationChannel
+  emailTemplateId   String?              @map("email_template_id")
+  smsTemplateId     String?              @map("sms_template_id")
+  to                String
+  subject           String?
+  body              String
+  status            MessageSendStatus    @default(QUEUED)
+  providerMessageId String?              @map("provider_message_id")
+  scheduledAt       DateTime?            @map("scheduled_at")
+  sentAt            DateTime?            @map("sent_at")
+  createdAt         DateTime             @default(now()) @map("created_at")
+  updatedAt         DateTime             @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
+  organization  Organization   @relation(fields: [orgId], references: [id])
   emailTemplate EmailTemplate? @relation(fields: [emailTemplateId], references: [id])
-  smsTemplate SmsTemplate? @relation(fields: [smsTemplateId], references: [id])
-  events MessageEvent[]
+  smsTemplate   SmsTemplate?   @relation(fields: [smsTemplateId], references: [id])
+  events        MessageEvent[]
 
   @@index([channel, status])
   @@map("message_sends")
 }
 
 model MessageEvent {
-  id            String           @id @default(cuid())
-  orgId         String           @map("org_id")
-  messageSendId String           @map("message_send_id")
-  eventType     MessageEventType @map("event_type")
-  providerEventId String?        @map("provider_event_id")
-  occurredAt    DateTime         @map("occurred_at")
-  createdAt     DateTime         @default(now()) @map("created_at")
+  id              String           @id @default(cuid())
+  orgId           String           @map("org_id")
+  messageSendId   String           @map("message_send_id")
+  eventType       MessageEventType @map("event_type")
+  providerEventId String?          @map("provider_event_id")
+  occurredAt      DateTime         @map("occurred_at")
+  createdAt       DateTime         @default(now()) @map("created_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  messageSend MessageSend @relation(fields: [messageSendId], references: [id])
+  messageSend  MessageSend  @relation(fields: [messageSendId], references: [id])
 
   @@index([messageSendId])
   @@map("message_events")
 }
 
 model KeywordRoute {
-  id           String            @id @default(cuid())
-  orgId        String            @map("org_id")
+  id           String             @id @default(cuid())
+  orgId        String             @map("org_id")
   keyword      String
-  campaignId   String?           @map("campaign_id")
-  replyMessage String?           @map("reply_message")
+  campaignId   String?            @map("campaign_id")
+  replyMessage String?            @map("reply_message")
   status       KeywordRouteStatus @default(ACTIVE)
-  createdAt    DateTime          @default(now()) @map("created_at")
-  updatedAt    DateTime          @updatedAt @map("updated_at")
+  createdAt    DateTime           @default(now()) @map("created_at")
+  updatedAt    DateTime           @updatedAt @map("updated_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
-  campaign Campaign? @relation(fields: [campaignId], references: [id])
+  campaign     Campaign?    @relation(fields: [campaignId], references: [id])
 
   @@unique([orgId, keyword])
   @@map("keyword_routes")
 }
 
 model ApiToken {
-  id        String   @id @default(cuid())
-  orgId     String   @map("org_id")
-  name      String
-  tokenHash String   @map("token_hash")
-  scopes    String[]
+  id         String    @id @default(cuid())
+  orgId      String    @map("org_id")
+  name       String
+  tokenHash  String    @map("token_hash")
+  scopes     String[]
   lastUsedAt DateTime? @map("last_used_at")
-  createdAt DateTime @default(now()) @map("created_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
 
@@ -1940,27 +2027,27 @@ model WebhookEndpoint {
   createdAt DateTime      @default(now()) @map("created_at")
   updatedAt DateTime      @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  deliveries WebhookDelivery[]
+  organization Organization      @relation(fields: [orgId], references: [id])
+  deliveries   WebhookDelivery[]
 
   @@map("webhook_endpoints")
 }
 
 model WebhookDelivery {
-  id          String                @id @default(cuid())
-  orgId       String                @map("org_id")
-  endpointId  String                @map("endpoint_id")
-  eventType   String                @map("event_type")
-  payload     Json
-  status      WebhookDeliveryStatus @default(PENDING)
-  responseCode Int?                 @map("response_code")
-  attempts    Int                   @default(0)
-  nextAttemptAt DateTime?           @map("next_attempt_at")
-  createdAt   DateTime              @default(now()) @map("created_at")
-  updatedAt   DateTime              @updatedAt @map("updated_at")
+  id            String                @id @default(cuid())
+  orgId         String                @map("org_id")
+  endpointId    String                @map("endpoint_id")
+  eventType     String                @map("event_type")
+  payload       Json
+  status        WebhookDeliveryStatus @default(PENDING)
+  responseCode  Int?                  @map("response_code")
+  attempts      Int                   @default(0)
+  nextAttemptAt DateTime?             @map("next_attempt_at")
+  createdAt     DateTime              @default(now()) @map("created_at")
+  updatedAt     DateTime              @updatedAt @map("updated_at")
 
-  organization Organization @relation(fields: [orgId], references: [id])
-  endpoint WebhookEndpoint @relation(fields: [endpointId], references: [id])
+  organization Organization    @relation(fields: [orgId], references: [id])
+  endpoint     WebhookEndpoint @relation(fields: [endpointId], references: [id])
 
   @@index([endpointId])
   @@map("webhook_deliveries")
@@ -1980,14 +2067,14 @@ model CrmMapping {
 }
 
 model IntegrationSyncJob {
-  id         String           @id @default(cuid())
-  orgId      String           @map("org_id")
+  id         String              @id @default(cuid())
+  orgId      String              @map("org_id")
   provider   IntegrationProvider
-  status     SyncJobStatus    @default(PENDING)
+  status     SyncJobStatus       @default(PENDING)
   details    Json?
-  startedAt  DateTime?        @map("started_at")
-  finishedAt DateTime?        @map("finished_at")
-  createdAt  DateTime         @default(now()) @map("created_at")
+  startedAt  DateTime?           @map("started_at")
+  finishedAt DateTime?           @map("finished_at")
+  createdAt  DateTime            @default(now()) @map("created_at")
 
   organization Organization @relation(fields: [orgId], references: [id])
 

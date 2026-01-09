@@ -9,7 +9,7 @@ type SearchPayload = {
 };
 
 export async function POST(request: Request) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });

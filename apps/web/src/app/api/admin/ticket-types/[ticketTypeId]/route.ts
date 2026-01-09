@@ -17,16 +17,18 @@ type TicketTypeUpdatePayload = {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { ticketTypeId: string } },
+  { params }: { params: Promise<{ ticketTypeId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { ticketTypeId } = await params;
+
   const ticketType = await prisma.ticketType.findUnique({
-    where: { id: params.ticketTypeId },
+    where: { id: ticketTypeId },
   });
 
   if (!ticketType) {
@@ -38,13 +40,15 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { ticketTypeId: string } },
+  { params }: { params: Promise<{ ticketTypeId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { ticketTypeId } = await params;
 
   let body: TicketTypeUpdatePayload;
 
@@ -93,7 +97,7 @@ export async function PATCH(
   }
 
   const ticketType = await prisma.ticketType.update({
-    where: { id: params.ticketTypeId },
+    where: { id: ticketTypeId },
     data,
   });
 
@@ -102,16 +106,18 @@ export async function PATCH(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { ticketTypeId: string } },
+  { params }: { params: Promise<{ ticketTypeId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { ticketTypeId } = await params;
+
   await prisma.ticketType.delete({
-    where: { id: params.ticketTypeId },
+    where: { id: ticketTypeId },
   });
 
   return NextResponse.json({ ok: true });

@@ -5,10 +5,12 @@ export const runtime = "nodejs";
 
 export async function GET(
   _request: Request,
-  { params }: { params: { campaignId: string } },
+  { params }: { params: Promise<{ campaignId: string }> },
 ) {
+  const { campaignId } = await params;
+
   const campaign = await prisma.campaign.findUnique({
-    where: { id: params.campaignId },
+    where: { id: campaignId },
     select: {
       id: true,
       goalAmount: true,

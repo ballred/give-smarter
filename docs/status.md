@@ -80,8 +80,8 @@ Notes: Admin shells + CRUD endpoints for raffles, contests, store products, cand
 ## WS-RPT - Reporting
 Owner: codex
 Scope: `apps/web/src/app/admin/reports`, `apps/web/src/app/api/admin/reports`
-Status: in progress
-Notes: Finance + attendance report pages and CSV export endpoints stubbed.
+Status: complete
+Notes: Finance report shows payment totals, fees, net revenue, refund rate + transaction table with status badges. Attendance report shows registered/checked-in/cancelled counts + attendee table with check-in timestamps. Both include CSV export.
 
 ## WS-AUC-CAT - Auction categories
 Owner: codex

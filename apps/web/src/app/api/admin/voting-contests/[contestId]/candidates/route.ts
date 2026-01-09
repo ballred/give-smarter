@@ -13,16 +13,18 @@ type CandidatePayload = {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { contestId: string } },
+  { params }: { params: Promise<{ contestId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { contestId } = await params;
+
   const candidates = await prisma.voteCandidate.findMany({
-    where: { contestId: params.contestId },
+    where: { contestId },
     orderBy: { createdAt: "desc" },
   });
 
@@ -31,13 +33,15 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: { contestId: string } },
+  { params }: { params: Promise<{ contestId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { contestId } = await params;
 
   let body: CandidatePayload;
 
@@ -52,7 +56,7 @@ export async function POST(
   }
 
   const contest = await prisma.votingContest.findUnique({
-    where: { id: params.contestId },
+    where: { id: contestId },
     select: { orgId: true },
   });
 
@@ -63,7 +67,7 @@ export async function POST(
   const candidate = await prisma.voteCandidate.create({
     data: {
       orgId: contest.orgId,
-      contestId: params.contestId,
+      contestId,
       name: body.name,
       description: body.description ?? null,
       photoUrl: body.photoUrl ?? null,

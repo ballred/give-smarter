@@ -1,8 +1,8 @@
 import { headers } from "next/headers";
 import { prisma } from "@/lib/db";
 
-function resolveOrigin() {
-  const headerList = headers();
+async function resolveOrigin() {
+  const headerList = await headers();
   const host = headerList.get("host");
   if (!host) return null;
   const proto = headerList.get("x-forwarded-proto") ?? "https";
@@ -57,7 +57,7 @@ export async function sendNoBidReminders(auctionId: string) {
     return 0;
   }
 
-  const origin = resolveOrigin();
+  const origin = await resolveOrigin();
   const catalogLink = origin
     ? `${origin}/campaigns/${auction.campaign.slug}/auction`
     : `/campaigns/${auction.campaign.slug}/auction`;

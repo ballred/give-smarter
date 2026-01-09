@@ -13,16 +13,18 @@ type AuctionCategoryPayload = {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { auctionId: string } },
+  { params }: { params: Promise<{ auctionId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { auctionId } = await params;
+
   const categories = await prisma.auctionCategory.findMany({
-    where: { auctionId: params.auctionId },
+    where: { auctionId },
     orderBy: { sortOrder: "asc" },
   });
 
@@ -31,13 +33,15 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: { auctionId: string } },
+  { params }: { params: Promise<{ auctionId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { auctionId } = await params;
 
   let body: AuctionCategoryPayload;
 
@@ -52,7 +56,7 @@ export async function POST(
   }
 
   const auction = await prisma.auction.findUnique({
-    where: { id: params.auctionId },
+    where: { id: auctionId },
     select: { orgId: true },
   });
 
@@ -63,7 +67,7 @@ export async function POST(
   const category = await prisma.auctionCategory.create({
     data: {
       orgId: auction.orgId,
-      auctionId: params.auctionId,
+      auctionId,
       name: body.name,
       description: body.description ?? null,
       sortOrder: body.sortOrder ?? 0,

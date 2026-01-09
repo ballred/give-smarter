@@ -10,16 +10,18 @@ type HouseholdUpdate = {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { householdId: string } },
+  { params }: { params: Promise<{ householdId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { householdId } = await params;
+
   const household = await prisma.household.findUnique({
-    where: { id: params.householdId },
+    where: { id: householdId },
   });
 
   if (!household) {
@@ -31,13 +33,15 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { householdId: string } },
+  { params }: { params: Promise<{ householdId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { householdId } = await params;
 
   let body: HouseholdUpdate;
 
@@ -48,7 +52,7 @@ export async function PUT(
   }
 
   const household = await prisma.household.update({
-    where: { id: params.householdId },
+    where: { id: householdId },
     data: {
       name: body.name,
     },
@@ -59,16 +63,18 @@ export async function PUT(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { householdId: string } },
+  { params }: { params: Promise<{ householdId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { householdId } = await params;
+
   await prisma.household.delete({
-    where: { id: params.householdId },
+    where: { id: householdId },
   });
 
   return NextResponse.json({ ok: true });

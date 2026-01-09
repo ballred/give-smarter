@@ -3,8 +3,8 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { PortalNav } from "./portal-nav";
 
-export default function PortalLayout({ children }: { children: ReactNode }) {
-  const { userId } = auth();
+export default async function PortalLayout({ children }: { children: ReactNode }) {
+  const { userId } = await auth();
 
   if (!userId) {
     redirect("/sign-in");

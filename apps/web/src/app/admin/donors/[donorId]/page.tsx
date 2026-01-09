@@ -29,8 +29,8 @@ export default async function DonorDetailPage({
         </p>
         <h1 className="text-2xl font-semibold text-zinc-900">
           {donor.displayName ??
-            [donor.firstName, donor.lastName].filter(Boolean).join(" ") ||
-            "Unnamed donor"}
+            ([donor.firstName, donor.lastName].filter(Boolean).join(" ") ||
+            "Unnamed donor")}
         </h1>
         <p className="text-sm text-zinc-600">Donor ID: {donor.id}</p>
       </header>
@@ -148,7 +148,7 @@ export default async function DonorDetailPage({
                   {address.line1}
                   {address.line2 ? `, ${address.line2}` : ""}
                   <div>
-                    {address.city}, {address.state} {address.postalCode}
+                    {address.city}, {address.region} {address.postalCode}
                   </div>
                 </div>
               ))

@@ -14,16 +14,18 @@ type VariantUpdatePayload = {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { productId: string; variantId: string } },
+  { params }: { params: Promise<{ productId: string; variantId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { productId, variantId } = await params;
+
   const variant = await prisma.storeVariant.findFirst({
-    where: { id: params.variantId, productId: params.productId },
+    where: { id: variantId, productId },
   });
 
   if (!variant) {
@@ -35,13 +37,15 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { productId: string; variantId: string } },
+  { params }: { params: Promise<{ productId: string; variantId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { variantId } = await params;
 
   let body: VariantUpdatePayload;
 
@@ -73,7 +77,7 @@ export async function PATCH(
   }
 
   const variant = await prisma.storeVariant.update({
-    where: { id: params.variantId },
+    where: { id: variantId },
     data,
   });
 
@@ -82,16 +86,18 @@ export async function PATCH(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { productId: string; variantId: string } },
+  { params }: { params: Promise<{ productId: string; variantId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { variantId } = await params;
+
   await prisma.storeVariant.delete({
-    where: { id: params.variantId },
+    where: { id: variantId },
   });
 
   return NextResponse.json({ ok: true });

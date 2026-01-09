@@ -18,16 +18,18 @@ type StoreProductUpdatePayload = {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { productId: string } },
+  { params }: { params: Promise<{ productId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { productId } = await params;
+
   const product = await prisma.storeProduct.findUnique({
-    where: { id: params.productId },
+    where: { id: productId },
   });
 
   if (!product) {
@@ -39,13 +41,15 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { productId: string } },
+  { params }: { params: Promise<{ productId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { productId } = await params;
 
   let body: StoreProductUpdatePayload;
 
@@ -82,7 +86,7 @@ export async function PATCH(
   }
 
   const product = await prisma.storeProduct.update({
-    where: { id: params.productId },
+    where: { id: productId },
     data,
   });
 
@@ -91,15 +95,17 @@ export async function PATCH(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { productId: string } },
+  { params }: { params: Promise<{ productId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  await prisma.storeProduct.delete({ where: { id: params.productId } });
+  const { productId } = await params;
+
+  await prisma.storeProduct.delete({ where: { id: productId } });
 
   return NextResponse.json({ ok: true });
 }

@@ -43,8 +43,8 @@ function parseRules(input: unknown): BidIncrementRule[] | undefined {
   return rules.length ? rules : undefined;
 }
 
-function resolveOrigin() {
-  const headerList = headers();
+async function resolveOrigin() {
+  const headerList = await headers();
   const host = headerList.get("host");
   if (!host) return null;
   const proto = headerList.get("x-forwarded-proto") ?? "https";
@@ -284,7 +284,7 @@ export async function placeBid(formData: FormData) {
       select: { primaryPhone: true, primaryEmail: true },
     });
 
-    const origin = resolveOrigin();
+    const origin = await resolveOrigin();
     const link = origin
       ? `${origin}/campaigns/${item.auction.campaign.slug}/auction/${item.id}`
       : `/campaigns/${item.auction.campaign.slug}/auction/${item.id}`;
@@ -327,7 +327,7 @@ export async function placeBid(formData: FormData) {
   });
 
   if (watchlist.length) {
-    const origin = resolveOrigin();
+    const origin = await resolveOrigin();
     const link = origin
       ? `${origin}/campaigns/${item.auction.campaign.slug}/auction/${item.id}`
       : `/campaigns/${item.auction.campaign.slug}/auction/${item.id}`;
@@ -417,9 +417,9 @@ export async function addToWatchlist(formData: FormData) {
       },
     },
     create: {
-      orgId: item.orgId,
-      auctionItemId: item.id,
-      donorId,
+      organization: { connect: { id: item.orgId } },
+      auctionItem: { connect: { id: item.id } },
+      donor: { connect: { id: donorId } },
     },
     update: {},
   });
@@ -525,7 +525,7 @@ export async function buyNow(formData: FormData) {
       coverFeesAmount: 0,
       lineItems: {
         create: normalized.items.map((lineItem) => ({
-          orgId: item.orgId,
+          organization: { connect: { id: item.orgId } },
           type: lineItem.type,
           sourceId: lineItem.sourceId,
           description: lineItem.description,
@@ -536,7 +536,7 @@ export async function buyNow(formData: FormData) {
           fmvAmount: lineItem.fmvAmount,
           benefitAmount: lineItem.benefitAmount,
           taxDeductibleAmount: lineItem.taxDeductibleAmount,
-          metadata: lineItem.metadata,
+          metadata: lineItem.metadata as object | undefined,
         })),
       },
     },
@@ -559,7 +559,7 @@ export async function buyNow(formData: FormData) {
     data: { status: "CLOSED", closesAt: now },
   });
 
-  const origin = resolveOrigin();
+  const origin = await resolveOrigin();
   if (!origin) {
     throw new Error("Missing request origin.");
   }

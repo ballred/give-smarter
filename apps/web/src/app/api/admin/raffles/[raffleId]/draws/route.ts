@@ -6,16 +6,18 @@ export const runtime = "nodejs";
 
 export async function POST(
   _request: Request,
-  { params }: { params: { raffleId: string } },
+  { params }: { params: Promise<{ raffleId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { raffleId } = await params;
+
   const raffle = await prisma.raffle.findUnique({
-    where: { id: params.raffleId },
+    where: { id: raffleId },
     select: { orgId: true },
   });
 
@@ -24,7 +26,7 @@ export async function POST(
   }
 
   const tickets = await prisma.raffleTicket.findMany({
-    where: { raffleId: params.raffleId },
+    where: { raffleId },
   });
 
   const drawnAt = new Date();
@@ -33,7 +35,7 @@ export async function POST(
     const draw = await prisma.raffleDraw.create({
       data: {
         orgId: raffle.orgId,
-        raffleId: params.raffleId,
+        raffleId,
         drawnAt,
         notes: "No tickets sold",
       },
@@ -47,7 +49,7 @@ export async function POST(
   const draw = await prisma.raffleDraw.create({
     data: {
       orgId: raffle.orgId,
-      raffleId: params.raffleId,
+      raffleId,
       drawnAt,
       winnerDonorId: winnerTicket.donorId ?? null,
     },

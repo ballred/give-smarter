@@ -13,16 +13,18 @@ type CandidateUpdatePayload = {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { contestId: string; candidateId: string } },
+  { params }: { params: Promise<{ contestId: string; candidateId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { contestId, candidateId } = await params;
+
   const candidate = await prisma.voteCandidate.findFirst({
-    where: { id: params.candidateId, contestId: params.contestId },
+    where: { id: candidateId, contestId: contestId },
   });
 
   if (!candidate) {
@@ -34,13 +36,15 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { contestId: string; candidateId: string } },
+  { params }: { params: Promise<{ contestId: string; candidateId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { candidateId } = await params;
 
   let body: CandidateUpdatePayload;
 
@@ -58,7 +62,7 @@ export async function PATCH(
   if (body.sponsorName !== undefined) data.sponsorName = body.sponsorName;
 
   const candidate = await prisma.voteCandidate.update({
-    where: { id: params.candidateId },
+    where: { id: candidateId },
     data,
   });
 
@@ -67,16 +71,18 @@ export async function PATCH(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { contestId: string; candidateId: string } },
+  { params }: { params: Promise<{ contestId: string; candidateId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { candidateId } = await params;
+
   await prisma.voteCandidate.delete({
-    where: { id: params.candidateId },
+    where: { id: candidateId },
   });
 
   return NextResponse.json({ ok: true });

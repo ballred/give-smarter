@@ -6,16 +6,18 @@ export const runtime = "nodejs";
 
 export async function POST(
   _request: Request,
-  { params }: { params: { attendeeId: string } },
+  { params }: { params: Promise<{ attendeeId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { attendeeId } = await params;
+
   const existing = await prisma.checkin.findFirst({
-    where: { attendeeId: params.attendeeId },
+    where: { attendeeId },
   });
 
   if (existing) {
@@ -23,7 +25,7 @@ export async function POST(
   }
 
   const attendee = await prisma.attendee.findUnique({
-    where: { id: params.attendeeId },
+    where: { id: attendeeId },
     select: { orgId: true },
   });
 
@@ -34,7 +36,7 @@ export async function POST(
   const checkin = await prisma.checkin.create({
     data: {
       orgId: attendee.orgId,
-      attendeeId: params.attendeeId,
+      attendeeId,
       method: "SEARCH",
       checkedInAt: new Date(),
     },

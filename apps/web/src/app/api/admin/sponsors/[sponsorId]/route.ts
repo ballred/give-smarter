@@ -13,16 +13,18 @@ type SponsorUpdate = {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { sponsorId: string } },
+  { params }: { params: Promise<{ sponsorId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { sponsorId } = await params;
+
   const sponsor = await prisma.sponsor.findUnique({
-    where: { id: params.sponsorId },
+    where: { id: sponsorId },
   });
 
   if (!sponsor) {
@@ -34,13 +36,15 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { sponsorId: string } },
+  { params }: { params: Promise<{ sponsorId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { sponsorId } = await params;
 
   let body: SponsorUpdate;
 
@@ -51,7 +55,7 @@ export async function PUT(
   }
 
   const sponsor = await prisma.sponsor.update({
-    where: { id: params.sponsorId },
+    where: { id: sponsorId },
     data: {
       name: body.name,
       level: body.level ?? undefined,
@@ -65,16 +69,18 @@ export async function PUT(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { sponsorId: string } },
+  { params }: { params: Promise<{ sponsorId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { sponsorId } = await params;
+
   await prisma.sponsor.delete({
-    where: { id: params.sponsorId },
+    where: { id: sponsorId },
   });
 
   return NextResponse.json({ ok: true });

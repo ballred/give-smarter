@@ -72,8 +72,8 @@ export async function AuctionItemDetail({
   const now = new Date();
   const opensAt = item.opensAt ?? item.auction.opensAt;
   const closesAt = item.closesAt ?? item.auction.closesAt;
-  const isClosed = item.status === "CLOSED" || (closesAt && now > closesAt);
-  const isPreview = item.isPreviewOnly || (opensAt && now < opensAt);
+  const isClosed = item.status === "CLOSED" || !!(closesAt && now > closesAt);
+  const isPreview = !!item.isPreviewOnly || !!(opensAt && now < opensAt);
   const bidDisabled = isClosed || isPreview;
 
   return (
@@ -107,7 +107,7 @@ export async function AuctionItemDetail({
 
         {showWatch ? (
           <div className="rounded-2xl border border-sky-200 bg-sky-50 p-4 text-sm text-sky-900">
-            You are now watching this item. We'll alert you if you get outbid.
+            You are now watching this item. We&apos;ll alert you if you get outbid.
           </div>
         ) : null}
 

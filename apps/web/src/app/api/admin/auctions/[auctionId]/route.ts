@@ -18,16 +18,18 @@ type AuctionUpdatePayload = {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { auctionId: string } },
+  { params }: { params: Promise<{ auctionId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { auctionId } = await params;
+
   const auction = await prisma.auction.findUnique({
-    where: { id: params.auctionId },
+    where: { id: auctionId },
   });
 
   if (!auction) {
@@ -39,13 +41,15 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { auctionId: string } },
+  { params }: { params: Promise<{ auctionId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { auctionId } = await params;
 
   let body: AuctionUpdatePayload;
 
@@ -81,7 +85,7 @@ export async function PATCH(
   }
 
   const auction = await prisma.auction.update({
-    where: { id: params.auctionId },
+    where: { id: auctionId },
     data,
   });
 
@@ -90,15 +94,17 @@ export async function PATCH(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { auctionId: string } },
+  { params }: { params: Promise<{ auctionId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  await prisma.auction.delete({ where: { id: params.auctionId } });
+  const { auctionId } = await params;
+
+  await prisma.auction.delete({ where: { id: auctionId } });
 
   return NextResponse.json({ ok: true });
 }

@@ -31,7 +31,7 @@ type PortalData = {
 };
 
 async function getPortalIdentity(): Promise<PortalIdentity | null> {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return null;

@@ -19,16 +19,18 @@ function normalizeKeyword(value: string) {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { routeId: string } },
+  { params }: { params: Promise<{ routeId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { routeId } = await params;
+
   const route = await prisma.keywordRoute.findUnique({
-    where: { id: params.routeId },
+    where: { id: routeId },
   });
 
   if (!route) {
@@ -40,13 +42,15 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { routeId: string } },
+  { params }: { params: Promise<{ routeId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { routeId } = await params;
 
   let body: KeywordRouteUpdatePayload;
 
@@ -61,7 +65,7 @@ export async function PATCH(
   }
 
   const existing = await prisma.keywordRoute.findUnique({
-    where: { id: params.routeId },
+    where: { id: routeId },
     select: { orgId: true },
   });
 
@@ -107,7 +111,7 @@ export async function PATCH(
   }
 
   const route = await prisma.keywordRoute.update({
-    where: { id: params.routeId },
+    where: { id: routeId },
     data,
   });
 
@@ -116,16 +120,18 @@ export async function PATCH(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { routeId: string } },
+  { params }: { params: Promise<{ routeId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { routeId } = await params;
+
   await prisma.keywordRoute.delete({
-    where: { id: params.routeId },
+    where: { id: routeId },
   });
 
   return NextResponse.json({ ok: true });

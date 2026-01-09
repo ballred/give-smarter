@@ -7,19 +7,20 @@ export const runtime = "nodejs";
 
 export async function GET(
   request: Request,
-  { params }: { params: { shiftId: string } },
+  { params }: { params: Promise<{ shiftId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { shiftId } = await params;
   const url = new URL(request.url);
   const format = url.searchParams.get("format") ?? "csv";
 
   const shift = await prisma.volunteerShift.findUnique({
-    where: { id: params.shiftId },
+    where: { id: shiftId },
     include: {
       campaign: { select: { name: true } },
       signups: {

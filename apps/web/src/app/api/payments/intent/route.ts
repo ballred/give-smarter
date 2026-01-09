@@ -143,7 +143,7 @@ export async function POST(request: Request) {
       coverFeesAmount,
       lineItems: {
         create: normalized.items.map((item) => ({
-          orgId,
+          organization: { connect: { id: orgId } },
           type: item.type,
           sourceId: item.sourceId,
           description: item.description,
@@ -154,7 +154,7 @@ export async function POST(request: Request) {
           fmvAmount: item.fmvAmount,
           benefitAmount: item.benefitAmount,
           taxDeductibleAmount: item.taxDeductibleAmount,
-          metadata: item.metadata,
+          metadata: item.metadata as object | undefined,
         })),
       },
     },

@@ -14,7 +14,7 @@ export async function checkInAttendee(
 
   return prisma.checkin.create({
     data: {
-      orgId: existing?.orgId ?? (await resolveOrgId(attendeeId)),
+      orgId: await resolveOrgId(attendeeId),
       attendeeId,
       method,
       checkedInAt: new Date(),

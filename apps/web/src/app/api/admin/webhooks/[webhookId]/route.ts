@@ -37,16 +37,18 @@ function validateUrl(value: string) {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { webhookId: string } },
+  { params }: { params: Promise<{ webhookId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { webhookId } = await params;
+
   const webhook = await prisma.webhookEndpoint.findUnique({
-    where: { id: params.webhookId },
+    where: { id: webhookId },
   });
 
   if (!webhook) {
@@ -58,13 +60,15 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { webhookId: string } },
+  { params }: { params: Promise<{ webhookId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { webhookId } = await params;
 
   let body: WebhookUpdatePayload;
 
@@ -104,7 +108,7 @@ export async function PATCH(
   }
 
   const webhook = await prisma.webhookEndpoint.update({
-    where: { id: params.webhookId },
+    where: { id: webhookId },
     data,
   });
 
@@ -113,16 +117,18 @@ export async function PATCH(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { webhookId: string } },
+  { params }: { params: Promise<{ webhookId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { webhookId } = await params;
+
   await prisma.webhookEndpoint.delete({
-    where: { id: params.webhookId },
+    where: { id: webhookId },
   });
 
   return NextResponse.json({ ok: true });

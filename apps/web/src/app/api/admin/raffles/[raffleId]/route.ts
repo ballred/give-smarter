@@ -18,16 +18,18 @@ type RaffleUpdatePayload = {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { raffleId: string } },
+  { params }: { params: Promise<{ raffleId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { raffleId } = await params;
+
   const raffle = await prisma.raffle.findUnique({
-    where: { id: params.raffleId },
+    where: { id: raffleId },
   });
 
   if (!raffle) {
@@ -39,13 +41,15 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { raffleId: string } },
+  { params }: { params: Promise<{ raffleId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { raffleId } = await params;
 
   let body: RaffleUpdatePayload;
 
@@ -85,7 +89,7 @@ export async function PATCH(
   }
 
   const raffle = await prisma.raffle.update({
-    where: { id: params.raffleId },
+    where: { id: raffleId },
     data,
   });
 
@@ -94,15 +98,17 @@ export async function PATCH(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { raffleId: string } },
+  { params }: { params: Promise<{ raffleId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  await prisma.raffle.delete({ where: { id: params.raffleId } });
+  const { raffleId } = await params;
+
+  await prisma.raffle.delete({ where: { id: raffleId } });
 
   return NextResponse.json({ ok: true });
 }

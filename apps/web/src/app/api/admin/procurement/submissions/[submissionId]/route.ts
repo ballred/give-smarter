@@ -16,16 +16,18 @@ type ProcurementUpdatePayload = {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { submissionId: string } },
+  { params }: { params: Promise<{ submissionId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { submissionId } = await params;
+
   const submission = await prisma.procurementSubmission.findUnique({
-    where: { id: params.submissionId },
+    where: { id: submissionId },
   });
 
   if (!submission) {
@@ -37,13 +39,15 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { submissionId: string } },
+  { params }: { params: Promise<{ submissionId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { submissionId } = await params;
 
   let body: ProcurementUpdatePayload;
 
@@ -71,7 +75,7 @@ export async function PATCH(
   }
 
   const submission = await prisma.procurementSubmission.update({
-    where: { id: params.submissionId },
+    where: { id: submissionId },
     data,
   });
 
@@ -80,16 +84,18 @@ export async function PATCH(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { submissionId: string } },
+  { params }: { params: Promise<{ submissionId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { submissionId } = await params;
+
   await prisma.procurementSubmission.delete({
-    where: { id: params.submissionId },
+    where: { id: submissionId },
   });
 
   return NextResponse.json({ ok: true });

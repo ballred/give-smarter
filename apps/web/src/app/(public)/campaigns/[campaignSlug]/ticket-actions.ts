@@ -34,8 +34,8 @@ function parseAddOnEntries(formData: FormData) {
     .filter((entry) => Number.isFinite(entry.quantity) && entry.quantity > 0);
 }
 
-function resolveOrigin() {
-  const headerList = headers();
+async function resolveOrigin() {
+  const headerList = await headers();
   const host = headerList.get("host");
   if (!host) return null;
   const proto = headerList.get("x-forwarded-proto") ?? "https";
@@ -128,7 +128,7 @@ export async function createTicketCheckout(formData: FormData) {
 
   const addOnLineItems: Array<{
     type: LineItemType;
-    sourceId?: string | null;
+    sourceId?: string;
     description: string;
     quantity: number;
     unitAmount: number;
@@ -293,7 +293,7 @@ export async function createTicketCheckout(formData: FormData) {
       coverFeesAmount,
       lineItems: {
         create: normalized.items.map((item) => ({
-          orgId: campaign.orgId,
+          organization: { connect: { id: campaign.orgId } },
           type: item.type,
           sourceId: item.sourceId,
           description: item.description,
@@ -304,7 +304,7 @@ export async function createTicketCheckout(formData: FormData) {
           fmvAmount: item.fmvAmount,
           benefitAmount: item.benefitAmount,
           taxDeductibleAmount: item.taxDeductibleAmount,
-          metadata: item.metadata,
+          metadata: item.metadata as object | undefined,
         })),
       },
     },
@@ -378,7 +378,7 @@ export async function createTicketCheckout(formData: FormData) {
     },
   });
 
-  const origin = resolveOrigin();
+  const origin = await resolveOrigin();
   if (!origin) {
     throw new Error("Missing request origin.");
   }

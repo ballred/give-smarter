@@ -73,10 +73,10 @@ export default async function DonorsPage({
                       href={`/admin/donors/${donor.id}`}
                     >
                       {donor.displayName ??
-                        [donor.firstName, donor.lastName]
+                        ([donor.firstName, donor.lastName]
                           .filter(Boolean)
                           .join(" ") ||
-                        "Unnamed donor"}
+                        "Unnamed donor")}
                     </Link>
                   </td>
                   <td className="px-4 py-3 text-zinc-600">

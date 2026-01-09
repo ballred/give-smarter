@@ -1,9 +1,6 @@
 import { getPortalDonors } from "../portal-data";
-import {
-  preferenceKey,
-  preferenceOptions,
-  updateDonorProfile,
-} from "./profile-actions";
+import { preferenceKey, preferenceOptions } from "./profile-utils";
+import { updateDonorProfile } from "./profile-actions";
 
 export default async function DonorProfilePage() {
   const portal = await getPortalDonors({ includePreferences: true });

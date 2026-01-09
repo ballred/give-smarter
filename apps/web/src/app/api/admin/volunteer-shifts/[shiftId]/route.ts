@@ -14,16 +14,18 @@ type VolunteerShiftUpdate = {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { shiftId: string } },
+  { params }: { params: Promise<{ shiftId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { shiftId } = await params;
+
   const shift = await prisma.volunteerShift.findUnique({
-    where: { id: params.shiftId },
+    where: { id: shiftId },
   });
 
   if (!shift) {
@@ -35,13 +37,15 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { shiftId: string } },
+  { params }: { params: Promise<{ shiftId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  const { shiftId } = await params;
 
   let body: VolunteerShiftUpdate;
 
@@ -52,7 +56,7 @@ export async function PUT(
   }
 
   const shift = await prisma.volunteerShift.update({
-    where: { id: params.shiftId },
+    where: { id: shiftId },
     data: {
       name: body.name,
       description: body.description ?? undefined,
@@ -67,16 +71,18 @@ export async function PUT(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { shiftId: string } },
+  { params }: { params: Promise<{ shiftId: string }> },
 ) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const { shiftId } = await params;
+
   await prisma.volunteerShift.delete({
-    where: { id: params.shiftId },
+    where: { id: shiftId },
   });
 
   return NextResponse.json({ ok: true });
