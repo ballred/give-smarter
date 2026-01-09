@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -54,6 +55,14 @@ export async function PATCH(
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
+  const beforeCandidate = await prisma.voteCandidate.findUnique({
+    where: { id: candidateId },
+  });
+
+  if (!beforeCandidate) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   const data: Record<string, unknown> = {};
 
   if (body.name !== undefined) data.name = body.name;
@@ -64,6 +73,15 @@ export async function PATCH(
   const candidate = await prisma.voteCandidate.update({
     where: { id: candidateId },
     data,
+  });
+
+  await logAuditEntry({
+    orgId: candidate.orgId,
+    action: "vote_candidate.update",
+    targetType: "VoteCandidate",
+    targetId: candidateId,
+    beforeData: beforeCandidate,
+    afterData: candidate,
   });
 
   return NextResponse.json({ data: candidate });
@@ -81,8 +99,24 @@ export async function DELETE(
 
   const { candidateId } = await params;
 
+  const candidate = await prisma.voteCandidate.findUnique({
+    where: { id: candidateId },
+  });
+
+  if (!candidate) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   await prisma.voteCandidate.delete({
     where: { id: candidateId },
+  });
+
+  await logAuditEntry({
+    orgId: candidate.orgId,
+    action: "vote_candidate.delete",
+    targetType: "VoteCandidate",
+    targetId: candidateId,
+    beforeData: candidate,
   });
 
   return NextResponse.json({ ok: true });

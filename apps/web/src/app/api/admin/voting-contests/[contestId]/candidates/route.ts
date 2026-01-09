@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -73,6 +74,14 @@ export async function POST(
       photoUrl: body.photoUrl ?? null,
       sponsorName: body.sponsorName ?? null,
     },
+  });
+
+  await logAuditEntry({
+    orgId: contest.orgId,
+    action: "vote_candidate.create",
+    targetType: "VoteCandidate",
+    targetId: candidate.id,
+    afterData: candidate,
   });
 
   return NextResponse.json({ data: candidate }, { status: 201 });
