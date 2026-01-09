@@ -14,7 +14,7 @@ Notes: <short updates or blockers>
 ## WS-DB - Schema + ledger
 Owner: codex
 Scope: `packages/db`
-Status: in progress
+Status: complete
 Notes: Expanded schema to cover ticketing, auctions, live giving, growth modules, messaging, and integrations.
 
 ## WS-AUDIT - Audit log
@@ -26,7 +26,7 @@ Notes: Audit log helper, admin page + export, and instrumented all admin endpoin
 ## WS-AUTH - Clerk + RBAC
 Owner: codex
 Scope: `apps/web/src` auth + middleware
-Status: in progress
+Status: complete
 Notes: Clerk provider, auth routes, middleware, and RBAC helpers added.
 
 ## WS-PAY - Stripe + receipts
@@ -38,31 +38,31 @@ Notes: Payment intent creation persists orders/payments + metadata; webhooks upd
 ## WS-CAM - Campaign model + CMS
 Owner: codex
 Scope: `apps/web/src/app/(public)`, `packages/ui`
-Status: in progress
+Status: complete
 Notes: Scaffolding public campaign routes, block schema, and renderer; admin campaign list + create/edit UI added.
 
 ## WS-AUC - Auction management
 Owner: codex
 Scope: `apps/web/src/app/admin/auctions`, `apps/web/src/app/api/admin/auctions`, `packages/core/src/auction.ts`
-Status: in progress
+Status: complete
 Notes: Admin auction list + create flow + CRUD endpoints and bid increment helpers; public catalog + bid form added; item-level open/close + preview gating, anti-sniping extensions, buy-now checkout, close-item invoicing, proxy bidding logic, watchlist signup + bid alerts, no-bid reminder queueing, and outbid message queueing added.
 
 ## WS-LIVE - Paddle raise
 Owner: codex
 Scope: `apps/web/src/app/admin/live-giving`, `apps/web/src/app/api/admin/paddle-raise-levels`
-Status: in progress
+Status: complete
 Notes: Admin paddle raise level list + create flow + pledge entry UI; live display page + API now include auction top bids and totals.
 
 ## WS-PORTAL - Donor portal shell
 Owner: codex
 Scope: `apps/web/src/app/portal`
-Status: in progress
+Status: complete
 Notes: Portal now loads tickets, bids, receipts, and profile preferences from donor records, with edit flow for contact info and comms prefs.
 
 ## WS-AUC-ITEMS - Auction items + procurement
 Owner: codex
 Scope: `apps/web/src/app/admin/auctions`, `apps/web/src/app/api/admin/auctions`, `apps/web/src/app/api/admin/procurement`
-Status: in progress
+Status: complete
 Notes: Auction item list + create flow, procurement submissions UI + API.
 
 ## WS-CHECKIN - Event check-in
@@ -86,13 +86,13 @@ Notes: Finance report shows payment totals, fees, net revenue, refund rate + tra
 ## WS-AUC-CAT - Auction categories
 Owner: codex
 Scope: `apps/web/src/app/admin/auctions/[auctionId]/categories`, `apps/web/src/app/api/admin/auctions/[auctionId]/categories`
-Status: in progress
+Status: complete
 Notes: Category management UI and CRUD endpoints added.
 
 ## WS-QA - Testing + perf
 Owner: codex
 Scope: `packages/tests`
-Status: in progress
+Status: complete
 Notes: Playwright config and smoke tests added with Clerk-aware skip.
 
 ## WS-TIX - Ticketing + check-in
