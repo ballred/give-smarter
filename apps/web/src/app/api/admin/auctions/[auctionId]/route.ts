@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -59,6 +60,14 @@ export async function PATCH(
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
+  const beforeAuction = await prisma.auction.findUnique({
+    where: { id: auctionId },
+  });
+
+  if (!beforeAuction) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   const data: Record<string, unknown> = {};
 
   if (body.name !== undefined) data.name = body.name;
@@ -89,6 +98,15 @@ export async function PATCH(
     data,
   });
 
+  await logAuditEntry({
+    orgId: auction.orgId,
+    action: "auction.update",
+    targetType: "Auction",
+    targetId: auctionId,
+    beforeData: beforeAuction,
+    afterData: auction,
+  });
+
   return NextResponse.json({ data: auction });
 }
 
@@ -104,7 +122,23 @@ export async function DELETE(
 
   const { auctionId } = await params;
 
+  const auction = await prisma.auction.findUnique({
+    where: { id: auctionId },
+  });
+
+  if (!auction) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   await prisma.auction.delete({ where: { id: auctionId } });
+
+  await logAuditEntry({
+    orgId: auction.orgId,
+    action: "auction.delete",
+    targetType: "Auction",
+    targetId: auctionId,
+    beforeData: auction,
+  });
 
   return NextResponse.json({ ok: true });
 }

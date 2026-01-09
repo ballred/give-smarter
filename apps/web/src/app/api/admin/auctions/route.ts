@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 import { defaultBidIncrementRules } from "@give-smarter/core";
 
 export const runtime = "nodejs";
@@ -88,6 +89,14 @@ export async function POST(request: Request) {
           : null,
       bidIncrementRules: body.bidIncrementRules ?? defaultBidIncrementRules,
     },
+  });
+
+  await logAuditEntry({
+    orgId: campaign.orgId,
+    action: "auction.create",
+    targetType: "Auction",
+    targetId: auction.id,
+    afterData: auction,
   });
 
   return NextResponse.json({ data: auction }, { status: 201 });

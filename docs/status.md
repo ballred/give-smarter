@@ -21,7 +21,7 @@ Notes: Expanded schema to cover ticketing, auctions, live giving, growth modules
 Owner: codex
 Scope: `apps/web/src/lib`, admin actions
 Status: in progress
-Notes: Audit log helper, admin page + export, and instrumented: auction item closes, ticket/add-on/promo creation, donor CRUD, campaign CRUD, API token CRUD, webhook CRUD, sponsor CRUD, raffle CRUD.
+Notes: Audit log helper, admin page + export, and instrumented: auction item closes, ticket/add-on/promo creation, donor CRUD, campaign CRUD, API token CRUD, webhook CRUD, sponsor CRUD, raffle CRUD, auction CRUD.
 
 ## WS-AUTH - Clerk + RBAC
 Owner: codex
