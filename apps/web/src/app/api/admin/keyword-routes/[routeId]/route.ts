@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -64,14 +65,15 @@ export async function PATCH(
     return NextResponse.json({ error: "invalid_status" }, { status: 400 });
   }
 
-  const existing = await prisma.keywordRoute.findUnique({
+  const beforeRoute = await prisma.keywordRoute.findUnique({
     where: { id: routeId },
-    select: { orgId: true },
   });
 
-  if (!existing) {
+  if (!beforeRoute) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
+
+  const existing = { orgId: beforeRoute.orgId };
 
   const data: Record<string, unknown> = {};
 
@@ -115,6 +117,15 @@ export async function PATCH(
     data,
   });
 
+  await logAuditEntry({
+    orgId: route.orgId,
+    action: "keyword_route.update",
+    targetType: "KeywordRoute",
+    targetId: routeId,
+    beforeData: beforeRoute,
+    afterData: route,
+  });
+
   return NextResponse.json({ data: route });
 }
 
@@ -130,8 +141,24 @@ export async function DELETE(
 
   const { routeId } = await params;
 
+  const route = await prisma.keywordRoute.findUnique({
+    where: { id: routeId },
+  });
+
+  if (!route) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   await prisma.keywordRoute.delete({
     where: { id: routeId },
+  });
+
+  await logAuditEntry({
+    orgId: route.orgId,
+    action: "keyword_route.delete",
+    targetType: "KeywordRoute",
+    targetId: routeId,
+    beforeData: route,
   });
 
   return NextResponse.json({ ok: true });

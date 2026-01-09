@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -97,6 +98,14 @@ export async function POST(request: Request) {
       replyMessage: body.replyMessage ?? null,
       status: (body.status ?? "ACTIVE") as "ACTIVE" | "INACTIVE",
     },
+  });
+
+  await logAuditEntry({
+    orgId: body.orgId,
+    action: "keyword_route.create",
+    targetType: "KeywordRoute",
+    targetId: route.id,
+    afterData: route,
   });
 
   return NextResponse.json({ data: route }, { status: 201 });

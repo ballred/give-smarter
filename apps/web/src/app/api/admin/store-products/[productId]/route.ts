@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { StoreProductStatus } from "@prisma/client";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -59,6 +60,14 @@ export async function PATCH(
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
+  const beforeProduct = await prisma.storeProduct.findUnique({
+    where: { id: productId },
+  });
+
+  if (!beforeProduct) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   const data: Record<string, unknown> = {};
 
   if (body.name !== undefined) data.name = body.name;
@@ -90,6 +99,15 @@ export async function PATCH(
     data,
   });
 
+  await logAuditEntry({
+    orgId: product.orgId,
+    action: "store_product.update",
+    targetType: "StoreProduct",
+    targetId: productId,
+    beforeData: beforeProduct,
+    afterData: product,
+  });
+
   return NextResponse.json({ data: product });
 }
 
@@ -105,7 +123,23 @@ export async function DELETE(
 
   const { productId } = await params;
 
+  const product = await prisma.storeProduct.findUnique({
+    where: { id: productId },
+  });
+
+  if (!product) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   await prisma.storeProduct.delete({ where: { id: productId } });
+
+  await logAuditEntry({
+    orgId: product.orgId,
+    action: "store_product.delete",
+    targetType: "StoreProduct",
+    targetId: productId,
+    beforeData: product,
+  });
 
   return NextResponse.json({ ok: true });
 }

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { StoreProductStatus } from "@prisma/client";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -83,6 +84,14 @@ export async function POST(request: Request) {
       shippingRequired: body.shippingRequired ?? false,
       status: body.status ?? StoreProductStatus.ACTIVE,
     },
+  });
+
+  await logAuditEntry({
+    orgId: campaign.orgId,
+    action: "store_product.create",
+    targetType: "StoreProduct",
+    targetId: product.id,
+    afterData: product,
   });
 
   return NextResponse.json({ data: product }, { status: 201 });
