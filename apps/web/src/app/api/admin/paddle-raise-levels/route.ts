@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -69,6 +70,14 @@ export async function POST(request: Request) {
       sortOrder: body.sortOrder ?? 0,
       isActive: body.isActive ?? true,
     },
+  });
+
+  await logAuditEntry({
+    orgId: campaign.orgId,
+    action: "paddle_raise_level.create",
+    targetType: "PaddleRaiseLevel",
+    targetId: level.id,
+    afterData: level,
   });
 
   return NextResponse.json({ data: level }, { status: 201 });
