@@ -2,6 +2,7 @@ import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -103,6 +104,14 @@ export async function POST(request: Request) {
       events,
       status: (body.status ?? "ACTIVE") as "ACTIVE" | "DISABLED",
     },
+  });
+
+  await logAuditEntry({
+    orgId: body.orgId,
+    action: "webhook.create",
+    targetType: "WebhookEndpoint",
+    targetId: webhook.id,
+    afterData: { id: webhook.id, url: webhook.url, events: webhook.events, status: webhook.status },
   });
 
   return NextResponse.json({ data: webhook, secret }, { status: 201 });

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -54,6 +55,14 @@ export async function PUT(
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
+  const beforeSponsor = await prisma.sponsor.findUnique({
+    where: { id: sponsorId },
+  });
+
+  if (!beforeSponsor) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   const sponsor = await prisma.sponsor.update({
     where: { id: sponsorId },
     data: {
@@ -62,6 +71,15 @@ export async function PUT(
       logoUrl: body.logoUrl ?? undefined,
       websiteUrl: body.websiteUrl ?? undefined,
     },
+  });
+
+  await logAuditEntry({
+    orgId: sponsor.orgId,
+    action: "sponsor.update",
+    targetType: "Sponsor",
+    targetId: sponsorId,
+    beforeData: beforeSponsor,
+    afterData: sponsor,
   });
 
   return NextResponse.json({ data: sponsor });
@@ -79,8 +97,24 @@ export async function DELETE(
 
   const { sponsorId } = await params;
 
+  const sponsor = await prisma.sponsor.findUnique({
+    where: { id: sponsorId },
+  });
+
+  if (!sponsor) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   await prisma.sponsor.delete({
     where: { id: sponsorId },
+  });
+
+  await logAuditEntry({
+    orgId: sponsor.orgId,
+    action: "sponsor.delete",
+    targetType: "Sponsor",
+    targetId: sponsorId,
+    beforeData: sponsor,
   });
 
   return NextResponse.json({ ok: true });

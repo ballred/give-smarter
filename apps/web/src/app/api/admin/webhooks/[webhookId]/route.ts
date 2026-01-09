@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -82,6 +83,14 @@ export async function PATCH(
     return NextResponse.json({ error: "invalid_status" }, { status: 400 });
   }
 
+  const beforeWebhook = await prisma.webhookEndpoint.findUnique({
+    where: { id: webhookId },
+  });
+
+  if (!beforeWebhook) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   const data: Record<string, unknown> = {};
 
   if (body.url !== undefined) {
@@ -112,6 +121,15 @@ export async function PATCH(
     data,
   });
 
+  await logAuditEntry({
+    orgId: webhook.orgId,
+    action: "webhook.update",
+    targetType: "WebhookEndpoint",
+    targetId: webhookId,
+    beforeData: { id: beforeWebhook.id, url: beforeWebhook.url, events: beforeWebhook.events, status: beforeWebhook.status },
+    afterData: { id: webhook.id, url: webhook.url, events: webhook.events, status: webhook.status },
+  });
+
   return NextResponse.json({ data: webhook });
 }
 
@@ -127,8 +145,24 @@ export async function DELETE(
 
   const { webhookId } = await params;
 
+  const webhook = await prisma.webhookEndpoint.findUnique({
+    where: { id: webhookId },
+  });
+
+  if (!webhook) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   await prisma.webhookEndpoint.delete({
     where: { id: webhookId },
+  });
+
+  await logAuditEntry({
+    orgId: webhook.orgId,
+    action: "webhook.delete",
+    targetType: "WebhookEndpoint",
+    targetId: webhookId,
+    beforeData: { id: webhook.id, url: webhook.url, events: webhook.events, status: webhook.status },
   });
 
   return NextResponse.json({ ok: true });
