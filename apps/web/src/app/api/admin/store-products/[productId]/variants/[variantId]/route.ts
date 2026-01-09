@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -55,6 +56,14 @@ export async function PATCH(
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
+  const beforeVariant = await prisma.storeVariant.findUnique({
+    where: { id: variantId },
+  });
+
+  if (!beforeVariant) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   const data: Record<string, unknown> = {};
 
   if (body.name !== undefined) data.name = body.name;
@@ -81,6 +90,15 @@ export async function PATCH(
     data,
   });
 
+  await logAuditEntry({
+    orgId: variant.orgId,
+    action: "store_variant.update",
+    targetType: "StoreVariant",
+    targetId: variantId,
+    beforeData: beforeVariant,
+    afterData: variant,
+  });
+
   return NextResponse.json({ data: variant });
 }
 
@@ -96,8 +114,24 @@ export async function DELETE(
 
   const { variantId } = await params;
 
+  const variant = await prisma.storeVariant.findUnique({
+    where: { id: variantId },
+  });
+
+  if (!variant) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
   await prisma.storeVariant.delete({
     where: { id: variantId },
+  });
+
+  await logAuditEntry({
+    orgId: variant.orgId,
+    action: "store_variant.delete",
+    targetType: "StoreVariant",
+    targetId: variantId,
+    beforeData: variant,
   });
 
   return NextResponse.json({ ok: true });

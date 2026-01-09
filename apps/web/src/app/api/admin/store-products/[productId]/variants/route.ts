@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
+import { logAuditEntry } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -81,6 +82,14 @@ export async function POST(
       price: priceCents !== null && priceCents > 0 ? priceCents : null,
       inventoryCount: body.inventoryCount ?? null,
     },
+  });
+
+  await logAuditEntry({
+    orgId: product.orgId,
+    action: "store_variant.create",
+    targetType: "StoreVariant",
+    targetId: variant.id,
+    afterData: variant,
   });
 
   return NextResponse.json({ data: variant }, { status: 201 });
