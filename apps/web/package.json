@@ -11,7 +11,9 @@
   "dependencies": {
     "@clerk/nextjs": "^6.36.5",
     "@give-smarter/core": "*",
+    "@give-smarter/db": "*",
     "@give-smarter/ui": "*",
+    "@give-smarter/workflows": "*",
     "@prisma/client": "^5.22.0",
     "next": "16.1.1",
     "pdf-lib": "^1.17.1",
