@@ -47,6 +47,7 @@ enum CampaignPageType {
   SPONSORS
   FAQ
   PORTAL_LOGIN
+  VOTING
   THANK_YOU
 }
 

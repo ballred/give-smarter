@@ -14,10 +14,42 @@ async function main() {
     },
   });
 
-  const campaign = await prisma.campaign.upsert({
-    where: { orgId_slug: { orgId: organization.id, slug: "sample" } },
-    update: {},
-    create: {
+  // Wipe all org data so seed is idempotent (child tables first)
+  const orgId = organization.id;
+  await prisma.messageSend.deleteMany({ where: { orgId } });
+  await prisma.raffleTicket.deleteMany({ where: { orgId } });
+  await prisma.raffleDraw.deleteMany({ where: { orgId } });
+  await prisma.storeVariant.deleteMany({ where: { orgId } });
+  await prisma.storeProduct.deleteMany({ where: { orgId } });
+  await prisma.voteCandidate.deleteMany({ where: { orgId } });
+  await prisma.votingContest.deleteMany({ where: { orgId } });
+  await prisma.auctionItem.deleteMany({ where: { orgId } });
+  await prisma.auctionCategory.deleteMany({ where: { orgId } });
+  await prisma.auction.deleteMany({ where: { orgId } });
+  await prisma.paddleRaiseLevel.deleteMany({ where: { orgId } });
+  await prisma.raffle.deleteMany({ where: { orgId } });
+  await prisma.volunteerShift.deleteMany({ where: { orgId } });
+  await prisma.attendee.deleteMany({ where: { orgId } });
+  await prisma.ticketType.deleteMany({ where: { orgId } });
+  await prisma.procurementSubmission.deleteMany({ where: { orgId } });
+  await prisma.procurementDonor.deleteMany({ where: { orgId } });
+  await prisma.peerFundraiser.deleteMany({ where: { orgId } });
+  await prisma.peerFundraisingClassroom.deleteMany({ where: { orgId } });
+  await prisma.peerFundraisingTeam.deleteMany({ where: { orgId } });
+  await prisma.keywordRoute.deleteMany({ where: { orgId } });
+  await prisma.emailTemplate.deleteMany({ where: { orgId } });
+  await prisma.smsTemplate.deleteMany({ where: { orgId } });
+  await prisma.apiToken.deleteMany({ where: { orgId } });
+  await prisma.webhookDelivery.deleteMany({ where: { orgId } });
+  await prisma.webhookEndpoint.deleteMany({ where: { orgId } });
+  await prisma.pageBlock.deleteMany({ where: { orgId } });
+  await prisma.campaignPage.deleteMany({ where: { orgId } });
+  await prisma.campaignModule.deleteMany({ where: { orgId } });
+  await prisma.donor.deleteMany({ where: { orgId } });
+  await prisma.campaign.deleteMany({ where: { orgId } });
+
+  const campaign = await prisma.campaign.create({
+    data: {
       orgId: organization.id,
       name: "Spring Gala 2026",
       slug: "sample",
@@ -306,7 +338,7 @@ async function main() {
                   data: {
                     title: "Ready to bid?",
                     body: "Explore the items and place a bid from your phone.",
-                    primaryCta: { label: "View items", href: \"#auction\" },
+                    primaryCta: { label: "View items", href: "#auction" },
                   },
                 },
               ],
@@ -339,7 +371,7 @@ async function main() {
                   data: {
                     title: "Ready to shop?",
                     body: "Select an item below and checkout securely.",
-                    primaryCta: { label: "Shop now", href: \"#store\" },
+                    primaryCta: { label: "Shop now", href: "#store" },
                   },
                 },
               ],
@@ -372,7 +404,7 @@ async function main() {
                   data: {
                     title: "Grab your tickets",
                     body: "Choose a bundle and checkout securely.",
-                    primaryCta: { label: "Buy tickets", href: \"#raffle\" },
+                    primaryCta: { label: "Buy tickets", href: "#raffle" },
                   },
                 },
               ],
@@ -405,7 +437,7 @@ async function main() {
                   data: {
                     title: "Cast your vote",
                     body: "Pick a candidate and submit your gift.",
-                    primaryCta: { label: "Vote now", href: \"#voting\" },
+                    primaryCta: { label: "Vote now", href: "#voting" },
                   },
                 },
               ],

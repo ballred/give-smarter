@@ -122,6 +122,7 @@ export type CampaignPageType =
   | "SPONSORS"
   | "FAQ"
   | "PORTAL_LOGIN"
+  | "VOTING"
   | "THANK_YOU";
 
 export type CampaignPage = {
