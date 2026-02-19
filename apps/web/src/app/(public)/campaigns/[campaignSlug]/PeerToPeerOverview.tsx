@@ -129,7 +129,7 @@ export async function PeerToPeerOverview({
                 <Link
                   key={fundraiser.id}
                   href={`/campaigns/${campaignSlug}/peer-to-peer/fundraisers/${fundraiser.slug}`}
-                  className="flex items-center justify-between rounded-2xl border border-[color:var(--campaign-border)] bg-white px-4 py-3 text-sm text-[color:var(--campaign-ink)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(18,15,12,0.12)]"
+                  className="flex items-center justify-between rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] px-4 py-3 text-sm text-[color:var(--campaign-ink)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(18,15,12,0.12)]"
                 >
                   <span className="font-semibold">{fundraiser.name}</span>
                   <span className="text-xs uppercase tracking-[0.2em] text-[color:var(--campaign-ink-muted)]">
@@ -154,7 +154,7 @@ export async function PeerToPeerOverview({
                 <Link
                   key={classroom.id}
                   href={`/campaigns/${campaignSlug}/peer-to-peer/classrooms/${classroom.slug}`}
-                  className="flex items-center justify-between rounded-2xl border border-[color:var(--campaign-border)] bg-white px-4 py-3 text-sm text-[color:var(--campaign-ink)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(18,15,12,0.12)]"
+                  className="flex items-center justify-between rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] px-4 py-3 text-sm text-[color:var(--campaign-ink)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(18,15,12,0.12)]"
                 >
                   <span className="font-semibold">{classroom.name}</span>
                   <span className="text-xs uppercase tracking-[0.2em] text-[color:var(--campaign-ink-muted)]">
@@ -179,7 +179,7 @@ export async function PeerToPeerOverview({
                 <Link
                   key={team.id}
                   href={`/campaigns/${campaignSlug}/peer-to-peer/teams/${team.slug}`}
-                  className="flex items-center justify-between rounded-2xl border border-[color:var(--campaign-border)] bg-white px-4 py-3 text-sm text-[color:var(--campaign-ink)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(18,15,12,0.12)]"
+                  className="flex items-center justify-between rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] px-4 py-3 text-sm text-[color:var(--campaign-ink)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(18,15,12,0.12)]"
                 >
                   <span className="font-semibold">{team.name}</span>
                   <span className="text-xs uppercase tracking-[0.2em] text-[color:var(--campaign-ink-muted)]">
@@ -206,7 +206,7 @@ export async function PeerToPeerOverview({
                 <Link
                   key={fundraiser.id}
                   href={`/campaigns/${campaignSlug}/peer-to-peer/fundraisers/${fundraiser.slug}`}
-                  className="rounded-2xl border border-[color:var(--campaign-border)] bg-white p-4 text-sm text-[color:var(--campaign-ink)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(18,15,12,0.12)]"
+                  className="rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-4 text-sm text-[color:var(--campaign-ink)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(18,15,12,0.12)]"
                 >
                   <div className="space-y-2">
                     <p className="text-base font-semibold">{fundraiser.name}</p>

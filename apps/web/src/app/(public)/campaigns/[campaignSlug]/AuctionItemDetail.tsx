@@ -112,13 +112,13 @@ export async function AuctionItemDetail({
         ) : null}
 
         {isPreview ? (
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-900">
+          <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-4 text-sm text-[color:var(--campaign-ink)]">
             This item is in preview. Bidding opens soon.
           </div>
         ) : null}
 
         {isClosed ? (
-          <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-700">
+          <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface-alt)] p-4 text-sm text-[color:var(--campaign-ink-soft)]">
             Bidding is closed for this item.
           </div>
         ) : null}

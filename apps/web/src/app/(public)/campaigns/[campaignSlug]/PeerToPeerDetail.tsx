@@ -45,7 +45,7 @@ function ShareLinks({ label, url }: { label: string; url: string }) {
   const encodedUrl = encodeURIComponent(url);
   const encodedLabel = encodeURIComponent(`Support ${label}`);
   return (
-    <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-white p-4">
+    <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-4">
       <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--campaign-ink-muted)]">
         Share this page
       </p>
@@ -72,7 +72,7 @@ function ShareLinks({ label, url }: { label: string; url: string }) {
       <input
         readOnly
         value={url}
-        className="mt-3 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-xs text-[color:var(--campaign-ink)]"
+        className="mt-3 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-xs text-[color:var(--campaign-ink)]"
       />
     </div>
   );
@@ -152,7 +152,7 @@ export async function PeerFundraiserDetail({
           </div>
 
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
-            <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-white p-4">
+            <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-4">
               <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--campaign-ink-muted)]">
                 Raised
               </p>
@@ -160,7 +160,7 @@ export async function PeerFundraiserDetail({
                 {formatCurrency(totalRaised, currency)}
               </p>
             </div>
-            <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-white p-4">
+            <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-4">
               <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--campaign-ink-muted)]">
                 Goal
               </p>
@@ -168,7 +168,7 @@ export async function PeerFundraiserDetail({
                 {goal ? formatCurrency(goal, currency) : "No goal set"}
               </p>
             </div>
-            <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-white p-4">
+            <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-4">
               <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--campaign-ink-muted)]">
                 Progress
               </p>
@@ -183,7 +183,7 @@ export async function PeerFundraiserDetail({
               {fundraiser.team ? (
                 <Link
                   href={`/campaigns/${campaign.slug}/peer-to-peer/teams/${fundraiser.team.slug}`}
-                  className="rounded-full border border-[color:var(--campaign-border)] bg-white px-4 py-2"
+                  className="rounded-full border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] px-4 py-2"
                 >
                   Team: {fundraiser.team.name}
                 </Link>
@@ -191,7 +191,7 @@ export async function PeerFundraiserDetail({
               {fundraiser.classroom ? (
                 <Link
                   href={`/campaigns/${campaign.slug}/peer-to-peer/classrooms/${fundraiser.classroom.slug}`}
-                  className="rounded-full border border-[color:var(--campaign-border)] bg-white px-4 py-2"
+                  className="rounded-full border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] px-4 py-2"
                 >
                   Classroom: {fundraiser.classroom.name}
                 </Link>
@@ -269,7 +269,7 @@ export async function PeerTeamDetail({
           </div>
 
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
-            <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-white p-4">
+            <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-4">
               <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--campaign-ink-muted)]">
                 Raised
               </p>
@@ -277,7 +277,7 @@ export async function PeerTeamDetail({
                 {formatCurrency(totalRaised, currency)}
               </p>
             </div>
-            <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-white p-4">
+            <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-4">
               <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--campaign-ink-muted)]">
                 Goal
               </p>
@@ -285,7 +285,7 @@ export async function PeerTeamDetail({
                 {goal ? formatCurrency(goal, currency) : "No goal set"}
               </p>
             </div>
-            <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-white p-4">
+            <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-4">
               <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--campaign-ink-muted)]">
                 Progress
               </p>
@@ -309,7 +309,7 @@ export async function PeerTeamDetail({
                   <Link
                     key={fundraiser.id}
                     href={`/campaigns/${campaign.slug}/peer-to-peer/fundraisers/${fundraiser.slug}`}
-                    className="rounded-2xl border border-[color:var(--campaign-border)] bg-white px-4 py-3 text-sm text-[color:var(--campaign-ink)]"
+                    className="rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] px-4 py-3 text-sm text-[color:var(--campaign-ink)]"
                   >
                     {fundraiser.name}
                   </Link>
@@ -390,7 +390,7 @@ export async function PeerClassroomDetail({
           </div>
 
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
-            <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-white p-4">
+            <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-4">
               <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--campaign-ink-muted)]">
                 Raised
               </p>
@@ -398,7 +398,7 @@ export async function PeerClassroomDetail({
                 {formatCurrency(totalRaised, currency)}
               </p>
             </div>
-            <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-white p-4">
+            <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-4">
               <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--campaign-ink-muted)]">
                 Goal
               </p>
@@ -406,7 +406,7 @@ export async function PeerClassroomDetail({
                 {goal ? formatCurrency(goal, currency) : "No goal set"}
               </p>
             </div>
-            <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-white p-4">
+            <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-4">
               <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--campaign-ink-muted)]">
                 Progress
               </p>
@@ -430,7 +430,7 @@ export async function PeerClassroomDetail({
                   <Link
                     key={fundraiser.id}
                     href={`/campaigns/${campaign.slug}/peer-to-peer/fundraisers/${fundraiser.slug}`}
-                    className="rounded-2xl border border-[color:var(--campaign-border)] bg-white px-4 py-3 text-sm text-[color:var(--campaign-ink)]"
+                    className="rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] px-4 py-3 text-sm text-[color:var(--campaign-ink)]"
                   >
                     {fundraiser.name}
                   </Link>

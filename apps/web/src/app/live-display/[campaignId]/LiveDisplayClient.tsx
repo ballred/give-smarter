@@ -96,22 +96,26 @@ export function LiveDisplayClient({
   }, [resolvedData.goalAmount, resolvedData.totalRaised]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-zinc-950 text-white">
-      <header className="flex items-center justify-between border-b border-zinc-800 px-10 py-6">
+    <div className="flex min-h-screen flex-col bg-[radial-gradient(circle_at_top,rgba(31,122,122,0.2),transparent_45%),#1c1917] text-amber-50">
+      <header className="flex items-center justify-between border-b border-amber-100/15 px-10 py-6">
         <div>
-          <p className="text-xs uppercase tracking-[0.4em] text-zinc-400">
+          <p className="text-xs uppercase tracking-[0.4em] text-amber-100/65">
             Live display
           </p>
           <h1 className="mt-2 text-3xl font-semibold">{campaignName}</h1>
         </div>
-        <div className="text-right text-sm text-zinc-400">
+        <div
+          className={`text-right text-sm ${
+            error ? "text-rose-300" : "text-amber-100/70"
+          }`}
+        >
           {error ? "Offline" : "Updating"}
         </div>
       </header>
 
       <main className="flex flex-1 flex-col items-center justify-center gap-10 px-10 py-12 text-center">
         <div>
-          <p className="text-xs uppercase tracking-[0.4em] text-zinc-400">
+          <p className="text-xs uppercase tracking-[0.4em] text-amber-100/65">
             Total raised
           </p>
           <h2 className="mt-4 text-6xl font-semibold">
@@ -121,16 +125,16 @@ export function LiveDisplayClient({
 
         {resolvedData.goalAmount ? (
           <div className="w-full max-w-3xl">
-            <div className="flex items-center justify-between text-xs uppercase tracking-[0.3em] text-zinc-400">
+            <div className="flex items-center justify-between text-xs uppercase tracking-[0.3em] text-amber-100/65">
               <span>Goal</span>
               <span>
                 {formatCurrency(resolvedData.goalAmount, resolvedData.currency)}{" "}
                 | {progress}%
               </span>
             </div>
-            <div className="mt-4 h-4 w-full overflow-hidden rounded-full bg-zinc-800">
+            <div className="mt-4 h-4 w-full overflow-hidden rounded-full bg-amber-100/15">
               <div
-                className="h-full rounded-full bg-emerald-500 transition-all duration-700"
+                className="h-full rounded-full bg-teal-400 transition-all duration-700"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -138,16 +142,16 @@ export function LiveDisplayClient({
         ) : null}
 
         <div className="grid w-full max-w-4xl gap-6 md:grid-cols-2">
-          <div className="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-6">
-            <p className="text-xs uppercase tracking-[0.3em] text-zinc-400">
+          <div className="rounded-3xl border border-amber-100/15 bg-white/5 p-6 backdrop-blur">
+            <p className="text-xs uppercase tracking-[0.3em] text-amber-100/65">
               Donations
             </p>
             <p className="mt-3 text-3xl font-semibold">
               {formatCurrency(resolvedData.donationTotal, resolvedData.currency)}
             </p>
           </div>
-          <div className="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-6">
-            <p className="text-xs uppercase tracking-[0.3em] text-zinc-400">
+          <div className="rounded-3xl border border-amber-100/15 bg-white/5 p-6 backdrop-blur">
+            <p className="text-xs uppercase tracking-[0.3em] text-amber-100/65">
               Paddle raise
             </p>
             <p className="mt-3 text-3xl font-semibold">
@@ -159,10 +163,10 @@ export function LiveDisplayClient({
         {resolvedData.topBids.length ? (
           <section className="w-full max-w-5xl text-left">
             <div className="flex items-center justify-between">
-              <p className="text-xs uppercase tracking-[0.3em] text-zinc-400">
+              <p className="text-xs uppercase tracking-[0.3em] text-amber-100/65">
                 Top auction bids
               </p>
-              <span className="text-xs uppercase tracking-[0.3em] text-zinc-500">
+              <span className="text-xs uppercase tracking-[0.3em] text-amber-100/45">
                 Live
               </span>
             </div>
@@ -170,12 +174,12 @@ export function LiveDisplayClient({
               {resolvedData.topBids.map((item) => (
                 <div
                   key={item.id}
-                  className="rounded-2xl border border-zinc-800 bg-zinc-900/60 px-5 py-4"
+                  className="rounded-2xl border border-amber-100/15 bg-white/5 px-5 py-4 backdrop-blur"
                 >
-                  <p className="text-sm font-semibold text-white">
+                  <p className="text-sm font-semibold text-amber-50">
                     {item.title}
                   </p>
-                  <p className="mt-2 text-lg font-semibold text-emerald-400">
+                  <p className="mt-2 text-lg font-semibold text-teal-300">
                     {formatCurrency(item.amount, resolvedData.currency)}
                   </p>
                 </div>

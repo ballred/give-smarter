@@ -23,7 +23,7 @@ function renderCtaLink(
   if (variant === "light") {
     return (
       <a
-        className="inline-flex h-12 items-center justify-center rounded-full bg-white px-6 text-sm font-semibold text-[color:var(--campaign-accent-strong)] transition hover:bg-white/90"
+        className="inline-flex h-12 items-center justify-center rounded-full bg-[color:var(--campaign-card)] px-6 text-sm font-semibold text-[color:var(--campaign-accent-strong)] transition hover:bg-[color:var(--campaign-surface)]"
         href={href}
       >
         {label}
