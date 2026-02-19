@@ -1,6 +1,17 @@
 import Link from "next/link";
+import { prisma } from "@/lib/db";
 
-export default function AdminPage() {
+export default async function AdminPage() {
+  const previewCampaign = await prisma.campaign.findFirst({
+    where: { status: "PUBLISHED" },
+    orderBy: { createdAt: "desc" },
+    select: { slug: true },
+  });
+
+  const previewHref = previewCampaign
+    ? `/campaigns/${previewCampaign.slug}`
+    : "/admin/campaigns";
+
   return (
     <div className="space-y-8">
       <header className="space-y-3">
@@ -33,9 +44,9 @@ export default function AdminPage() {
           </p>
           <Link
             className="mt-4 inline-flex h-10 items-center justify-center rounded-full border border-zinc-200 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-700 transition hover:border-zinc-300"
-            href="/campaigns/sample"
+            href={previewHref}
           >
-            View sample
+            {previewCampaign ? "View sample" : "Create campaign"}
           </Link>
         </div>
       </section>

@@ -52,7 +52,14 @@ function renderCtaLink(
   );
 }
 
-export function BlockRenderer({ blocks }: { blocks: CampaignBlock[] }) {
+export function BlockRenderer({
+  blocks,
+  resolveHref = (href: string) => href,
+}: {
+  blocks: CampaignBlock[];
+  resolveHref?: (href: string) => string;
+}) {
+
   return (
     <div>
       {blocks.map((block, index) => {
@@ -121,14 +128,14 @@ export function BlockRenderer({ blocks }: { blocks: CampaignBlock[] }) {
                         {data.primaryCta
                           ? renderCtaLink(
                               data.primaryCta.label,
-                              data.primaryCta.href,
+                              resolveHref(data.primaryCta.href),
                               "primary"
                             )
                           : null}
                         {data.secondaryCta
                           ? renderCtaLink(
                               data.secondaryCta.label,
-                              data.secondaryCta.href,
+                              resolveHref(data.secondaryCta.href),
                               "ghost"
                             )
                           : null}
@@ -290,7 +297,7 @@ export function BlockRenderer({ blocks }: { blocks: CampaignBlock[] }) {
                           ) : null}
                         </div>
                         <div className="mt-6">
-                          {renderCtaLink("Select", "#donate", "primary")}
+                          {renderCtaLink("Select", resolveHref("#donate"), "primary")}
                         </div>
                       </div>
                     ))}
@@ -353,11 +360,15 @@ export function BlockRenderer({ blocks }: { blocks: CampaignBlock[] }) {
                     ) : null}
                   </div>
                   <div className="flex flex-wrap items-center gap-3 lg:justify-end">
-                    {renderCtaLink(data.primaryCta.label, data.primaryCta.href, "light")}
+                    {renderCtaLink(
+                      data.primaryCta.label,
+                      resolveHref(data.primaryCta.href),
+                      "light"
+                    )}
                     {data.secondaryCta
                       ? renderCtaLink(
                           data.secondaryCta.label,
-                          data.secondaryCta.href,
+                          resolveHref(data.secondaryCta.href),
                           "ghostLight"
                         )
                       : null}
@@ -383,19 +394,37 @@ export function BlockRenderer({ blocks }: { blocks: CampaignBlock[] }) {
                     </h2>
                   ) : null}
                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    {data.sponsors.map((sponsor, sponsorIndex) => (
-                      <a
-                        key={`${sponsor.name}-${sponsorIndex}`}
-                        href={sponsor.href ?? "#"}
-                        className="flex items-center justify-center rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-4 py-6 text-sm font-semibold text-[color:var(--campaign-ink)] transition hover:-translate-y-1"
-                      >
-                        <img
-                          src={sponsor.logoUrl}
-                          alt={sponsor.name}
-                          className="h-10 w-auto object-contain"
-                        />
-                      </a>
-                    ))}
+                    {data.sponsors.map((sponsor, sponsorIndex) => {
+                      const href = sponsor.href ? resolveHref(sponsor.href) : null;
+                      const className =
+                        "flex items-center justify-center rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-4 py-6 text-sm font-semibold text-[color:var(--campaign-ink)]";
+
+                      if (!href) {
+                        return (
+                          <div key={`${sponsor.name}-${sponsorIndex}`} className={className}>
+                            <img
+                              src={sponsor.logoUrl}
+                              alt={sponsor.name}
+                              className="h-10 w-auto object-contain"
+                            />
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <a
+                          key={`${sponsor.name}-${sponsorIndex}`}
+                          href={href}
+                          className={`${className} transition hover:-translate-y-1`}
+                        >
+                          <img
+                            src={sponsor.logoUrl}
+                            alt={sponsor.name}
+                            className="h-10 w-auto object-contain"
+                          />
+                        </a>
+                      );
+                    })}
                   </div>
                 </div>
               </section>

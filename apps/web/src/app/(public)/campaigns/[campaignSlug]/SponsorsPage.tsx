@@ -34,36 +34,54 @@ export async function SponsorsPage({ campaignId }: SponsorsPageProps) {
 
         {sponsors.length ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {sponsors.map((sponsor) => (
-              <a
-                key={sponsor.id}
-                href={sponsor.websiteUrl ?? "#"}
-                className="flex flex-col items-center justify-center gap-3 rounded-3xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-6 py-6 text-center text-sm text-[color:var(--campaign-ink)] transition hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(18,15,12,0.12)]"
-              >
-                {sponsor.logoUrl ? (
-                  <Image
-                    src={sponsor.logoUrl}
-                    alt={sponsor.name}
-                    width={120}
-                    height={48}
-                    className="h-12 w-auto object-contain"
-                    unoptimized
-                  />
-                ) : (
-                  <div className="text-xs uppercase tracking-[0.3em] text-[color:var(--campaign-ink-muted)]">
-                    Sponsor
+            {sponsors.map((sponsor) => {
+              const className =
+                "flex flex-col items-center justify-center gap-3 rounded-3xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-6 py-6 text-center text-sm text-[color:var(--campaign-ink)]";
+              const content = (
+                <>
+                  {sponsor.logoUrl ? (
+                    <Image
+                      src={sponsor.logoUrl}
+                      alt={sponsor.name}
+                      width={120}
+                      height={48}
+                      className="h-12 w-auto object-contain"
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="text-xs uppercase tracking-[0.3em] text-[color:var(--campaign-ink-muted)]">
+                      Sponsor
+                    </div>
+                  )}
+                  <div className="space-y-1">
+                    <p className="text-base font-semibold">{sponsor.name}</p>
+                    {sponsor.level ? (
+                      <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--campaign-ink-muted)]">
+                        {sponsor.level}
+                      </p>
+                    ) : null}
                   </div>
-                )}
-                <div className="space-y-1">
-                  <p className="text-base font-semibold">{sponsor.name}</p>
-                  {sponsor.level ? (
-                    <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--campaign-ink-muted)]">
-                      {sponsor.level}
-                    </p>
-                  ) : null}
-                </div>
-              </a>
-            ))}
+                </>
+              );
+
+              if (!sponsor.websiteUrl) {
+                return (
+                  <div key={sponsor.id} className={className}>
+                    {content}
+                  </div>
+                );
+              }
+
+              return (
+                <a
+                  key={sponsor.id}
+                  href={sponsor.websiteUrl}
+                  className={`${className} transition hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(18,15,12,0.12)]`}
+                >
+                  {content}
+                </a>
+              );
+            })}
           </div>
         ) : (
           <div className="rounded-2xl border border-dashed border-[color:var(--campaign-border)] bg-white p-6 text-sm text-[color:var(--campaign-ink-muted)]">

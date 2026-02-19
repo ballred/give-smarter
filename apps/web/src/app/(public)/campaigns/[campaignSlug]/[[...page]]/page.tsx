@@ -82,11 +82,41 @@ export default async function CampaignPage({
     notFound();
   }
 
+  const campaignPages = campaign.pages;
+  const campaignSlug = campaign.slug;
   const enabledModules = campaign.modules.filter((module) => module.isEnabled);
-  const donatePage = campaign.pages.find((item) => item.slug === "donate");
+  const donatePage = campaignPages.find((item) => item.slug === "donate");
+  const currentPageHref =
+    page.slug === "home"
+      ? `/campaigns/${campaignSlug}`
+      : `/campaigns/${campaignSlug}/${page.slug}`;
+
+  function resolveCampaignHref(href: string) {
+    const value = href.trim();
+    if (!value.startsWith("#")) {
+      return value;
+    }
+
+    const anchor = value.slice(1).trim().toLowerCase();
+    if (!anchor) {
+      return currentPageHref;
+    }
+
+    const targetPage = campaignPages.find(
+      (item) => item.slug.toLowerCase() === anchor,
+    );
+    if (targetPage) {
+      return targetPage.slug === "home"
+        ? `/campaigns/${campaignSlug}`
+        : `/campaigns/${campaignSlug}/${targetPage.slug}`;
+    }
+
+    return `${currentPageHref}#${anchor}`;
+  }
+
   const donateHref = donatePage
-    ? `/campaigns/${campaign.slug}/${donatePage.slug}`
-    : "#donate";
+    ? `/campaigns/${campaignSlug}/${donatePage.slug}`
+    : currentPageHref;
   const auctionItemId = resolvedParams.page?.[1];
   const peerSection = resolvedParams.page?.[1];
   const peerSlug = resolvedParams.page?.[2];
@@ -180,95 +210,123 @@ export default async function CampaignPage({
             </section>
           ) : null}
 
-          <BlockRenderer blocks={page.blocks} />
+          <BlockRenderer blocks={page.blocks} resolveHref={resolveCampaignHref} />
           {showDonationForm ? (
-            <DonationForm
-              campaign={campaign}
-              showSuccess={showSuccess}
-              showCanceled={showCanceled}
-              tracking={tracking}
-            />
+            <section id="donate">
+              <DonationForm
+                campaign={campaign}
+                showSuccess={showSuccess}
+                showCanceled={showCanceled}
+                tracking={tracking}
+              />
+            </section>
           ) : null}
           {showTicketForm ? (
-            <TicketPurchaseForm
-              campaign={campaign}
-              showSuccess={showSuccess}
-              showCanceled={showCanceled}
-            />
+            <section id="tickets">
+              <TicketPurchaseForm
+                campaign={campaign}
+                showSuccess={showSuccess}
+                showCanceled={showCanceled}
+              />
+            </section>
           ) : null}
           {showStoreForm ? (
-            <StorePurchaseForm
-              campaign={campaign}
-              showSuccess={showSuccess}
-              showCanceled={showCanceled}
-            />
+            <section id="store">
+              <StorePurchaseForm
+                campaign={campaign}
+                showSuccess={showSuccess}
+                showCanceled={showCanceled}
+              />
+            </section>
           ) : null}
           {showRaffleForm ? (
-            <RafflePurchaseForm
-              campaign={campaign}
-              showSuccess={showSuccess}
-              showCanceled={showCanceled}
-            />
+            <section id="raffle">
+              <RafflePurchaseForm
+                campaign={campaign}
+                showSuccess={showSuccess}
+                showCanceled={showCanceled}
+              />
+            </section>
           ) : null}
           {showVotingForm ? (
-            <VotingForm
-              campaign={campaign}
-              showSuccess={showSuccess}
-              showCanceled={showCanceled}
-            />
+            <section id="voting">
+              <VotingForm
+                campaign={campaign}
+                showSuccess={showSuccess}
+                showCanceled={showCanceled}
+              />
+            </section>
           ) : null}
-          {showAuctionCatalog ? <AuctionCatalog campaign={campaign} /> : null}
+          {showAuctionCatalog ? (
+            <section id="auction">
+              <AuctionCatalog campaign={campaign} />
+            </section>
+          ) : null}
           {showAuctionItem && auctionItemId ? (
-            <AuctionItemDetail
-              itemId={auctionItemId}
-              currency={campaign.currency ?? "USD"}
-              showSuccess={showSuccess}
-              showCanceled={showCanceled}
-              showWatch={showWatch}
-            />
+            <section id="auction">
+              <AuctionItemDetail
+                itemId={auctionItemId}
+                currency={campaign.currency ?? "USD"}
+                showSuccess={showSuccess}
+                showCanceled={showCanceled}
+                showWatch={showWatch}
+              />
+            </section>
           ) : null}
           {showVolunteerForm ? (
-            <VolunteerSignupForm
-              campaign={campaign}
-              showSuccess={showSuccess}
-            />
+            <section id="volunteer">
+              <VolunteerSignupForm
+                campaign={campaign}
+                showSuccess={showSuccess}
+              />
+            </section>
           ) : null}
           {showSponsorsPage && campaign.id ? (
-            <SponsorsPage campaignId={campaign.id} />
+            <section id="sponsors">
+              <SponsorsPage campaignId={campaign.id} />
+            </section>
           ) : null}
           {showPeerOverview ? (
-            <PeerToPeerOverview
-              campaignId={campaign.id ?? ""}
-              campaignSlug={campaign.slug}
-              currency={campaign.currency ?? "USD"}
-            />
+            <section id="peer-to-peer">
+              <PeerToPeerOverview
+                campaignId={campaign.id ?? ""}
+                campaignSlug={campaign.slug}
+                currency={campaign.currency ?? "USD"}
+              />
+            </section>
           ) : null}
           {showPeerFundraiser && peerSlug ? (
-            <PeerFundraiserDetail
-              campaign={campaign}
-              slug={peerSlug}
-              showSuccess={showSuccess}
-              showCanceled={showCanceled}
-              tracking={tracking}
-            />
+            <section id="peer-to-peer">
+              <PeerFundraiserDetail
+                campaign={campaign}
+                slug={peerSlug}
+                showSuccess={showSuccess}
+                showCanceled={showCanceled}
+                tracking={tracking}
+              />
+            </section>
           ) : null}
           {showPeerTeam && peerSlug ? (
-            <PeerTeamDetail
-              campaign={campaign}
-              slug={peerSlug}
-              showSuccess={showSuccess}
-              showCanceled={showCanceled}
-              tracking={tracking}
-            />
+            <section id="peer-to-peer">
+              <PeerTeamDetail
+                campaign={campaign}
+                slug={peerSlug}
+                showSuccess={showSuccess}
+                showCanceled={showCanceled}
+                tracking={tracking}
+              />
+            </section>
           ) : null}
           {showPeerClassroom && peerSlug ? (
-            <PeerClassroomDetail
-              campaign={campaign}
-              slug={peerSlug}
-              showSuccess={showSuccess}
-              showCanceled={showCanceled}
-              tracking={tracking}
-            />
+            <section id="peer-to-peer">
+              <PeerClassroomDetail
+                campaign={campaign}
+                slug={peerSlug}
+                showSuccess={showSuccess}
+                showCanceled={showCanceled}
+                tracking={tracking}
+              />
+            </section>
           ) : null}
         </main>
 
