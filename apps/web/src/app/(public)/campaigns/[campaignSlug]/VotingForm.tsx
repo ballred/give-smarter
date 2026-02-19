@@ -58,7 +58,7 @@ export async function VotingForm({
         </header>
 
         {showSuccess ? (
-          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+          <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-4 text-sm text-[color:var(--campaign-ink)]">
             Thanks for voting! Your gift has been recorded.
           </div>
         ) : null}
@@ -77,7 +77,7 @@ export async function VotingForm({
               Candidate
               <select
                 name="selection"
-                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
               >
                 {options.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -95,7 +95,7 @@ export async function VotingForm({
                 min="1"
                 step="0.01"
                 defaultValue={10}
-                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
               />
             </label>
 
@@ -105,7 +105,7 @@ export async function VotingForm({
                 <input
                   name="firstName"
                   type="text"
-                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
                 />
               </label>
               <label className="block text-sm font-semibold text-[color:var(--campaign-ink)]">
@@ -113,7 +113,7 @@ export async function VotingForm({
                 <input
                   name="lastName"
                   type="text"
-                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
                 />
               </label>
             </div>
@@ -124,7 +124,7 @@ export async function VotingForm({
                 name="email"
                 type="email"
                 required
-                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
                 placeholder="you@example.org"
               />
             </label>
@@ -137,7 +137,7 @@ export async function VotingForm({
             </button>
           </form>
         ) : (
-          <div className="rounded-2xl border border-dashed border-[color:var(--campaign-border)] bg-white p-6 text-sm text-[color:var(--campaign-ink-muted)]">
+          <div className="rounded-2xl border border-dashed border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-6 text-sm text-[color:var(--campaign-ink-muted)]">
             Voting contests will appear here once active.
           </div>
         )}

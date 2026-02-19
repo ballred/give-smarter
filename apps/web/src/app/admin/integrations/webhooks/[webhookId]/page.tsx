@@ -35,12 +35,12 @@ export default async function WebhookDetailPage({
       </header>
 
       {resolvedSearchParams?.secret ? (
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-sm text-emerald-900">
+        <div className="rounded-2xl border border-teal-200 bg-teal-50 p-5 text-sm text-teal-900">
           <p className="font-semibold">Webhook secret generated</p>
-          <p className="mt-2 break-all font-mono text-xs text-emerald-800">
+          <p className="mt-2 break-all font-mono text-xs text-teal-800">
             {resolvedSearchParams.secret}
           </p>
-          <p className="mt-2 text-xs text-emerald-700">
+          <p className="mt-2 text-xs text-teal-700">
             Copy this secret now. You won&apos;t be able to see it again.
           </p>
         </div>

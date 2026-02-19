@@ -28,7 +28,7 @@ export default async function CheckInQrPage({
       </header>
 
       {showSuccess ? (
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+        <div className="rounded-2xl border border-teal-200 bg-teal-50 p-4 text-sm text-teal-900">
           Check-in recorded.
         </div>
       ) : null}

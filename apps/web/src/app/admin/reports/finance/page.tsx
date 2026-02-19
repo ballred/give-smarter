@@ -84,7 +84,7 @@ export default async function FinanceReportPage() {
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">
             Net Revenue
           </p>
-          <p className="mt-2 text-2xl font-bold text-emerald-600">
+          <p className="mt-2 text-2xl font-bold text-teal-600">
             {formatCurrency(totalNet)}
           </p>
           <p className="mt-1 text-xs text-stone-500">After fees</p>
@@ -168,7 +168,7 @@ export default async function FinanceReportPage() {
                         <span
                           className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
                             payment.status === PaymentStatus.SUCCEEDED
-                              ? "bg-emerald-100 text-emerald-700"
+                              ? "bg-teal-100 text-teal-700"
                               : payment.status === PaymentStatus.REFUNDED
                                 ? "bg-amber-100 text-amber-700"
                                 : payment.status === PaymentStatus.FAILED

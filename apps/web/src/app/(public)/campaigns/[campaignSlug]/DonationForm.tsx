@@ -61,7 +61,7 @@ export function DonationForm({
         </header>
 
         {showSuccess ? (
-          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+          <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-4 text-sm text-[color:var(--campaign-ink)]">
             Thank you! Your donation was received.
           </div>
         ) : null}
@@ -164,7 +164,7 @@ export function DonationForm({
                   min="1"
                   step="0.01"
                   placeholder="Other amount"
-                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
                 />
               </label>
               <label className="flex items-center gap-2 text-sm text-[color:var(--campaign-ink-soft)]">
@@ -185,7 +185,7 @@ export function DonationForm({
               <input
                 name="firstName"
                 type="text"
-                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
               />
             </label>
             <label className="block text-sm font-semibold text-[color:var(--campaign-ink)]">
@@ -193,7 +193,7 @@ export function DonationForm({
               <input
                 name="lastName"
                 type="text"
-                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
               />
             </label>
           </div>
@@ -204,7 +204,7 @@ export function DonationForm({
               name="email"
               type="email"
               required
-              className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+              className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
               placeholder="you@example.org"
             />
           </label>
@@ -214,7 +214,7 @@ export function DonationForm({
               Designation
               <select
                 name="designation"
-                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
               >
                 <option value="">General fund</option>
                 {config.designationOptions.map((option) => (
@@ -231,7 +231,7 @@ export function DonationForm({
             <input
               name="tribute"
               type="text"
-              className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+              className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
               placeholder="In honor of..."
             />
           </label>

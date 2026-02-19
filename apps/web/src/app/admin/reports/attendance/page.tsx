@@ -58,7 +58,7 @@ export default async function AttendanceReportPage() {
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">
             Registered
           </p>
-          <p className="mt-2 text-2xl font-bold text-emerald-600">
+          <p className="mt-2 text-2xl font-bold text-teal-600">
             {registered.length}
           </p>
           <p className="mt-1 text-xs text-stone-500">Ready to attend</p>
@@ -134,7 +134,7 @@ export default async function AttendanceReportPage() {
                         <span
                           className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
                             attendee.status === AttendeeStatus.REGISTERED
-                              ? "bg-emerald-100 text-emerald-700"
+                              ? "bg-teal-100 text-teal-700"
                               : "bg-red-100 text-red-700"
                           }`}
                         >

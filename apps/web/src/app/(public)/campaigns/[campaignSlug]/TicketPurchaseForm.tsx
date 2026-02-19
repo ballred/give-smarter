@@ -58,7 +58,7 @@ export async function TicketPurchaseForm({
         </header>
 
         {showSuccess ? (
-          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+          <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-4 text-sm text-[color:var(--campaign-ink)]">
             Tickets reserved! Check your email for confirmation.
           </div>
         ) : null}
@@ -115,7 +115,7 @@ export async function TicketPurchaseForm({
                 type="number"
                 min="1"
                 defaultValue={1}
-                className="mt-2 w-32 rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                className="mt-2 w-32 rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
               />
             </label>
 
@@ -124,7 +124,7 @@ export async function TicketPurchaseForm({
               <input
                 name="promoCode"
                 type="text"
-                className="mt-2 w-48 rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                className="mt-2 w-48 rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
               />
             </label>
 
@@ -155,7 +155,7 @@ export async function TicketPurchaseForm({
                         type="number"
                         min="0"
                         defaultValue={0}
-                        className="w-24 rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                        className="w-24 rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
                       />
                     </label>
                   ))}
@@ -178,7 +178,7 @@ export async function TicketPurchaseForm({
                 <input
                   name="firstName"
                   type="text"
-                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
                 />
               </label>
               <label className="block text-sm font-semibold text-[color:var(--campaign-ink)]">
@@ -186,7 +186,7 @@ export async function TicketPurchaseForm({
                 <input
                   name="lastName"
                   type="text"
-                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
                 />
               </label>
             </div>
@@ -197,7 +197,7 @@ export async function TicketPurchaseForm({
                 name="email"
                 type="email"
                 required
-                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
                 placeholder="you@example.org"
               />
             </label>
@@ -210,7 +210,7 @@ export async function TicketPurchaseForm({
             </button>
           </form>
         ) : (
-          <div className="rounded-2xl border border-dashed border-[color:var(--campaign-border)] bg-white p-6 text-sm text-[color:var(--campaign-ink-muted)]">
+          <div className="rounded-2xl border border-dashed border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-6 text-sm text-[color:var(--campaign-ink-muted)]">
             Ticket sales are not configured yet.
           </div>
         )}

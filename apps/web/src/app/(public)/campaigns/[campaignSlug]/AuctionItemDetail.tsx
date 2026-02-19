@@ -94,7 +94,7 @@ export async function AuctionItemDetail({
         </header>
 
         {showSuccess ? (
-          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+          <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-4 text-sm text-[color:var(--campaign-ink)]">
             Thanks for your purchase! Your buy-now checkout is complete.
           </div>
         ) : null}
@@ -165,7 +165,7 @@ export async function AuctionItemDetail({
                   min={(minBid / 100).toFixed(2)}
                   step="0.01"
                   required
-                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
                 />
               </label>
               {item.auction.allowMaxBid ? (
@@ -176,7 +176,7 @@ export async function AuctionItemDetail({
                     type="number"
                     min={(minBid / 100).toFixed(2)}
                     step="0.01"
-                    className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                    className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
                   />
                 </label>
               ) : null}
@@ -188,7 +188,7 @@ export async function AuctionItemDetail({
                 <input
                   name="firstName"
                   type="text"
-                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
                 />
               </label>
               <label className="block text-sm font-semibold text-[color:var(--campaign-ink)]">
@@ -196,7 +196,7 @@ export async function AuctionItemDetail({
                 <input
                   name="lastName"
                   type="text"
-                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
                 />
               </label>
             </div>
@@ -207,7 +207,7 @@ export async function AuctionItemDetail({
                 name="email"
                 type="email"
                 required
-                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
                 placeholder="you@example.org"
               />
             </label>
@@ -222,7 +222,7 @@ export async function AuctionItemDetail({
               <button
                 type="submit"
                 formAction={buyNow}
-                className="inline-flex h-12 w-full items-center justify-center rounded-full border border-[color:var(--campaign-border)] bg-white px-6 text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--campaign-ink)] transition hover:bg-[color:var(--campaign-surface)]"
+                className="inline-flex h-12 w-full items-center justify-center rounded-full border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-6 text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--campaign-ink)] transition hover:bg-[color:var(--campaign-surface)]"
               >
                 Buy now
               </button>
@@ -249,7 +249,7 @@ export async function AuctionItemDetail({
               <input
                 name="firstName"
                 type="text"
-                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
               />
             </label>
             <label className="block text-sm font-semibold text-[color:var(--campaign-ink)]">
@@ -257,7 +257,7 @@ export async function AuctionItemDetail({
               <input
                 name="lastName"
                 type="text"
-                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
               />
             </label>
           </div>
@@ -267,7 +267,7 @@ export async function AuctionItemDetail({
               name="email"
               type="email"
               required
-              className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+              className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
               placeholder="you@example.org"
             />
           </label>

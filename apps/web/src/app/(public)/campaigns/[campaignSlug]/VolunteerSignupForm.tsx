@@ -35,13 +35,13 @@ export async function VolunteerSignupForm({
         </header>
 
         {showSuccess ? (
-          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+          <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-4 text-sm text-[color:var(--campaign-ink)]">
             Thanks for volunteering! We will be in touch with details.
           </div>
         ) : null}
 
         {!shifts.length ? (
-          <div className="rounded-2xl border border-dashed border-[color:var(--campaign-border)] bg-white p-6 text-sm text-[color:var(--campaign-ink-muted)]">
+          <div className="rounded-2xl border border-dashed border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-6 text-sm text-[color:var(--campaign-ink-muted)]">
             Volunteer shifts will appear here soon.
           </div>
         ) : (
@@ -52,7 +52,7 @@ export async function VolunteerSignupForm({
               <select
                 name="shiftId"
                 required
-                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
               >
                 <option value="" disabled>
                   Choose a shift
@@ -75,7 +75,7 @@ export async function VolunteerSignupForm({
                   name="name"
                   type="text"
                   required
-                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
                 />
               </label>
               <label className="block text-sm font-semibold text-[color:var(--campaign-ink)]">
@@ -83,7 +83,7 @@ export async function VolunteerSignupForm({
                 <input
                   name="email"
                   type="email"
-                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
                 />
               </label>
             </div>
@@ -93,7 +93,7 @@ export async function VolunteerSignupForm({
               <input
                 name="phone"
                 type="tel"
-                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
               />
             </label>
 

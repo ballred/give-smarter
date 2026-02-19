@@ -40,7 +40,7 @@ export async function AuctionCatalog({ campaign }: AuctionCatalogProps) {
   if (!items.length) {
     return (
       <section className="px-6 pb-16 pt-8 sm:px-10">
-        <div className="mx-auto w-full max-w-5xl rounded-3xl border border-dashed border-[color:var(--campaign-border)] bg-white p-6 text-sm text-[color:var(--campaign-ink-muted)]">
+        <div className="mx-auto w-full max-w-5xl rounded-3xl border border-dashed border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-6 text-sm text-[color:var(--campaign-ink-muted)]">
           Auction items will appear here once published.
         </div>
       </section>

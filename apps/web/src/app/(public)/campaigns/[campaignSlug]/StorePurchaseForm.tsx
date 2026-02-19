@@ -68,7 +68,7 @@ export async function StorePurchaseForm({
         </header>
 
         {showSuccess ? (
-          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+          <div className="rounded-2xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-4 text-sm text-[color:var(--campaign-ink)]">
             Purchase complete! Watch your inbox for details.
           </div>
         ) : null}
@@ -87,7 +87,7 @@ export async function StorePurchaseForm({
               Select item
               <select
                 name="item"
-                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
               >
                 {options.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -104,7 +104,7 @@ export async function StorePurchaseForm({
                 type="number"
                 min="1"
                 defaultValue={1}
-                className="mt-2 w-32 rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                className="mt-2 w-32 rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
               />
             </label>
 
@@ -114,7 +114,7 @@ export async function StorePurchaseForm({
                 <input
                   name="firstName"
                   type="text"
-                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
                 />
               </label>
               <label className="block text-sm font-semibold text-[color:var(--campaign-ink)]">
@@ -122,7 +122,7 @@ export async function StorePurchaseForm({
                 <input
                   name="lastName"
                   type="text"
-                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                  className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
                 />
               </label>
             </div>
@@ -133,7 +133,7 @@ export async function StorePurchaseForm({
                 name="email"
                 type="email"
                 required
-                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-white px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
+                className="mt-2 w-full rounded-xl border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-3 py-2 text-sm text-[color:var(--campaign-ink)]"
                 placeholder="you@example.org"
               />
             </label>
@@ -146,7 +146,7 @@ export async function StorePurchaseForm({
             </button>
           </form>
         ) : (
-          <div className="rounded-2xl border border-dashed border-[color:var(--campaign-border)] bg-white p-6 text-sm text-[color:var(--campaign-ink-muted)]">
+          <div className="rounded-2xl border border-dashed border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-6 text-sm text-[color:var(--campaign-ink-muted)]">
             Store items will appear once published.
           </div>
         )}

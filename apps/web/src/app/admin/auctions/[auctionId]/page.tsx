@@ -45,7 +45,7 @@ export default async function AuctionDetailPage({
   return (
     <div className="space-y-6">
       {showClosed ? (
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+        <div className="rounded-2xl border border-teal-200 bg-teal-50 p-4 text-sm text-teal-900">
           Item closed and invoice queued.
         </div>
       ) : null}
@@ -179,7 +179,7 @@ export default async function AuctionDetailPage({
           </form>
         </div>
         {showReminderSent ? (
-          <div className="border-b border-emerald-200 bg-emerald-50 px-6 py-3 text-sm text-emerald-900">
+          <div className="border-b border-teal-200 bg-teal-50 px-6 py-3 text-sm text-teal-900">
             Reminder queued.
           </div>
         ) : null}

@@ -84,7 +84,7 @@ export async function SponsorsPage({ campaignId }: SponsorsPageProps) {
             })}
           </div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-[color:var(--campaign-border)] bg-white p-6 text-sm text-[color:var(--campaign-ink-muted)]">
+          <div className="rounded-2xl border border-dashed border-[color:var(--campaign-border)] bg-[color:var(--campaign-surface)] p-6 text-sm text-[color:var(--campaign-ink-muted)]">
             Sponsor highlights will appear here soon.
           </div>
         )}
