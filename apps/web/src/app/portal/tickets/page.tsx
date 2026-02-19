@@ -85,14 +85,14 @@ export default async function DonorTicketsPage() {
   return (
     <div className="space-y-6">
       <header className="space-y-1">
-        <h1 className="text-2xl font-semibold text-zinc-900">Tickets</h1>
-        <p className="text-sm text-zinc-600">
+        <h1 className="text-2xl font-semibold text-stone-900">Tickets</h1>
+        <p className="text-sm text-stone-600">
           Your ticket orders, guests, and event details.
         </p>
       </header>
 
       {!groups.length ? (
-        <div className="rounded-2xl border border-dashed border-zinc-200 bg-white p-6 text-sm text-zinc-500">
+        <div className="rounded-2xl border border-dashed border-amber-200/60 bg-white p-6 text-sm text-stone-500">
           Ticket QR codes and guest assignments will appear here once you
           purchase tickets.
         </div>
@@ -101,43 +101,43 @@ export default async function DonorTicketsPage() {
           {groups.map((group) => (
             <div
               key={group.id}
-              className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
+              className="rounded-2xl border border-amber-200/60 bg-white p-6 shadow-sm"
             >
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div className="space-y-1">
-                  <h2 className="text-lg font-semibold text-zinc-900">
+                  <h2 className="text-lg font-semibold text-stone-900">
                     {group.ticketName}
                   </h2>
-                  <p className="text-xs uppercase tracking-[0.2em] text-zinc-400">
+                  <p className="text-xs uppercase tracking-[0.2em] text-stone-400">
                     {group.campaignName ?? "Campaign"} |{" "}
                     {group.orgName ?? "Organization"}
                   </p>
-                  <p className="text-xs text-zinc-500">
+                  <p className="text-xs text-stone-500">
                     Order {group.orderNumber ?? "pending"} |{" "}
                     {group.orderStatus ?? "status pending"} |{" "}
                     {formatDate(group.createdAt)}
                   </p>
                 </div>
-                <span className="rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-xs font-semibold text-zinc-600">
+                <span className="rounded-full border border-amber-200/60 bg-amber-50/40 px-3 py-1 text-xs font-semibold text-stone-600">
                   {group.attendees.length} attendee
                   {group.attendees.length === 1 ? "" : "s"}
                 </span>
               </div>
-              <div className="mt-4 grid gap-2 text-sm text-zinc-600">
+              <div className="mt-4 grid gap-2 text-sm text-stone-600">
                 {group.attendees.map((attendee) => (
                   <div
                     key={attendee.id}
-                    className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-zinc-100 bg-zinc-50 px-4 py-2"
+                    className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-amber-100 bg-amber-50/40 px-4 py-2"
                   >
                     <div className="space-y-1">
-                      <span className="text-zinc-900">{attendee.label}</span>
+                      <span className="text-stone-900">{attendee.label}</span>
                       {attendee.qrCode ? (
-                        <span className="block text-xs text-zinc-400">
+                        <span className="block text-xs text-stone-400">
                           QR {attendee.qrCode}
                         </span>
                       ) : null}
                     </div>
-                    <span className="text-xs uppercase tracking-[0.15em] text-zinc-400">
+                    <span className="text-xs uppercase tracking-[0.15em] text-stone-400">
                       {attendee.tableName
                         ? `Table ${attendee.tableName}`
                         : attendee.status}

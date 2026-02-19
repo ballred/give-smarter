@@ -42,17 +42,17 @@ export default async function CampaignDetailPage({
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-stone-500">
           {campaign.organization.publicName}
         </p>
-        <h1 className="text-2xl font-semibold text-zinc-900">
+        <h1 className="text-2xl font-semibold text-stone-900">
           {campaign.name}
         </h1>
-        <p className="text-sm text-zinc-600">Slug: {campaign.slug}</p>
+        <p className="text-sm text-stone-600">Slug: {campaign.slug}</p>
       </header>
 
       <form
-        className="space-y-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
+        className="space-y-6 rounded-2xl border border-amber-200/60 bg-white p-6 shadow-sm"
         action={async (formData) => {
           "use server";
           await updateCampaign(campaign.id, formData);
@@ -60,33 +60,33 @@ export default async function CampaignDetailPage({
         }}
       >
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             Campaign name
             <input
               name="name"
               type="text"
               required
               defaultValue={campaign.name}
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             />
           </label>
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             Slug
             <input
               name="slug"
               type="text"
               defaultValue={campaign.slug}
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             />
           </label>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             Type
             <select
               name="type"
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
               defaultValue={campaign.type}
             >
               {campaignFormOptions.campaignTypes.map((type) => (
@@ -96,11 +96,11 @@ export default async function CampaignDetailPage({
               ))}
             </select>
           </label>
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             Status
             <select
               name="status"
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
               defaultValue={campaign.status}
             >
               {campaignFormOptions.campaignStatuses.map((status) => (
@@ -113,27 +113,27 @@ export default async function CampaignDetailPage({
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             Starts at
             <input
               name="startsAt"
               type="datetime-local"
               defaultValue={formatDateTimeLocal(campaign.startsAt)}
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             />
           </label>
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             Ends at
             <input
               name="endsAt"
               type="datetime-local"
               defaultValue={formatDateTimeLocal(campaign.endsAt)}
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             />
           </label>
         </div>
 
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Goal amount (USD)
           <input
             name="goalAmount"
@@ -141,74 +141,74 @@ export default async function CampaignDetailPage({
             min="0"
             step="0.01"
             defaultValue={campaign.goalAmount ? campaign.goalAmount / 100 : ""}
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
           />
         </label>
 
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Description
           <textarea
             name="description"
             rows={3}
             defaultValue={campaign.description ?? ""}
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
           />
         </label>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             Hero title
             <input
               name="heroTitle"
               type="text"
               defaultValue={campaign.heroTitle ?? ""}
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             />
           </label>
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             Hero media URL
             <input
               name="heroMediaUrl"
               type="url"
               defaultValue={campaign.heroMediaUrl ?? ""}
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             />
           </label>
         </div>
 
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Story content
           <textarea
             name="storyContent"
             rows={4}
             defaultValue={campaign.storyContent ?? ""}
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
           />
         </label>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             SEO title
             <input
               name="seoTitle"
               type="text"
               defaultValue={campaign.seoTitle ?? ""}
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             />
           </label>
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             SEO description
             <input
               name="seoDescription"
               type="text"
               defaultValue={campaign.seoDescription ?? ""}
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             />
           </label>
         </div>
 
         <fieldset className="space-y-3">
-          <legend className="text-sm font-semibold text-zinc-700">
+          <legend className="text-sm font-semibold text-stone-700">
             Modules
           </legend>
           <div className="grid gap-3 md:grid-cols-2">
@@ -219,9 +219,9 @@ export default async function CampaignDetailPage({
                   name="modules"
                   value={module}
                   defaultChecked={moduleSet.has(module)}
-                  className="h-4 w-4 rounded border-zinc-300 text-zinc-900"
+                  className="h-4 w-4 rounded border-amber-300 text-teal-600"
                 />
-                <span className="text-zinc-700">{formatModuleLabel(module)}</span>
+                <span className="text-stone-700">{formatModuleLabel(module)}</span>
               </label>
             ))}
           </div>
@@ -229,7 +229,7 @@ export default async function CampaignDetailPage({
 
         <button
           type="submit"
-          className="inline-flex h-11 items-center justify-center rounded-full bg-zinc-900 px-6 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-800"
+          className="inline-flex h-11 items-center justify-center rounded-full bg-teal-700 px-6 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-teal-800"
         >
           Update campaign
         </button>

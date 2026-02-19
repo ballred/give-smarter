@@ -22,7 +22,7 @@ export default async function HouseholdDetailPage({
 
   if (!household) {
     return (
-      <div className="rounded-2xl border border-dashed border-zinc-200 bg-white p-6 text-sm text-zinc-500">
+      <div className="rounded-2xl border border-dashed border-amber-200/60 bg-white p-6 text-sm text-stone-500">
         Household not found.
       </div>
     );
@@ -37,16 +37,16 @@ export default async function HouseholdDetailPage({
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <h1 className="text-2xl font-semibold text-zinc-900">
+        <h1 className="text-2xl font-semibold text-stone-900">
           {household.name}
         </h1>
-        <p className="text-sm text-zinc-600">
+        <p className="text-sm text-stone-600">
           {household.organization.publicName} | Household
         </p>
       </header>
 
       <form
-        className="space-y-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
+        className="space-y-4 rounded-2xl border border-amber-200/60 bg-white p-6 shadow-sm"
         action={async (formData) => {
           "use server";
           await addHouseholdMember(resolvedParams.householdId, formData);
@@ -54,12 +54,12 @@ export default async function HouseholdDetailPage({
         }}
       >
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             Add donor
             <select
               name="donorId"
               required
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             >
               <option value="" disabled>
                 Select a donor
@@ -72,11 +72,11 @@ export default async function HouseholdDetailPage({
             </select>
           </label>
 
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             Role
             <select
               name="role"
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             >
               <option value="PRIMARY">Primary</option>
               <option value="MEMBER">Member</option>
@@ -84,32 +84,32 @@ export default async function HouseholdDetailPage({
           </label>
         </div>
 
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Relationship (optional)
           <input
             name="relationship"
             type="text"
             placeholder="Spouse, Parent, Guardian"
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
           />
         </label>
 
         <button
           type="submit"
-          className="inline-flex h-10 items-center justify-center rounded-full bg-zinc-900 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-800"
+          className="inline-flex h-10 items-center justify-center rounded-full bg-teal-700 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-teal-800"
         >
           Add member
         </button>
       </form>
 
-      <div className="rounded-2xl border border-zinc-200 bg-white shadow-sm">
+      <div className="rounded-2xl border border-amber-200/60 bg-white shadow-sm">
         <table className="w-full text-left text-sm">
-          <thead className="border-b border-zinc-200 bg-zinc-50">
+          <thead className="border-b border-amber-200/60 bg-amber-50/40">
             <tr>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Donor</th>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Email</th>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Role</th>
-              <th className="px-4 py-3 font-semibold text-zinc-700">
+              <th className="px-4 py-3 font-semibold text-stone-700">Donor</th>
+              <th className="px-4 py-3 font-semibold text-stone-700">Email</th>
+              <th className="px-4 py-3 font-semibold text-stone-700">Role</th>
+              <th className="px-4 py-3 font-semibold text-stone-700">
                 Relationship
               </th>
             </tr>
@@ -117,19 +117,19 @@ export default async function HouseholdDetailPage({
           <tbody>
             {household.memberships.length ? (
               household.memberships.map((membership) => (
-                <tr key={membership.id} className="border-b border-zinc-100">
-                  <td className="px-4 py-3 text-zinc-600">
+                <tr key={membership.id} className="border-b border-amber-100">
+                  <td className="px-4 py-3 text-stone-600">
                     {membership.donor.displayName ??
                       membership.donor.primaryEmail ??
                       "Donor"}
                   </td>
-                  <td className="px-4 py-3 text-zinc-600">
+                  <td className="px-4 py-3 text-stone-600">
                     {membership.donor.primaryEmail ?? "--"}
                   </td>
-                  <td className="px-4 py-3 text-zinc-600">
+                  <td className="px-4 py-3 text-stone-600">
                     {membership.role}
                   </td>
-                  <td className="px-4 py-3 text-zinc-600">
+                  <td className="px-4 py-3 text-stone-600">
                     {membership.relationship ?? "--"}
                   </td>
                 </tr>
@@ -137,7 +137,7 @@ export default async function HouseholdDetailPage({
             ) : (
               <tr>
                 <td
-                  className="px-4 py-6 text-center text-zinc-500"
+                  className="px-4 py-6 text-center text-stone-500"
                   colSpan={4}
                 >
                   No members yet.

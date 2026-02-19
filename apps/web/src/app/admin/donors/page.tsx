@@ -32,8 +32,8 @@ export default async function DonorsPage({
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <h1 className="text-2xl font-semibold text-zinc-900">Donors</h1>
-        <p className="text-sm text-zinc-600">
+        <h1 className="text-2xl font-semibold text-stone-900">Donors</h1>
+        <p className="text-sm text-stone-600">
           Search and manage donor profiles across campaigns.
         </p>
       </header>
@@ -43,34 +43,34 @@ export default async function DonorsPage({
           name="q"
           defaultValue={query}
           placeholder="Search by name, email, or phone"
-          className="h-11 flex-1 rounded-full border border-zinc-200 bg-white px-5 text-sm text-zinc-900"
+          className="h-11 flex-1 rounded-full border border-amber-200/60 bg-white px-5 text-sm text-stone-900"
         />
         <button
           type="submit"
-          className="inline-flex h-11 items-center justify-center rounded-full bg-zinc-900 px-6 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-800"
+          className="inline-flex h-11 items-center justify-center rounded-full bg-teal-700 px-6 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-teal-800"
         >
           Search
         </button>
       </form>
 
-      <div className="rounded-2xl border border-zinc-200 bg-white shadow-sm">
+      <div className="rounded-2xl border border-amber-200/60 bg-white shadow-sm">
         <table className="w-full text-left text-sm">
-          <thead className="border-b border-zinc-200 bg-zinc-50">
+          <thead className="border-b border-amber-200/60 bg-amber-50/40">
             <tr>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Donor</th>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Org</th>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Email</th>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Phone</th>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Created</th>
+              <th className="px-4 py-3 font-semibold text-stone-700">Donor</th>
+              <th className="px-4 py-3 font-semibold text-stone-700">Org</th>
+              <th className="px-4 py-3 font-semibold text-stone-700">Email</th>
+              <th className="px-4 py-3 font-semibold text-stone-700">Phone</th>
+              <th className="px-4 py-3 font-semibold text-stone-700">Created</th>
             </tr>
           </thead>
           <tbody>
             {donors.length ? (
               donors.map((donor) => (
-                <tr key={donor.id} className="border-b border-zinc-100">
-                  <td className="px-4 py-3 font-semibold text-zinc-900">
+                <tr key={donor.id} className="border-b border-amber-100">
+                  <td className="px-4 py-3 font-semibold text-stone-900">
                     <Link
-                      className="text-zinc-900 hover:text-zinc-700"
+                      className="text-stone-900 hover:text-stone-700"
                       href={`/admin/donors/${donor.id}`}
                     >
                       {donor.displayName ??
@@ -80,23 +80,23 @@ export default async function DonorsPage({
                         "Unnamed donor")}
                     </Link>
                   </td>
-                  <td className="px-4 py-3 text-zinc-600">
+                  <td className="px-4 py-3 text-stone-600">
                     {donor.organization.publicName}
                   </td>
-                  <td className="px-4 py-3 text-zinc-600">
+                  <td className="px-4 py-3 text-stone-600">
                     {donor.primaryEmail ?? "—"}
                   </td>
-                  <td className="px-4 py-3 text-zinc-600">
+                  <td className="px-4 py-3 text-stone-600">
                     {donor.primaryPhone ?? "—"}
                   </td>
-                  <td className="px-4 py-3 text-zinc-600">
+                  <td className="px-4 py-3 text-stone-600">
                     {new Date(donor.createdAt).toLocaleDateString()}
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td className="px-4 py-6 text-center text-zinc-500" colSpan={5}>
+                <td className="px-4 py-6 text-center text-stone-500" colSpan={5}>
                   {query ? "No donors found." : "Search to begin."}
                 </td>
               </tr>

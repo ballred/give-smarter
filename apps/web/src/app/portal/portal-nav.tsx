@@ -16,7 +16,7 @@ export function PortalNav() {
         <Link
           key={item.href}
           href={item.href}
-          className="inline-flex items-center rounded-full border border-zinc-200 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-600 transition hover:border-zinc-300 hover:text-zinc-900"
+          className="inline-flex items-center rounded-full border border-amber-200/60 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-stone-600 transition hover:border-amber-300 hover:text-stone-900"
         >
           {item.label}
         </Link>

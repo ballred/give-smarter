@@ -41,48 +41,48 @@ export default async function DonorPortalHome() {
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <h1 className="text-3xl font-semibold text-zinc-900">Your giving</h1>
-        <p className="text-sm text-zinc-600">
+        <h1 className="text-3xl font-semibold text-stone-900">Your giving</h1>
+        <p className="text-sm text-stone-600">
           Review tickets, bids, receipts, and recurring gifts in one place.
         </p>
         {identity?.name || identity?.emails?.[0] ? (
-          <p className="text-xs uppercase tracking-[0.2em] text-zinc-400">
+          <p className="text-xs uppercase tracking-[0.2em] text-stone-400">
             Signed in as {identity?.name || identity?.emails?.[0]}
           </p>
         ) : null}
       </header>
 
       {!donors.length ? (
-        <div className="rounded-2xl border border-dashed border-zinc-200 bg-white p-6 text-sm text-zinc-500">
+        <div className="rounded-2xl border border-dashed border-amber-200/60 bg-white p-6 text-sm text-stone-500">
           We could not find any donations or tickets tied to this email yet.
           Complete a gift or ticket purchase and your portal will fill in
           automatically.
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2">
-          <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-zinc-900">Tickets</h2>
-            <p className="mt-2 text-sm text-zinc-600">
+          <div className="rounded-2xl border border-amber-200/60 bg-white p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-stone-900">Tickets</h2>
+            <p className="mt-2 text-sm text-stone-600">
               You have {ticketCount} ticket
               {ticketCount === 1 ? "" : "s"} on file.
             </p>
           </div>
-          <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-zinc-900">Receipts</h2>
-            <p className="mt-2 text-sm text-zinc-600">
+          <div className="rounded-2xl border border-amber-200/60 bg-white p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-stone-900">Receipts</h2>
+            <p className="mt-2 text-sm text-stone-600">
               {receiptCount} receipt{receiptCount === 1 ? "" : "s"} ready to
               download.
             </p>
           </div>
-          <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-zinc-900">Bids</h2>
-            <p className="mt-2 text-sm text-zinc-600">
+          <div className="rounded-2xl border border-amber-200/60 bg-white p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-stone-900">Bids</h2>
+            <p className="mt-2 text-sm text-stone-600">
               {bidCount} bid{bidCount === 1 ? "" : "s"} placed across auctions.
             </p>
           </div>
-          <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-zinc-900">Recurring</h2>
-            <p className="mt-2 text-sm text-zinc-600">
+          <div className="rounded-2xl border border-amber-200/60 bg-white p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-stone-900">Recurring</h2>
+            <p className="mt-2 text-sm text-stone-600">
               Recurring gifts will appear here once scheduled.
             </p>
           </div>
@@ -90,8 +90,8 @@ export default async function DonorPortalHome() {
       )}
 
       {orgNames.length ? (
-        <div className="rounded-2xl border border-zinc-200 bg-white p-6 text-sm text-zinc-600 shadow-sm">
-          <span className="font-semibold text-zinc-900">Organizations:</span>{" "}
+        <div className="rounded-2xl border border-amber-200/60 bg-white p-6 text-sm text-stone-600 shadow-sm">
+          <span className="font-semibold text-stone-900">Organizations:</span>{" "}
           {orgNames.join(", ")}
         </div>
       ) : null}

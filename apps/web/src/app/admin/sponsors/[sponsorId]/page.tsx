@@ -23,7 +23,7 @@ export default async function SponsorDetailPage({
 
   if (!sponsor) {
     return (
-      <div className="rounded-2xl border border-dashed border-zinc-200 bg-white p-6 text-sm text-zinc-500">
+      <div className="rounded-2xl border border-dashed border-amber-200/60 bg-white p-6 text-sm text-stone-500">
         Sponsor not found.
       </div>
     );
@@ -38,87 +38,87 @@ export default async function SponsorDetailPage({
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <h1 className="text-2xl font-semibold text-zinc-900">{sponsor.name}</h1>
-        <p className="text-sm text-zinc-600">
+        <h1 className="text-2xl font-semibold text-stone-900">{sponsor.name}</h1>
+        <p className="text-sm text-stone-600">
           {sponsor.organization.publicName} | Sponsor profile
         </p>
       </header>
 
       <form
-        className="space-y-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
+        className="space-y-6 rounded-2xl border border-amber-200/60 bg-white p-6 shadow-sm"
         action={async (formData) => {
           "use server";
           await updateSponsor(resolvedParams.sponsorId, formData);
           redirect(`/admin/sponsors/${resolvedParams.sponsorId}`);
         }}
       >
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Sponsor name
           <input
             name="name"
             type="text"
             required
             defaultValue={sponsor.name}
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
           />
         </label>
 
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Sponsor level
           <input
             name="level"
             type="text"
             defaultValue={sponsor.level ?? ""}
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
           />
         </label>
 
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Logo URL
           <input
             name="logoUrl"
             type="url"
             defaultValue={sponsor.logoUrl ?? ""}
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
           />
         </label>
 
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Website URL
           <input
             name="websiteUrl"
             type="url"
             defaultValue={sponsor.websiteUrl ?? ""}
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
           />
         </label>
 
         <button
           type="submit"
-          className="inline-flex h-10 items-center justify-center rounded-full bg-zinc-900 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-800"
+          className="inline-flex h-10 items-center justify-center rounded-full bg-teal-700 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-teal-800"
         >
           Save changes
         </button>
       </form>
 
       <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-zinc-900">
+        <h2 className="text-lg font-semibold text-stone-900">
           Sponsor placements
         </h2>
         <form
-          className="grid gap-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm md:grid-cols-2"
+          className="grid gap-4 rounded-2xl border border-amber-200/60 bg-white p-6 shadow-sm md:grid-cols-2"
           action={async (formData) => {
             "use server";
             await addSponsorPlacement(resolvedParams.sponsorId, formData);
             redirect(`/admin/sponsors/${resolvedParams.sponsorId}`);
           }}
         >
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             Campaign
             <select
               name="campaignId"
               required
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             >
               <option value="" disabled>
                 Select a campaign
@@ -131,12 +131,12 @@ export default async function SponsorDetailPage({
             </select>
           </label>
 
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             Placement type
             <select
               name="placementType"
               required
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             >
               <option value="CAMPAIGN_PAGE">Campaign page</option>
               <option value="MODULE">Module</option>
@@ -144,52 +144,52 @@ export default async function SponsorDetailPage({
             </select>
           </label>
 
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             Placement reference
             <input
               name="placementRefId"
               type="text"
               placeholder="Page slug or module key"
               required
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             />
           </label>
 
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             Sort order
             <input
               name="sortOrder"
               type="number"
               min="0"
               step="1"
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             />
           </label>
 
           <div className="md:col-span-2">
             <button
               type="submit"
-              className="inline-flex h-10 items-center justify-center rounded-full bg-zinc-900 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-800"
+              className="inline-flex h-10 items-center justify-center rounded-full bg-teal-700 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-teal-800"
             >
               Add placement
             </button>
           </div>
         </form>
 
-        <div className="rounded-2xl border border-zinc-200 bg-white shadow-sm">
+        <div className="rounded-2xl border border-amber-200/60 bg-white shadow-sm">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-zinc-200 bg-zinc-50">
+            <thead className="border-b border-amber-200/60 bg-amber-50/40">
               <tr>
-                <th className="px-4 py-3 font-semibold text-zinc-700">
+                <th className="px-4 py-3 font-semibold text-stone-700">
                   Campaign
                 </th>
-                <th className="px-4 py-3 font-semibold text-zinc-700">
+                <th className="px-4 py-3 font-semibold text-stone-700">
                   Type
                 </th>
-                <th className="px-4 py-3 font-semibold text-zinc-700">
+                <th className="px-4 py-3 font-semibold text-stone-700">
                   Reference
                 </th>
-                <th className="px-4 py-3 font-semibold text-zinc-700">
+                <th className="px-4 py-3 font-semibold text-stone-700">
                   Sort
                 </th>
               </tr>
@@ -197,17 +197,17 @@ export default async function SponsorDetailPage({
             <tbody>
               {sponsor.placements.length ? (
                 sponsor.placements.map((placement) => (
-                  <tr key={placement.id} className="border-b border-zinc-100">
-                    <td className="px-4 py-3 text-zinc-600">
+                  <tr key={placement.id} className="border-b border-amber-100">
+                    <td className="px-4 py-3 text-stone-600">
                       {placement.campaign?.name ?? "Campaign"}
                     </td>
-                    <td className="px-4 py-3 text-zinc-600">
+                    <td className="px-4 py-3 text-stone-600">
                       {placement.placementType}
                     </td>
-                    <td className="px-4 py-3 text-zinc-600">
+                    <td className="px-4 py-3 text-stone-600">
                       {placement.placementRefId}
                     </td>
-                    <td className="px-4 py-3 text-zinc-600">
+                    <td className="px-4 py-3 text-stone-600">
                       {placement.sortOrder}
                     </td>
                   </tr>
@@ -215,7 +215,7 @@ export default async function SponsorDetailPage({
               ) : (
                 <tr>
                   <td
-                    className="px-4 py-6 text-center text-zinc-500"
+                    className="px-4 py-6 text-center text-stone-500"
                     colSpan={4}
                   >
                     No placements yet.

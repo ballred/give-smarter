@@ -10,7 +10,7 @@ export default async function NewSponsorPage() {
 
   if (!organizations.length) {
     return (
-      <div className="rounded-2xl border border-dashed border-zinc-200 bg-white p-6 text-sm text-zinc-500">
+      <div className="rounded-2xl border border-dashed border-amber-200/60 bg-white p-6 text-sm text-stone-500">
         Create an organization before adding sponsors.
       </div>
     );
@@ -19,28 +19,28 @@ export default async function NewSponsorPage() {
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <h1 className="text-2xl font-semibold text-zinc-900">
+        <h1 className="text-2xl font-semibold text-stone-900">
           Create sponsor
         </h1>
-        <p className="text-sm text-zinc-600">
+        <p className="text-sm text-stone-600">
           Add sponsor details and branding assets.
         </p>
       </header>
 
       <form
-        className="space-y-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
+        className="space-y-6 rounded-2xl border border-amber-200/60 bg-white p-6 shadow-sm"
         action={async (formData) => {
           "use server";
           const id = await createSponsor(formData);
           redirect(`/admin/sponsors/${id}`);
         }}
       >
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Organization
           <select
             name="orgId"
             required
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
           >
             <option value="" disabled>
               Select an organization
@@ -53,47 +53,47 @@ export default async function NewSponsorPage() {
           </select>
         </label>
 
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Sponsor name
           <input
             name="name"
             type="text"
             required
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
           />
         </label>
 
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Sponsor level
           <input
             name="level"
             type="text"
             placeholder="Gold, Silver, Platinum"
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
           />
         </label>
 
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Logo URL
           <input
             name="logoUrl"
             type="url"
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
           />
         </label>
 
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Website URL
           <input
             name="websiteUrl"
             type="url"
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
           />
         </label>
 
         <button
           type="submit"
-          className="inline-flex h-10 items-center justify-center rounded-full bg-zinc-900 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-800"
+          className="inline-flex h-10 items-center justify-center rounded-full bg-teal-700 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-teal-800"
         >
           Create sponsor
         </button>

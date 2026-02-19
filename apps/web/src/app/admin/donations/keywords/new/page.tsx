@@ -17,10 +17,10 @@ export default async function NewKeywordRoutePage() {
   if (!organizations.length) {
     return (
       <div className="space-y-4">
-        <h1 className="text-2xl font-semibold text-zinc-900">
+        <h1 className="text-2xl font-semibold text-stone-900">
           New keyword route
         </h1>
-        <p className="text-sm text-zinc-600">
+        <p className="text-sm text-stone-600">
           Create an organization before adding keywords.
         </p>
       </div>
@@ -30,27 +30,27 @@ export default async function NewKeywordRoutePage() {
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <h1 className="text-2xl font-semibold text-zinc-900">
+        <h1 className="text-2xl font-semibold text-stone-900">
           New keyword route
         </h1>
-        <p className="text-sm text-zinc-600">
+        <p className="text-sm text-stone-600">
           Configure an SMS keyword to send donors to the right campaign.
         </p>
       </header>
 
       <form
-        className="space-y-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
+        className="space-y-6 rounded-2xl border border-amber-200/60 bg-white p-6 shadow-sm"
         action={async (formData) => {
           "use server";
           const id = await createKeywordRoute(formData);
           redirect(`/admin/donations/keywords/${id}`);
         }}
       >
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Organization
           <select
             name="orgId"
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             required
           >
             {organizations.map((org) => (
@@ -61,22 +61,22 @@ export default async function NewKeywordRoutePage() {
           </select>
         </label>
 
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Keyword
           <input
             name="keyword"
             type="text"
             required
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             placeholder="GIVE"
           />
         </label>
 
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Campaign (optional)
           <select
             name="campaignId"
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
           >
             <option value="">No campaign</option>
             {campaigns.map((campaign) => (
@@ -87,21 +87,21 @@ export default async function NewKeywordRoutePage() {
           </select>
         </label>
 
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Auto-reply message
           <textarea
             name="replyMessage"
             rows={3}
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             placeholder="Thanks for supporting our campaign! Donate here: {{link}}"
           />
         </label>
 
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Status
           <select
             name="status"
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             defaultValue="ACTIVE"
           >
             <option value="ACTIVE">Active</option>
@@ -111,7 +111,7 @@ export default async function NewKeywordRoutePage() {
 
         <button
           type="submit"
-          className="inline-flex h-11 items-center justify-center rounded-full bg-zinc-900 px-6 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-800"
+          className="inline-flex h-11 items-center justify-center rounded-full bg-teal-700 px-6 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-teal-800"
         >
           Save keyword
         </button>

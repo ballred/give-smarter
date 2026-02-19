@@ -10,14 +10,14 @@ export default async function DonorProfilePage() {
   return (
     <div className="space-y-6">
       <header className="space-y-1">
-        <h1 className="text-2xl font-semibold text-zinc-900">Profile</h1>
-        <p className="text-sm text-zinc-600">
+        <h1 className="text-2xl font-semibold text-stone-900">Profile</h1>
+        <p className="text-sm text-stone-600">
           Update your contact information and communication preferences.
         </p>
       </header>
 
       {!donors.length ? (
-        <div className="rounded-2xl border border-dashed border-zinc-200 bg-white p-6 text-sm text-zinc-500">
+        <div className="rounded-2xl border border-dashed border-amber-200/60 bg-white p-6 text-sm text-stone-500">
           We could not find a donor profile tied to this account yet. Complete a
           donation or ticket purchase to create one.
         </div>
@@ -38,44 +38,44 @@ export default async function DonorProfilePage() {
               <form
                 key={donor.id}
                 action={updateDonorProfile}
-                className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
+                className="rounded-2xl border border-amber-200/60 bg-white p-6 shadow-sm"
               >
                 <input type="hidden" name="donorId" value={donor.id} />
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div className="space-y-1">
-                    <h2 className="text-lg font-semibold text-zinc-900">
+                    <h2 className="text-lg font-semibold text-stone-900">
                       {orgName}
                     </h2>
-                    <p className="text-xs uppercase tracking-[0.2em] text-zinc-400">
+                    <p className="text-xs uppercase tracking-[0.2em] text-stone-400">
                       Donor profile
                     </p>
                   </div>
                   <button
                     type="submit"
-                    className="rounded-full bg-emerald-600 px-5 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-emerald-700"
+                    className="rounded-full bg-teal-700 px-5 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-teal-800"
                   >
                     Save updates
                   </button>
                 </div>
 
                 <div className="mt-6 grid gap-4 md:grid-cols-2">
-                  <label className="space-y-2 text-sm text-zinc-600">
+                  <label className="space-y-2 text-sm text-stone-600">
                     Preferred name
                     <input
                       name="preferredName"
                       defaultValue={donor.preferredName ?? ""}
-                      className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+                      className="w-full rounded-xl border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
                     />
                   </label>
-                  <label className="space-y-2 text-sm text-zinc-600">
+                  <label className="space-y-2 text-sm text-stone-600">
                     Mobile phone
                     <input
                       name="primaryPhone"
                       defaultValue={donor.primaryPhone ?? ""}
-                      className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+                      className="w-full rounded-xl border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
                     />
                   </label>
-                  <label className="space-y-2 text-sm text-zinc-600 md:col-span-2">
+                  <label className="space-y-2 text-sm text-stone-600 md:col-span-2">
                     Email
                     <input
                       disabled
@@ -84,13 +84,13 @@ export default async function DonorProfilePage() {
                         identity?.emails?.[0] ??
                         "No email on file"
                       }
-                      className="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-500"
+                      className="w-full rounded-xl border border-amber-200/60 bg-amber-50/40 px-3 py-2 text-sm text-stone-500"
                     />
                   </label>
                 </div>
 
                 <div className="mt-6 space-y-3">
-                  <h3 className="text-sm font-semibold text-zinc-900">
+                  <h3 className="text-sm font-semibold text-stone-900">
                     Communication preferences
                   </h3>
                   <div className="grid gap-3 md:grid-cols-2">
@@ -103,20 +103,20 @@ export default async function DonorProfilePage() {
                       return (
                         <label
                           key={key}
-                          className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-600"
+                          className="flex items-center gap-3 rounded-xl border border-amber-200/60 bg-amber-50/40 px-4 py-3 text-sm text-stone-600"
                         >
                           <input
                             type="checkbox"
                             name={key}
                             defaultChecked={checked}
-                            className="h-4 w-4 rounded border-zinc-300 text-emerald-600"
+                            className="h-4 w-4 rounded border-amber-300 text-teal-600"
                           />
                           <span>{pref.label}</span>
                         </label>
                       );
                     })}
                   </div>
-                  <p className="text-xs text-zinc-400">
+                  <p className="text-xs text-stone-400">
                     Email changes are managed through your sign-in account.
                   </p>
                 </div>

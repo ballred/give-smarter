@@ -24,8 +24,8 @@ const NAV_ITEMS = [
 
 export function AdminNav() {
   return (
-    <aside className="w-64 border-r border-zinc-200 bg-white px-6 py-8">
-      <div className="mb-8 text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">
+    <aside className="w-64 border-r border-[var(--gs-nav-border)] bg-white px-6 py-8">
+      <div className="mb-8 text-xs font-semibold uppercase tracking-[0.3em] text-stone-500">
         GiveSmarter
       </div>
       <nav className="space-y-1">
@@ -33,7 +33,7 @@ export function AdminNav() {
           <Link
             key={item.href}
             href={item.href}
-            className="block rounded-lg px-3 py-2 text-sm font-semibold text-zinc-700 transition hover:bg-zinc-100"
+            className="block rounded-lg px-3 py-2 text-sm font-semibold text-stone-700 transition hover:bg-amber-50"
           >
             {item.label}
           </Link>

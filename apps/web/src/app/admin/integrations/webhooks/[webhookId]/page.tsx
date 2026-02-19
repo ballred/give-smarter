@@ -27,11 +27,11 @@ export default async function WebhookDetailPage({
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-stone-500">
           {webhook.organization.publicName}
         </p>
-        <h1 className="text-2xl font-semibold text-zinc-900">Webhook</h1>
-        <p className="text-sm text-zinc-600">Status: {webhook.status}</p>
+        <h1 className="text-2xl font-semibold text-stone-900">Webhook</h1>
+        <p className="text-sm text-stone-600">Status: {webhook.status}</p>
       </header>
 
       {resolvedSearchParams?.secret ? (
@@ -47,26 +47,26 @@ export default async function WebhookDetailPage({
       ) : null}
 
       <form
-        className="space-y-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
+        className="space-y-6 rounded-2xl border border-amber-200/60 bg-white p-6 shadow-sm"
         action={async (formData) => {
           "use server";
           await updateWebhook(webhook.id, formData);
           redirect(`/admin/integrations/webhooks/${webhook.id}`);
         }}
       >
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Endpoint URL
           <input
             name="url"
             type="url"
             required
             defaultValue={webhook.url}
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
           />
         </label>
 
         <fieldset className="space-y-3">
-          <legend className="text-sm font-semibold text-zinc-700">Events</legend>
+          <legend className="text-sm font-semibold text-stone-700">Events</legend>
           <div className="grid gap-3 md:grid-cols-2">
             {webhookEvents.map((event) => (
               <label key={event} className="flex items-center gap-2 text-sm">
@@ -75,19 +75,19 @@ export default async function WebhookDetailPage({
                   name="events"
                   value={event}
                   defaultChecked={isEventSelected(webhook.events, event)}
-                  className="h-4 w-4 rounded border-zinc-300 text-zinc-900"
+                  className="h-4 w-4 rounded border-amber-300 text-teal-600"
                 />
-                <span className="text-zinc-700">{event}</span>
+                <span className="text-stone-700">{event}</span>
               </label>
             ))}
           </div>
         </fieldset>
 
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Status
           <select
             name="status"
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             defaultValue={webhook.status}
           >
             <option value="ACTIVE">Active</option>
@@ -97,7 +97,7 @@ export default async function WebhookDetailPage({
 
         <button
           type="submit"
-          className="inline-flex h-11 items-center justify-center rounded-full bg-zinc-900 px-6 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-800"
+          className="inline-flex h-11 items-center justify-center rounded-full bg-teal-700 px-6 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-teal-800"
         >
           Update webhook
         </button>

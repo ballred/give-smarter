@@ -13,7 +13,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 text-zinc-900">
+    <div className="min-h-screen bg-[var(--gs-surface)] text-stone-900">
       <div className="flex min-h-screen">
         <AdminNav />
         <main className="flex-1 px-8 py-10">{children}</main>

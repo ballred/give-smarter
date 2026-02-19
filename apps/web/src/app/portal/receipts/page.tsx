@@ -36,14 +36,14 @@ export default async function DonorReceiptsPage() {
   return (
     <div className="space-y-6">
       <header className="space-y-1">
-        <h1 className="text-2xl font-semibold text-zinc-900">Receipts</h1>
-        <p className="text-sm text-zinc-600">
+        <h1 className="text-2xl font-semibold text-stone-900">Receipts</h1>
+        <p className="text-sm text-stone-600">
           Download transaction receipts and annual summaries.
         </p>
       </header>
 
       {!receipts.length ? (
-        <div className="rounded-2xl border border-dashed border-zinc-200 bg-white p-6 text-sm text-zinc-500">
+        <div className="rounded-2xl border border-dashed border-amber-200/60 bg-white p-6 text-sm text-stone-500">
           Transaction receipts and year-end summaries will appear here.
         </div>
       ) : (
@@ -64,38 +64,38 @@ export default async function DonorReceiptsPage() {
             return (
               <div
                 key={receipt.id}
-                className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
+                className="rounded-2xl border border-amber-200/60 bg-white p-6 shadow-sm"
               >
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div className="space-y-1">
-                    <h2 className="text-lg font-semibold text-zinc-900">
+                    <h2 className="text-lg font-semibold text-stone-900">
                       {getReceiptLabel(receipt.receiptType)} |{" "}
                       {receipt.receiptNumber}
                     </h2>
-                    <p className="text-xs uppercase tracking-[0.2em] text-zinc-400">
+                    <p className="text-xs uppercase tracking-[0.2em] text-stone-400">
                       {orgName}
                     </p>
-                    <p className="text-xs text-zinc-500">
+                    <p className="text-xs text-stone-500">
                       Issued {formatDate(receipt.issuedAt)}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-zinc-900">
+                    <p className="text-sm font-semibold text-stone-900">
                       {formatCurrency(totalAmount, currency)}
                     </p>
-                    <p className="text-xs text-zinc-500">
+                    <p className="text-xs text-stone-500">
                       Tax deductible{" "}
                       {formatCurrency(deductibleAmount, currency)}
                     </p>
                     {receipt.documentUrl ? (
                       <a
                         href={receipt.documentUrl}
-                        className="mt-2 inline-flex items-center text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600 hover:text-emerald-700"
+                        className="mt-2 inline-flex items-center text-xs font-semibold uppercase tracking-[0.2em] text-teal-600 hover:text-teal-700"
                       >
                         Download PDF
                       </a>
                     ) : (
-                      <span className="mt-2 inline-flex items-center text-xs uppercase tracking-[0.2em] text-zinc-400">
+                      <span className="mt-2 inline-flex items-center text-xs uppercase tracking-[0.2em] text-stone-400">
                         PDF pending
                       </span>
                     )}

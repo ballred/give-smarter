@@ -19,10 +19,10 @@ export default async function CheckInQrPage({
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <h1 className="text-2xl font-semibold text-zinc-900">
+        <h1 className="text-2xl font-semibold text-stone-900">
           QR check-in kiosk
         </h1>
-        <p className="text-sm text-zinc-600">
+        <p className="text-sm text-stone-600">
           This view will activate the camera scanner once configured.
         </p>
       </header>
@@ -42,7 +42,7 @@ export default async function CheckInQrPage({
       ) : null}
 
       <form
-        className="flex flex-wrap items-center gap-3 rounded-3xl border border-dashed border-zinc-200 bg-white p-6"
+        className="flex flex-wrap items-center gap-3 rounded-3xl border border-dashed border-amber-200/60 bg-white p-6"
         action={async (formData) => {
           "use server";
           try {
@@ -60,17 +60,17 @@ export default async function CheckInQrPage({
         <input
           name="qrCode"
           placeholder="Enter or scan QR code"
-          className="h-12 flex-1 rounded-full border border-zinc-200 bg-white px-5 text-sm text-zinc-900"
+          className="h-12 flex-1 rounded-full border border-amber-200/60 bg-white px-5 text-sm text-stone-900"
         />
         <button
           type="submit"
-          className="inline-flex h-12 items-center justify-center rounded-full bg-zinc-900 px-6 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-800"
+          className="inline-flex h-12 items-center justify-center rounded-full bg-teal-700 px-6 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-teal-800"
         >
           Check in
         </button>
       </form>
 
-      <div className="flex h-64 items-center justify-center rounded-3xl border border-dashed border-zinc-200 bg-white text-sm text-zinc-500">
+      <div className="flex h-64 items-center justify-center rounded-3xl border border-dashed border-amber-200/60 bg-white text-sm text-stone-500">
         Camera scanner placeholder
       </div>
     </div>

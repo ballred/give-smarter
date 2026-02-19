@@ -36,52 +36,52 @@ export default async function OrderDetailPage({
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-stone-500">
           {order.campaign?.name ?? "Campaign"}
         </p>
-        <h1 className="text-2xl font-semibold text-zinc-900">
+        <h1 className="text-2xl font-semibold text-stone-900">
           Order {order.orderNumber}
         </h1>
-        <p className="text-sm text-zinc-600">
+        <p className="text-sm text-stone-600">
           Status: {order.status} · Total:{" "}
           {formatCurrency(order.totalAmount, order.currency)}
         </p>
       </header>
 
       <section className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
-          <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-500">
+        <div className="rounded-2xl border border-amber-200/60 bg-white p-5 shadow-sm">
+          <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-stone-500">
             Donor
           </h2>
-          <p className="mt-3 text-base font-semibold text-zinc-900">{donorName}</p>
-          <p className="text-sm text-zinc-600">{order.donor?.primaryEmail ?? "—"}</p>
-          <p className="text-sm text-zinc-600">{order.donor?.primaryPhone ?? "—"}</p>
+          <p className="mt-3 text-base font-semibold text-stone-900">{donorName}</p>
+          <p className="text-sm text-stone-600">{order.donor?.primaryEmail ?? "—"}</p>
+          <p className="text-sm text-stone-600">{order.donor?.primaryPhone ?? "—"}</p>
         </div>
-        <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
-          <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-500">
+        <div className="rounded-2xl border border-amber-200/60 bg-white p-5 shadow-sm">
+          <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-stone-500">
             Timing
           </h2>
-          <p className="mt-3 text-sm text-zinc-700">
+          <p className="mt-3 text-sm text-stone-700">
             Created: {new Date(order.createdAt).toLocaleString()}
           </p>
-          <p className="text-sm text-zinc-700">
+          <p className="text-sm text-stone-700">
             Updated: {new Date(order.updatedAt).toLocaleString()}
           </p>
         </div>
       </section>
 
-      <section className="rounded-2xl border border-zinc-200 bg-white shadow-sm">
-        <div className="border-b border-zinc-200 px-5 py-4">
-          <h2 className="font-semibold text-zinc-900">Line Items</h2>
+      <section className="rounded-2xl border border-amber-200/60 bg-white shadow-sm">
+        <div className="border-b border-amber-200/60 px-5 py-4">
+          <h2 className="font-semibold text-stone-900">Line Items</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-zinc-200 bg-zinc-50">
+            <thead className="border-b border-amber-200/60 bg-amber-50/40">
               <tr>
-                <th className="px-4 py-3 font-semibold text-zinc-700">Type</th>
-                <th className="px-4 py-3 font-semibold text-zinc-700">Description</th>
-                <th className="px-4 py-3 text-right font-semibold text-zinc-700">Qty</th>
-                <th className="px-4 py-3 text-right font-semibold text-zinc-700">
+                <th className="px-4 py-3 font-semibold text-stone-700">Type</th>
+                <th className="px-4 py-3 font-semibold text-stone-700">Description</th>
+                <th className="px-4 py-3 text-right font-semibold text-stone-700">Qty</th>
+                <th className="px-4 py-3 text-right font-semibold text-stone-700">
                   Amount
                 </th>
               </tr>
@@ -89,22 +89,22 @@ export default async function OrderDetailPage({
             <tbody>
               {order.lineItems.length ? (
                 order.lineItems.map((lineItem) => (
-                  <tr key={lineItem.id} className="border-b border-zinc-100">
-                    <td className="px-4 py-3 text-zinc-700">{lineItem.type}</td>
-                    <td className="px-4 py-3 text-zinc-900">
+                  <tr key={lineItem.id} className="border-b border-amber-100">
+                    <td className="px-4 py-3 text-stone-700">{lineItem.type}</td>
+                    <td className="px-4 py-3 text-stone-900">
                       {lineItem.description ?? "—"}
                     </td>
-                    <td className="px-4 py-3 text-right text-zinc-700">
+                    <td className="px-4 py-3 text-right text-stone-700">
                       {lineItem.quantity}
                     </td>
-                    <td className="px-4 py-3 text-right font-medium text-zinc-900">
+                    <td className="px-4 py-3 text-right font-medium text-stone-900">
                       {formatCurrency(lineItem.totalAmount, lineItem.currency)}
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td className="px-4 py-6 text-center text-zinc-500" colSpan={4}>
+                  <td className="px-4 py-6 text-center text-stone-500" colSpan={4}>
                     No line items found.
                   </td>
                 </tr>
@@ -114,43 +114,43 @@ export default async function OrderDetailPage({
         </div>
       </section>
 
-      <section className="rounded-2xl border border-zinc-200 bg-white shadow-sm">
-        <div className="border-b border-zinc-200 px-5 py-4">
-          <h2 className="font-semibold text-zinc-900">Payments</h2>
+      <section className="rounded-2xl border border-amber-200/60 bg-white shadow-sm">
+        <div className="border-b border-amber-200/60 px-5 py-4">
+          <h2 className="font-semibold text-stone-900">Payments</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-zinc-200 bg-zinc-50">
+            <thead className="border-b border-amber-200/60 bg-amber-50/40">
               <tr>
-                <th className="px-4 py-3 font-semibold text-zinc-700">Date</th>
-                <th className="px-4 py-3 font-semibold text-zinc-700">Provider</th>
-                <th className="px-4 py-3 font-semibold text-zinc-700">Status</th>
-                <th className="px-4 py-3 text-right font-semibold text-zinc-700">
+                <th className="px-4 py-3 font-semibold text-stone-700">Date</th>
+                <th className="px-4 py-3 font-semibold text-stone-700">Provider</th>
+                <th className="px-4 py-3 font-semibold text-stone-700">Status</th>
+                <th className="px-4 py-3 text-right font-semibold text-stone-700">
                   Amount
                 </th>
-                <th className="px-4 py-3 text-right font-semibold text-zinc-700">Net</th>
+                <th className="px-4 py-3 text-right font-semibold text-stone-700">Net</th>
               </tr>
             </thead>
             <tbody>
               {order.payments.length ? (
                 order.payments.map((payment) => (
-                  <tr key={payment.id} className="border-b border-zinc-100">
-                    <td className="px-4 py-3 text-zinc-700">
+                  <tr key={payment.id} className="border-b border-amber-100">
+                    <td className="px-4 py-3 text-stone-700">
                       {new Date(payment.createdAt).toLocaleString()}
                     </td>
-                    <td className="px-4 py-3 text-zinc-700">{payment.provider}</td>
-                    <td className="px-4 py-3 text-zinc-700">{payment.status}</td>
-                    <td className="px-4 py-3 text-right text-zinc-900">
+                    <td className="px-4 py-3 text-stone-700">{payment.provider}</td>
+                    <td className="px-4 py-3 text-stone-700">{payment.status}</td>
+                    <td className="px-4 py-3 text-right text-stone-900">
                       {formatCurrency(payment.amount, payment.currency)}
                     </td>
-                    <td className="px-4 py-3 text-right text-zinc-900">
+                    <td className="px-4 py-3 text-right text-stone-900">
                       {formatCurrency(payment.netAmount, payment.currency)}
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td className="px-4 py-6 text-center text-zinc-500" colSpan={5}>
+                  <td className="px-4 py-6 text-center text-stone-500" colSpan={5}>
                     No payments found.
                   </td>
                 </tr>

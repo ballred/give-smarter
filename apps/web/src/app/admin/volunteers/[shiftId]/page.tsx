@@ -29,7 +29,7 @@ export default async function VolunteerShiftDetailPage({
 
   if (!shift) {
     return (
-      <div className="rounded-2xl border border-dashed border-zinc-200 bg-white p-6 text-sm text-zinc-500">
+      <div className="rounded-2xl border border-dashed border-amber-200/60 bg-white p-6 text-sm text-stone-500">
         Shift not found.
       </div>
     );
@@ -38,76 +38,76 @@ export default async function VolunteerShiftDetailPage({
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <h1 className="text-2xl font-semibold text-zinc-900">{shift.name}</h1>
-        <p className="text-sm text-zinc-600">
+        <h1 className="text-2xl font-semibold text-stone-900">{shift.name}</h1>
+        <p className="text-sm text-stone-600">
           {shift.campaign?.name ?? "Campaign"} | Volunteer shift
         </p>
       </header>
 
       <form
-        className="space-y-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
+        className="space-y-6 rounded-2xl border border-amber-200/60 bg-white p-6 shadow-sm"
         action={async (formData) => {
           "use server";
           await updateVolunteerShift(resolvedParams.shiftId, formData);
           redirect(`/admin/volunteers/${resolvedParams.shiftId}`);
         }}
       >
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Shift name
           <input
             name="name"
             type="text"
             required
             defaultValue={shift.name}
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
           />
         </label>
 
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Description
           <textarea
             name="description"
             rows={3}
             defaultValue={shift.description ?? ""}
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
           />
         </label>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             Start time
             <input
               name="startsAt"
               type="datetime-local"
               defaultValue={toLocalInput(shift.startsAt)}
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             />
           </label>
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             End time
             <input
               name="endsAt"
               type="datetime-local"
               defaultValue={toLocalInput(shift.endsAt)}
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             />
           </label>
         </div>
 
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Capacity
           <input
             name="capacity"
             type="number"
             min="0"
             defaultValue={shift.capacity ?? ""}
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
           />
         </label>
 
         <button
           type="submit"
-          className="inline-flex h-10 items-center justify-center rounded-full bg-zinc-900 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-800"
+          className="inline-flex h-10 items-center justify-center rounded-full bg-teal-700 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-teal-800"
         >
           Save changes
         </button>
@@ -116,32 +116,32 @@ export default async function VolunteerShiftDetailPage({
       <div className="flex justify-end">
         <a
           href={`/api/admin/volunteers/${shift.id}/signups?format=csv`}
-          className="inline-flex h-10 items-center justify-center rounded-full border border-zinc-200 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-700 transition hover:border-zinc-300"
+          className="inline-flex h-10 items-center justify-center rounded-full border border-amber-200/60 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-stone-700 transition hover:border-amber-300"
         >
           Download CSV
         </a>
       </div>
 
-      <div className="rounded-2xl border border-zinc-200 bg-white shadow-sm">
+      <div className="rounded-2xl border border-amber-200/60 bg-white shadow-sm">
         <table className="w-full text-left text-sm">
-          <thead className="border-b border-zinc-200 bg-zinc-50">
+          <thead className="border-b border-amber-200/60 bg-amber-50/40">
             <tr>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Volunteer</th>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Email</th>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Status</th>
+              <th className="px-4 py-3 font-semibold text-stone-700">Volunteer</th>
+              <th className="px-4 py-3 font-semibold text-stone-700">Email</th>
+              <th className="px-4 py-3 font-semibold text-stone-700">Status</th>
             </tr>
           </thead>
           <tbody>
             {shift.signups.length ? (
               shift.signups.map((signup) => (
-                <tr key={signup.id} className="border-b border-zinc-100">
-                  <td className="px-4 py-3 text-zinc-600">
+                <tr key={signup.id} className="border-b border-amber-100">
+                  <td className="px-4 py-3 text-stone-600">
                     {signup.name}
                   </td>
-                  <td className="px-4 py-3 text-zinc-600">
+                  <td className="px-4 py-3 text-stone-600">
                     {signup.email ?? signup.donor?.primaryEmail ?? "--"}
                   </td>
-                  <td className="px-4 py-3 text-zinc-600">
+                  <td className="px-4 py-3 text-stone-600">
                     {signup.status}
                   </td>
                 </tr>
@@ -149,7 +149,7 @@ export default async function VolunteerShiftDetailPage({
             ) : (
               <tr>
                 <td
-                  className="px-4 py-6 text-center text-zinc-500"
+                  className="px-4 py-6 text-center text-stone-500"
                   colSpan={3}
                 >
                   No volunteers signed up yet.

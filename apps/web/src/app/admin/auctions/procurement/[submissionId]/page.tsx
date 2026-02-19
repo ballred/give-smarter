@@ -23,41 +23,41 @@ export default async function ProcurementDetailPage({
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-stone-500">
           {submission.campaign?.name ?? "Auction"}
         </p>
-        <h1 className="text-2xl font-semibold text-zinc-900">
+        <h1 className="text-2xl font-semibold text-stone-900">
           {submission.itemTitle ?? "Procurement submission"}
         </h1>
-        <p className="text-sm text-zinc-600">
+        <p className="text-sm text-stone-600">
           Status: {submission.status}
         </p>
       </header>
 
-      <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-amber-200/60 bg-white p-6 shadow-sm">
         <div className="grid gap-4 md:grid-cols-2">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">
               Donor
             </p>
-            <p className="mt-2 text-sm text-zinc-900">
+            <p className="mt-2 text-sm text-stone-900">
               {submission.procurementDonor?.name ?? "—"}
             </p>
-            <p className="text-sm text-zinc-600">
+            <p className="text-sm text-stone-600">
               {submission.procurementDonor?.email ?? "No email"} ·{" "}
               {submission.procurementDonor?.phone ?? "No phone"}
             </p>
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">
               FMV
             </p>
-            <p className="mt-2 text-sm text-zinc-900">
+            <p className="mt-2 text-sm text-stone-900">
               {submission.fmvAmount
                 ? `$${(submission.fmvAmount / 100).toFixed(2)}`
                 : "—"}
             </p>
-            <p className="text-sm text-zinc-600">
+            <p className="text-sm text-stone-600">
               Restrictions: {submission.restrictions ?? "—"}
             </p>
           </div>
@@ -65,18 +65,18 @@ export default async function ProcurementDetailPage({
       </div>
 
       <form
-        className="space-y-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
+        className="space-y-4 rounded-2xl border border-amber-200/60 bg-white p-6 shadow-sm"
         action={async (formData) => {
           "use server";
           await updateProcurementSubmission(submission.id, formData);
         }}
       >
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Status
           <select
             name="status"
             defaultValue={submission.status}
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
           >
             <option value="PLEDGED">Pledged</option>
             <option value="RECEIVED">Received</option>
@@ -86,29 +86,29 @@ export default async function ProcurementDetailPage({
           </select>
         </label>
 
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Item title
           <input
             name="itemTitle"
             type="text"
             defaultValue={submission.itemTitle ?? ""}
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
           />
         </label>
 
-        <label className="block text-sm font-semibold text-zinc-700">
+        <label className="block text-sm font-semibold text-stone-700">
           Notes
           <textarea
             name="notes"
             rows={3}
             defaultValue={submission.notes ?? ""}
-            className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
           />
         </label>
 
         <button
           type="submit"
-          className="inline-flex h-10 items-center justify-center rounded-full bg-zinc-900 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-800"
+          className="inline-flex h-10 items-center justify-center rounded-full bg-teal-700 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-teal-800"
         >
           Update submission
         </button>

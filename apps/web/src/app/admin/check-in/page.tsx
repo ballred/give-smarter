@@ -31,8 +31,8 @@ export default async function CheckInPage({
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <h1 className="text-2xl font-semibold text-zinc-900">Check-in</h1>
-        <p className="text-sm text-zinc-600">
+        <h1 className="text-2xl font-semibold text-stone-900">Check-in</h1>
+        <p className="text-sm text-stone-600">
           Search attendees and check them in quickly.
         </p>
       </header>
@@ -43,70 +43,70 @@ export default async function CheckInPage({
             name="q"
             defaultValue={query}
             placeholder="Search by name, email, or phone"
-            className="h-11 flex-1 rounded-full border border-zinc-200 bg-white px-5 text-sm text-zinc-900"
+            className="h-11 flex-1 rounded-full border border-amber-200/60 bg-white px-5 text-sm text-stone-900"
           />
           <button
             type="submit"
-            className="inline-flex h-11 items-center justify-center rounded-full bg-zinc-900 px-6 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-800"
+            className="inline-flex h-11 items-center justify-center rounded-full bg-teal-700 px-6 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-teal-800"
           >
             Search
           </button>
         </form>
         <Link
           href="/admin/check-in/import"
-          className="inline-flex h-11 items-center justify-center rounded-full border border-zinc-200 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-700 transition hover:border-zinc-300"
+          className="inline-flex h-11 items-center justify-center rounded-full border border-amber-200/60 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-stone-700 transition hover:border-amber-300"
         >
           Import list
         </Link>
         <Link
           href="/admin/check-in/qr"
-          className="inline-flex h-11 items-center justify-center rounded-full border border-zinc-200 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-700 transition hover:border-zinc-300"
+          className="inline-flex h-11 items-center justify-center rounded-full border border-amber-200/60 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-stone-700 transition hover:border-amber-300"
         >
           QR scanner
         </Link>
       </div>
 
       <form
-        className="rounded-2xl border border-zinc-200 bg-white shadow-sm"
+        className="rounded-2xl border border-amber-200/60 bg-white shadow-sm"
         action={async (formData) => {
           "use server";
           await bulkCheckIn(formData);
         }}
       >
         <table className="w-full text-left text-sm">
-          <thead className="border-b border-zinc-200 bg-zinc-50">
+          <thead className="border-b border-amber-200/60 bg-amber-50/40">
             <tr>
               <th className="px-4 py-3">
-                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">
                   Select
                 </span>
               </th>
-              <th className="px-4 py-3 font-semibold text-zinc-700">
+              <th className="px-4 py-3 font-semibold text-stone-700">
                 Attendee
               </th>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Email</th>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Status</th>
+              <th className="px-4 py-3 font-semibold text-stone-700">Email</th>
+              <th className="px-4 py-3 font-semibold text-stone-700">Status</th>
             </tr>
           </thead>
           <tbody>
             {attendees.length ? (
               attendees.map((attendee) => (
-                <tr key={attendee.id} className="border-b border-zinc-100">
+                <tr key={attendee.id} className="border-b border-amber-100">
                   <td className="px-4 py-3">
                     <input
                       type="checkbox"
                       name="attendeeIds"
                       value={attendee.id}
-                      className="h-4 w-4 rounded border-zinc-300 text-zinc-900"
+                      className="h-4 w-4 rounded border-amber-300 text-teal-600"
                     />
                   </td>
-                  <td className="px-4 py-3 font-semibold text-zinc-900">
+                  <td className="px-4 py-3 font-semibold text-stone-900">
                     {attendee.firstName} {attendee.lastName}
                   </td>
-                  <td className="px-4 py-3 text-zinc-600">
+                  <td className="px-4 py-3 text-stone-600">
                     {attendee.email ?? "—"}
                   </td>
-                  <td className="px-4 py-3 text-zinc-600">
+                  <td className="px-4 py-3 text-stone-600">
                     {attendee.status}
                   </td>
                 </tr>
@@ -114,7 +114,7 @@ export default async function CheckInPage({
             ) : (
               <tr>
                 <td
-                  className="px-4 py-6 text-center text-zinc-500"
+                  className="px-4 py-6 text-center text-stone-500"
                   colSpan={4}
                 >
                   {query ? "No matches found." : "Search to begin."}
@@ -124,13 +124,13 @@ export default async function CheckInPage({
           </tbody>
         </table>
         {attendees.length ? (
-          <div className="flex items-center justify-between border-t border-zinc-200 px-4 py-3">
-            <span className="text-xs text-zinc-500">
+          <div className="flex items-center justify-between border-t border-amber-200/60 px-4 py-3">
+            <span className="text-xs text-stone-500">
               Select multiple guests to check in at once.
             </span>
             <button
               type="submit"
-              className="inline-flex h-10 items-center justify-center rounded-full bg-zinc-900 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-800"
+              className="inline-flex h-10 items-center justify-center rounded-full bg-teal-700 px-5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-teal-800"
             >
               Check in selected
             </button>

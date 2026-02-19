@@ -25,6 +25,15 @@
   }
 }
 
+/* GiveSmarter admin/portal theming */
+:root {
+  --gs-surface: rgba(255, 251, 235, 0.4);
+  --gs-nav-border: rgba(253, 230, 138, 0.6);
+  --gs-brand: #0f766e;
+  --gs-brand-hover: #115e59;
+  --gs-brand-text: #ffffff;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

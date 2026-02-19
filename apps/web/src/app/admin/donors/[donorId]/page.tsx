@@ -25,19 +25,19 @@ export default async function DonorDetailPage({
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-stone-500">
           {donor.organization.publicName}
         </p>
-        <h1 className="text-2xl font-semibold text-zinc-900">
+        <h1 className="text-2xl font-semibold text-stone-900">
           {donor.displayName ??
             ([donor.firstName, donor.lastName].filter(Boolean).join(" ") ||
             "Unnamed donor")}
         </h1>
-        <p className="text-sm text-zinc-600">Donor ID: {donor.id}</p>
+        <p className="text-sm text-stone-600">Donor ID: {donor.id}</p>
       </header>
 
       <form
-        className="space-y-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
+        className="space-y-6 rounded-2xl border border-amber-200/60 bg-white p-6 shadow-sm"
         action={async (formData) => {
           "use server";
           await updateDonor(donor.id, formData);
@@ -45,80 +45,80 @@ export default async function DonorDetailPage({
         }}
       >
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             Display name
             <input
               name="displayName"
               type="text"
               defaultValue={donor.displayName ?? ""}
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             />
           </label>
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             Preferred name
             <input
               name="preferredName"
               type="text"
               defaultValue={donor.preferredName ?? ""}
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             />
           </label>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             First name
             <input
               name="firstName"
               type="text"
               defaultValue={donor.firstName ?? ""}
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             />
           </label>
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             Last name
             <input
               name="lastName"
               type="text"
               defaultValue={donor.lastName ?? ""}
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             />
           </label>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             Primary email
             <input
               name="primaryEmail"
               type="email"
               defaultValue={donor.primaryEmail ?? ""}
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             />
           </label>
-          <label className="block text-sm font-semibold text-zinc-700">
+          <label className="block text-sm font-semibold text-stone-700">
             Primary phone
             <input
               name="primaryPhone"
               type="tel"
               defaultValue={donor.primaryPhone ?? ""}
-              className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
+              className="mt-2 w-full rounded-lg border border-amber-200/60 bg-white px-3 py-2 text-sm text-stone-900"
             />
           </label>
         </div>
 
         <button
           type="submit"
-          className="inline-flex h-11 items-center justify-center rounded-full bg-zinc-900 px-6 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-800"
+          className="inline-flex h-11 items-center justify-center rounded-full bg-teal-700 px-6 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-teal-800"
         >
           Update donor
         </button>
       </form>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
-          <h2 className="text-sm font-semibold text-zinc-900">Emails</h2>
-          <div className="mt-3 space-y-2 text-sm text-zinc-600">
+        <div className="rounded-2xl border border-amber-200/60 bg-white p-5 shadow-sm">
+          <h2 className="text-sm font-semibold text-stone-900">Emails</h2>
+          <div className="mt-3 space-y-2 text-sm text-stone-600">
             {donor.emails.length ? (
               donor.emails.map((email) => (
                 <div key={email.id}>{email.email}</div>
@@ -128,9 +128,9 @@ export default async function DonorDetailPage({
             )}
           </div>
         </div>
-        <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
-          <h2 className="text-sm font-semibold text-zinc-900">Phones</h2>
-          <div className="mt-3 space-y-2 text-sm text-zinc-600">
+        <div className="rounded-2xl border border-amber-200/60 bg-white p-5 shadow-sm">
+          <h2 className="text-sm font-semibold text-stone-900">Phones</h2>
+          <div className="mt-3 space-y-2 text-sm text-stone-600">
             {donor.phones.length ? (
               donor.phones.map((phone) => (
                 <div key={phone.id}>{phone.phoneE164}</div>
@@ -140,9 +140,9 @@ export default async function DonorDetailPage({
             )}
           </div>
         </div>
-        <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
-          <h2 className="text-sm font-semibold text-zinc-900">Addresses</h2>
-          <div className="mt-3 space-y-2 text-sm text-zinc-600">
+        <div className="rounded-2xl border border-amber-200/60 bg-white p-5 shadow-sm">
+          <h2 className="text-sm font-semibold text-stone-900">Addresses</h2>
+          <div className="mt-3 space-y-2 text-sm text-stone-600">
             {donor.addresses.length ? (
               donor.addresses.map((address) => (
                 <div key={address.id}>
