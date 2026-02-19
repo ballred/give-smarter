@@ -5,10 +5,11 @@ import { prisma } from "@/lib/db";
 export default async function VotingContestDetailPage({
   params,
 }: {
-  params: { contestId: string };
+  params: Promise<{ contestId: string }>;
 }) {
+  const resolvedParams = await params;
   const contest = await prisma.votingContest.findUnique({
-    where: { id: params.contestId },
+    where: { id: resolvedParams.contestId },
     include: {
       campaign: { select: { name: true } },
       candidates: { orderBy: { createdAt: "desc" } },

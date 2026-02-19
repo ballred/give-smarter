@@ -3,12 +3,13 @@ import { prisma } from "@/lib/db";
 import { updatePeerTeam } from "../team-actions";
 
 type TeamDetailPageProps = {
-  params: { teamId: string };
+  params: Promise<{ teamId: string }>;
 };
 
 export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
+  const resolvedParams = await params;
   const team = await prisma.peerFundraisingTeam.findUnique({
-    where: { id: params.teamId },
+    where: { id: resolvedParams.teamId },
   });
 
   if (!team) {
@@ -37,8 +38,8 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
         className="space-y-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
         action={async (formData) => {
           "use server";
-          await updatePeerTeam(params.teamId, formData);
-          redirect(`/admin/peer-to-peer/teams/${params.teamId}`);
+          await updatePeerTeam(resolvedParams.teamId, formData);
+          redirect(`/admin/peer-to-peer/teams/${resolvedParams.teamId}`);
         }}
       >
         <label className="block text-sm font-semibold text-zinc-700">

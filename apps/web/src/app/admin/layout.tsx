@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/admin-auth";
 import { redirect } from "next/navigation";
 import { AdminNav } from "./_components/AdminNav";
 

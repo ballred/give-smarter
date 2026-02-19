@@ -7,13 +7,14 @@ type SearchParams = {
   attendee?: string;
 };
 
-export default function CheckInQrPage({
+export default async function CheckInQrPage({
   searchParams,
 }: {
-  searchParams: SearchParams;
+  searchParams: Promise<SearchParams>;
 }) {
-  const showSuccess = searchParams.success === "1";
-  const error = searchParams.error;
+  const resolvedSearchParams = await searchParams;
+  const showSuccess = resolvedSearchParams.success === "1";
+  const error = resolvedSearchParams.error;
 
   return (
     <div className="space-y-6">

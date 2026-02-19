@@ -5,10 +5,11 @@ import { updateSmsTemplate } from "../template-actions";
 export default async function SmsTemplateDetailPage({
   params,
 }: {
-  params: { templateId: string };
+  params: Promise<{ templateId: string }>;
 }) {
+  const resolvedParams = await params;
   const template = await prisma.smsTemplate.findUnique({
-    where: { id: params.templateId },
+    where: { id: resolvedParams.templateId },
     include: { organization: { select: { publicName: true } } },
   });
 

@@ -20,10 +20,11 @@ function formatDateTimeLocal(value: Date | null) {
 export default async function CampaignDetailPage({
   params,
 }: {
-  params: { campaignId: string };
+  params: Promise<{ campaignId: string }>;
 }) {
+  const resolvedParams = await params;
   const campaign = await prisma.campaign.findUnique({
-    where: { id: params.campaignId },
+    where: { id: resolvedParams.campaignId },
     include: {
       organization: { select: { publicName: true } },
       modules: { select: { type: true, isEnabled: true } },

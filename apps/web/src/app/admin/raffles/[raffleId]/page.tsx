@@ -5,10 +5,11 @@ import { drawRaffleWinner } from "./raffle-draw-actions";
 export default async function RaffleDetailPage({
   params,
 }: {
-  params: { raffleId: string };
+  params: Promise<{ raffleId: string }>;
 }) {
+  const resolvedParams = await params;
   const raffle = await prisma.raffle.findUnique({
-    where: { id: params.raffleId },
+    where: { id: resolvedParams.raffleId },
     include: {
       campaign: { select: { name: true } },
       draws: { orderBy: { drawnAt: "desc" } },

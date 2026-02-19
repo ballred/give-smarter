@@ -3,14 +3,15 @@ import { prisma } from "@/lib/db";
 import { LiveDisplayClient } from "./LiveDisplayClient";
 
 type LiveDisplayPageProps = {
-  params: { campaignId: string };
+  params: Promise<{ campaignId: string }>;
 };
 
 export default async function LiveDisplayPage({
   params,
 }: LiveDisplayPageProps) {
+  const resolvedParams = await params;
   const campaign = await prisma.campaign.findUnique({
-    where: { id: params.campaignId },
+    where: { id: resolvedParams.campaignId },
     select: {
       id: true,
       name: true,

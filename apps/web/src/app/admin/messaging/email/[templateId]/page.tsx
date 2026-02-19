@@ -5,10 +5,11 @@ import { updateEmailTemplate } from "../template-actions";
 export default async function EmailTemplateDetailPage({
   params,
 }: {
-  params: { templateId: string };
+  params: Promise<{ templateId: string }>;
 }) {
+  const resolvedParams = await params;
   const template = await prisma.emailTemplate.findUnique({
-    where: { id: params.templateId },
+    where: { id: resolvedParams.templateId },
     include: { organization: { select: { publicName: true } } },
   });
 

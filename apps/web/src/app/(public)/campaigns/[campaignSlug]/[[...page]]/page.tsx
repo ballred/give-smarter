@@ -29,15 +29,16 @@ type CampaignPageParams = {
 export async function generateMetadata({
   params,
 }: {
-  params: CampaignPageParams;
+  params: Promise<CampaignPageParams>;
 }): Promise<Metadata> {
-  const campaign = await getCampaignBySlug(params.campaignSlug);
+  const resolvedParams = await params;
+  const campaign = await getCampaignBySlug(resolvedParams.campaignSlug);
 
   if (!campaign) {
     return { title: "Campaign not found" };
   }
 
-  const pageSlug = params.page?.[0] ?? "home";
+  const pageSlug = resolvedParams.page?.[0] ?? "home";
   const page = campaign.pages.find((item) => item.slug === pageSlug);
   const title = page?.title
     ? `${page.title} | ${campaign.name}`
@@ -53,8 +54,8 @@ export default async function CampaignPage({
   params,
   searchParams,
 }: {
-  params: CampaignPageParams;
-  searchParams?: {
+  params: Promise<CampaignPageParams>;
+  searchParams?: Promise<{
     success?: string;
     canceled?: string;
     watch?: string;
@@ -64,15 +65,17 @@ export default async function CampaignPage({
     utm_content?: string;
     utm_term?: string;
     keyword?: string;
-  };
+  }>;
 }) {
-  const campaign = await getCampaignBySlug(params.campaignSlug);
+  const resolvedParams = await params;
+  const resolvedSearchParams = (await searchParams) ?? {};
+  const campaign = await getCampaignBySlug(resolvedParams.campaignSlug);
 
   if (!campaign) {
     notFound();
   }
 
-  const pageSlug = params.page?.[0] ?? "home";
+  const pageSlug = resolvedParams.page?.[0] ?? "home";
   const page = campaign.pages.find((item) => item.slug === pageSlug);
 
   if (!page) {
@@ -84,9 +87,9 @@ export default async function CampaignPage({
   const donateHref = donatePage
     ? `/campaigns/${campaign.slug}/${donatePage.slug}`
     : "#donate";
-  const auctionItemId = params.page?.[1];
-  const peerSection = params.page?.[1];
-  const peerSlug = params.page?.[2];
+  const auctionItemId = resolvedParams.page?.[1];
+  const peerSection = resolvedParams.page?.[1];
+  const peerSlug = resolvedParams.page?.[2];
   const showDonationForm = page.slug === "donate";
   const showTicketForm = page.slug === "tickets";
   const showStoreForm = page.slug === "store";
@@ -107,16 +110,16 @@ export default async function CampaignPage({
     page.slug === "peer-to-peer" &&
     peerSection === "classrooms" &&
     Boolean(peerSlug);
-  const showSuccess = searchParams?.success === "1";
-  const showCanceled = searchParams?.canceled === "1";
-  const showWatch = searchParams?.watch === "1";
+  const showSuccess = resolvedSearchParams.success === "1";
+  const showCanceled = resolvedSearchParams.canceled === "1";
+  const showWatch = resolvedSearchParams.watch === "1";
   const tracking = {
-    utmSource: searchParams?.utm_source,
-    utmMedium: searchParams?.utm_medium,
-    utmCampaign: searchParams?.utm_campaign,
-    utmContent: searchParams?.utm_content,
-    utmTerm: searchParams?.utm_term,
-    keyword: searchParams?.keyword,
+    utmSource: resolvedSearchParams.utm_source,
+    utmMedium: resolvedSearchParams.utm_medium,
+    utmCampaign: resolvedSearchParams.utm_campaign,
+    utmContent: resolvedSearchParams.utm_content,
+    utmTerm: resolvedSearchParams.utm_term,
+    keyword: resolvedSearchParams.keyword,
   };
 
   return (

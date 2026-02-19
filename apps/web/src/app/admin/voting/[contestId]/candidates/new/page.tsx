@@ -5,10 +5,11 @@ import { createVoteCandidate } from "./voting-candidate-actions";
 export default async function NewVotingCandidatePage({
   params,
 }: {
-  params: { contestId: string };
+  params: Promise<{ contestId: string }>;
 }) {
+  const resolvedParams = await params;
   const contest = await prisma.votingContest.findUnique({
-    where: { id: params.contestId },
+    where: { id: resolvedParams.contestId },
     select: { id: true, name: true },
   });
 

@@ -3,14 +3,15 @@ import { prisma } from "@/lib/db";
 import { addHouseholdMember } from "../household-actions";
 
 type HouseholdDetailPageProps = {
-  params: { householdId: string };
+  params: Promise<{ householdId: string }>;
 };
 
 export default async function HouseholdDetailPage({
   params,
 }: HouseholdDetailPageProps) {
+  const resolvedParams = await params;
   const household = await prisma.household.findUnique({
-    where: { id: params.householdId },
+    where: { id: resolvedParams.householdId },
     include: {
       organization: { select: { publicName: true } },
       memberships: {
@@ -48,8 +49,8 @@ export default async function HouseholdDetailPage({
         className="space-y-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
         action={async (formData) => {
           "use server";
-          await addHouseholdMember(params.householdId, formData);
-          redirect(`/admin/households/${params.householdId}`);
+          await addHouseholdMember(resolvedParams.householdId, formData);
+          redirect(`/admin/households/${resolvedParams.householdId}`);
         }}
       >
         <div className="grid gap-4 md:grid-cols-2">

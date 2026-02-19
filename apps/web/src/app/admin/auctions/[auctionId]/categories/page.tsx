@@ -5,10 +5,11 @@ import { createAuctionCategory } from "./category-actions";
 export default async function AuctionCategoriesPage({
   params,
 }: {
-  params: { auctionId: string };
+  params: Promise<{ auctionId: string }>;
 }) {
+  const resolvedParams = await params;
   const auction = await prisma.auction.findUnique({
-    where: { id: params.auctionId },
+    where: { id: resolvedParams.auctionId },
     include: {
       categories: { orderBy: { sortOrder: "asc" } },
       campaign: { select: { name: true } },

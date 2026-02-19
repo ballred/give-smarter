@@ -3,14 +3,15 @@ import { prisma } from "@/lib/db";
 import { updatePeerFundraiser } from "../fundraiser-actions";
 
 type FundraiserDetailPageProps = {
-  params: { fundraiserId: string };
+  params: Promise<{ fundraiserId: string }>;
 };
 
 export default async function FundraiserDetailPage({
   params,
 }: FundraiserDetailPageProps) {
+  const resolvedParams = await params;
   const fundraiser = await prisma.peerFundraiser.findUnique({
-    where: { id: params.fundraiserId },
+    where: { id: resolvedParams.fundraiserId },
   });
 
   if (!fundraiser) {
@@ -53,8 +54,8 @@ export default async function FundraiserDetailPage({
         className="space-y-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
         action={async (formData) => {
           "use server";
-          await updatePeerFundraiser(params.fundraiserId, formData);
-          redirect(`/admin/peer-to-peer/fundraisers/${params.fundraiserId}`);
+          await updatePeerFundraiser(resolvedParams.fundraiserId, formData);
+          redirect(`/admin/peer-to-peer/fundraisers/${resolvedParams.fundraiserId}`);
         }}
       >
         <label className="block text-sm font-semibold text-zinc-700">

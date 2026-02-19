@@ -5,10 +5,11 @@ import { createAuctionItem } from "./auction-item-actions";
 export default async function NewAuctionItemPage({
   params,
 }: {
-  params: { auctionId: string };
+  params: Promise<{ auctionId: string }>;
 }) {
+  const resolvedParams = await params;
   const auction = await prisma.auction.findUnique({
-    where: { id: params.auctionId },
+    where: { id: resolvedParams.auctionId },
     include: {
       categories: { orderBy: { sortOrder: "asc" } },
     },

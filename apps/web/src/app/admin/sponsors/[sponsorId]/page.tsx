@@ -3,14 +3,15 @@ import { prisma } from "@/lib/db";
 import { addSponsorPlacement, updateSponsor } from "../sponsor-actions";
 
 type SponsorDetailPageProps = {
-  params: { sponsorId: string };
+  params: Promise<{ sponsorId: string }>;
 };
 
 export default async function SponsorDetailPage({
   params,
 }: SponsorDetailPageProps) {
+  const resolvedParams = await params;
   const sponsor = await prisma.sponsor.findUnique({
-    where: { id: params.sponsorId },
+    where: { id: resolvedParams.sponsorId },
     include: {
       organization: { select: { publicName: true } },
       placements: {
@@ -47,8 +48,8 @@ export default async function SponsorDetailPage({
         className="space-y-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
         action={async (formData) => {
           "use server";
-          await updateSponsor(params.sponsorId, formData);
-          redirect(`/admin/sponsors/${params.sponsorId}`);
+          await updateSponsor(resolvedParams.sponsorId, formData);
+          redirect(`/admin/sponsors/${resolvedParams.sponsorId}`);
         }}
       >
         <label className="block text-sm font-semibold text-zinc-700">
@@ -108,8 +109,8 @@ export default async function SponsorDetailPage({
           className="grid gap-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm md:grid-cols-2"
           action={async (formData) => {
             "use server";
-            await addSponsorPlacement(params.sponsorId, formData);
-            redirect(`/admin/sponsors/${params.sponsorId}`);
+            await addSponsorPlacement(resolvedParams.sponsorId, formData);
+            redirect(`/admin/sponsors/${resolvedParams.sponsorId}`);
           }}
         >
           <label className="block text-sm font-semibold text-zinc-700">

@@ -8,9 +8,10 @@ type SearchParams = {
 export default async function DonorsPage({
   searchParams,
 }: {
-  searchParams: SearchParams;
+  searchParams: Promise<SearchParams>;
 }) {
-  const query = searchParams.q?.trim() ?? "";
+  const resolvedSearchParams = await searchParams;
+  const query = resolvedSearchParams.q?.trim() ?? "";
   const donors = await prisma.donor.findMany({
     where: query
       ? {

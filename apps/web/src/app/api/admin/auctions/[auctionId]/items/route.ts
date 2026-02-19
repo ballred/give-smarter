@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/admin-auth";
 import { AuctionItemStatus } from "@prisma/client";
 import { prisma } from "@/lib/db";
 

@@ -9,9 +9,10 @@ type SearchParams = {
 export default async function CheckInPage({
   searchParams,
 }: {
-  searchParams: SearchParams;
+  searchParams: Promise<SearchParams>;
 }) {
-  const query = searchParams.q?.trim() ?? "";
+  const resolvedSearchParams = await searchParams;
+  const query = resolvedSearchParams.q?.trim() ?? "";
   const attendees = query
     ? await prisma.attendee.findMany({
         where: {

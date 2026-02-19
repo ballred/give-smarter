@@ -5,10 +5,11 @@ import { updateDonor } from "../donor-actions";
 export default async function DonorDetailPage({
   params,
 }: {
-  params: { donorId: string };
+  params: Promise<{ donorId: string }>;
 }) {
+  const resolvedParams = await params;
   const donor = await prisma.donor.findUnique({
-    where: { id: params.donorId },
+    where: { id: resolvedParams.donorId },
     include: {
       organization: { select: { publicName: true } },
       emails: true,

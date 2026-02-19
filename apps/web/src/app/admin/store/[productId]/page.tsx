@@ -5,10 +5,11 @@ import { prisma } from "@/lib/db";
 export default async function StoreProductDetailPage({
   params,
 }: {
-  params: { productId: string };
+  params: Promise<{ productId: string }>;
 }) {
+  const resolvedParams = await params;
   const product = await prisma.storeProduct.findUnique({
-    where: { id: params.productId },
+    where: { id: resolvedParams.productId },
     include: {
       campaign: { select: { name: true } },
       variants: { orderBy: { createdAt: "desc" } },

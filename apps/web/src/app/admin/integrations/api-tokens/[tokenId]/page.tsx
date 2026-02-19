@@ -10,11 +10,13 @@ export default async function ApiTokenDetailPage({
   params,
   searchParams,
 }: {
-  params: { tokenId: string };
-  searchParams?: { token?: string };
+  params: Promise<{ tokenId: string }>;
+  searchParams?: Promise<{ token?: string }>;
 }) {
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
   const token = await prisma.apiToken.findUnique({
-    where: { id: params.tokenId },
+    where: { id: resolvedParams.tokenId },
     include: { organization: { select: { publicName: true } } },
   });
 
@@ -34,11 +36,11 @@ export default async function ApiTokenDetailPage({
         </p>
       </header>
 
-      {searchParams?.token ? (
+      {resolvedSearchParams?.token ? (
         <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-sm text-emerald-900">
           <p className="font-semibold">New token generated</p>
           <p className="mt-2 break-all font-mono text-xs text-emerald-800">
-            {searchParams.token}
+            {resolvedSearchParams.token}
           </p>
           <p className="mt-2 text-xs text-emerald-700">
             Copy this token now. You won&apos;t be able to see it again.

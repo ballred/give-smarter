@@ -8,12 +8,14 @@ export default async function AuctionDetailPage({
   params,
   searchParams,
 }: {
-  params: { auctionId: string };
-  searchParams?: { reminder?: string; closed?: string };
+  params: Promise<{ auctionId: string }>;
+  searchParams?: Promise<{ reminder?: string; closed?: string }>;
 }) {
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
   const [auction, noBidItems] = await Promise.all([
     prisma.auction.findUnique({
-      where: { id: params.auctionId },
+      where: { id: resolvedParams.auctionId },
       include: {
         campaign: { select: { name: true } },
         items: {
@@ -24,7 +26,7 @@ export default async function AuctionDetailPage({
     }),
     prisma.auctionItem.findMany({
       where: {
-        auctionId: params.auctionId,
+        auctionId: resolvedParams.auctionId,
         status: "PUBLISHED",
         bids: { none: {} },
       },
@@ -37,8 +39,8 @@ export default async function AuctionDetailPage({
     notFound();
   }
 
-  const showReminderSent = searchParams?.reminder === "1";
-  const showClosed = Boolean(searchParams?.closed);
+  const showReminderSent = resolvedSearchParams?.reminder === "1";
+  const showClosed = Boolean(resolvedSearchParams?.closed);
 
   return (
     <div className="space-y-6">

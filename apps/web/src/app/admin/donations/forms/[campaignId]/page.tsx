@@ -36,10 +36,11 @@ function parseDesignations(config: unknown) {
 export default async function DonationFormDetailPage({
   params,
 }: {
-  params: { campaignId: string };
+  params: Promise<{ campaignId: string }>;
 }) {
+  const resolvedParams = await params;
   const campaign = await prisma.campaign.findUnique({
-    where: { id: params.campaignId },
+    where: { id: resolvedParams.campaignId },
     include: {
       organization: { select: { publicName: true } },
       modules: { where: { type: "DONATIONS" } },

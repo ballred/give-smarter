@@ -3,14 +3,15 @@ import { prisma } from "@/lib/db";
 import { updatePeerClassroom } from "../classroom-actions";
 
 type ClassroomDetailPageProps = {
-  params: { classroomId: string };
+  params: Promise<{ classroomId: string }>;
 };
 
 export default async function ClassroomDetailPage({
   params,
 }: ClassroomDetailPageProps) {
+  const resolvedParams = await params;
   const classroom = await prisma.peerFundraisingClassroom.findUnique({
-    where: { id: params.classroomId },
+    where: { id: resolvedParams.classroomId },
   });
 
   if (!classroom) {
@@ -41,8 +42,8 @@ export default async function ClassroomDetailPage({
         className="space-y-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
         action={async (formData) => {
           "use server";
-          await updatePeerClassroom(params.classroomId, formData);
-          redirect(`/admin/peer-to-peer/classrooms/${params.classroomId}`);
+          await updatePeerClassroom(resolvedParams.classroomId, formData);
+          redirect(`/admin/peer-to-peer/classrooms/${resolvedParams.classroomId}`);
         }}
       >
         <label className="block text-sm font-semibold text-zinc-700">

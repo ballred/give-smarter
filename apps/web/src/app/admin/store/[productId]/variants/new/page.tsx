@@ -5,10 +5,11 @@ import { createStoreVariant } from "./variant-actions";
 export default async function NewStoreVariantPage({
   params,
 }: {
-  params: { productId: string };
+  params: Promise<{ productId: string }>;
 }) {
+  const resolvedParams = await params;
   const product = await prisma.storeProduct.findUnique({
-    where: { id: params.productId },
+    where: { id: resolvedParams.productId },
     select: { id: true, name: true, currency: true },
   });
 

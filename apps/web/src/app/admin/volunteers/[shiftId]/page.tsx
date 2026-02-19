@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import { updateVolunteerShift } from "../shift-actions";
 
 type VolunteerShiftPageProps = {
-  params: { shiftId: string };
+  params: Promise<{ shiftId: string }>;
 };
 
 function toLocalInput(date: Date | null) {
@@ -15,8 +15,9 @@ function toLocalInput(date: Date | null) {
 export default async function VolunteerShiftDetailPage({
   params,
 }: VolunteerShiftPageProps) {
+  const resolvedParams = await params;
   const shift = await prisma.volunteerShift.findUnique({
-    where: { id: params.shiftId },
+    where: { id: resolvedParams.shiftId },
     include: {
       campaign: { select: { name: true } },
       signups: {
@@ -47,8 +48,8 @@ export default async function VolunteerShiftDetailPage({
         className="space-y-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
         action={async (formData) => {
           "use server";
-          await updateVolunteerShift(params.shiftId, formData);
-          redirect(`/admin/volunteers/${params.shiftId}`);
+          await updateVolunteerShift(resolvedParams.shiftId, formData);
+          redirect(`/admin/volunteers/${resolvedParams.shiftId}`);
         }}
       >
         <label className="block text-sm font-semibold text-zinc-700">

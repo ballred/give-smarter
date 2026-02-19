@@ -1,4 +1,5 @@
 const needsEscaping = /[",\n]/;
+const formulaPrefix = /^[\t ]*[=+\-@]/;
 
 export type ParsedCsv = {
   headers: string[];
@@ -80,10 +81,16 @@ function escapeCell(value: string | number | null) {
     return "";
   }
 
-  const str = String(value);
-  if (needsEscaping.test(str)) {
-    return `"${str.replaceAll("\"", "\"\"")}"`;
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? String(value) : "";
   }
 
-  return str;
+  const str = String(value);
+  const safe = formulaPrefix.test(str) ? `'${str}` : str;
+
+  if (needsEscaping.test(safe)) {
+    return `"${safe.replaceAll("\"", "\"\"")}"`;
+  }
+
+  return safe;
 }

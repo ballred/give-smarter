@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/admin-auth";
 import { prisma } from "@/lib/db";
 import { logAuditEntry } from "@/lib/audit";
 import { defaultBidIncrementRules } from "@give-smarter/core";

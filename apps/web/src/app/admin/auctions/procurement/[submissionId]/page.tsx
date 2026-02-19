@@ -5,10 +5,11 @@ import { updateProcurementSubmission } from "./procurement-actions";
 export default async function ProcurementDetailPage({
   params,
 }: {
-  params: { submissionId: string };
+  params: Promise<{ submissionId: string }>;
 }) {
+  const resolvedParams = await params;
   const submission = await prisma.procurementSubmission.findUnique({
-    where: { id: params.submissionId },
+    where: { id: resolvedParams.submissionId },
     include: {
       procurementDonor: true,
       campaign: { select: { name: true } },

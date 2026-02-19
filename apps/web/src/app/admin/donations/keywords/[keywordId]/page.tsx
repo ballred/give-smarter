@@ -5,11 +5,12 @@ import { updateKeywordRoute } from "../keyword-actions";
 export default async function KeywordRouteDetailPage({
   params,
 }: {
-  params: { keywordId: string };
+  params: Promise<{ keywordId: string }>;
 }) {
+  const resolvedParams = await params;
   const [route, campaigns] = await Promise.all([
     prisma.keywordRoute.findUnique({
-      where: { id: params.keywordId },
+      where: { id: resolvedParams.keywordId },
       include: { organization: { select: { publicName: true } } },
     }),
     prisma.campaign.findMany({

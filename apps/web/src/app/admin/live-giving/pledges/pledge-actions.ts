@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/admin-auth";
 import { prisma } from "@/lib/db";
 
 function parseAmount(value: FormDataEntryValue | null) {

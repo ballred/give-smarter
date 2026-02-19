@@ -88,7 +88,16 @@ function computeTwilioSignature(
 }
 
 function shouldValidateTwilioSignature() {
-  return (process.env.TWILIO_VALIDATE_SIGNATURE ?? "").toLowerCase() === "true";
+  const configured = (process.env.TWILIO_VALIDATE_SIGNATURE ?? "").toLowerCase();
+
+  if (configured === "false") {
+    return false;
+  }
+  if (configured === "true") {
+    return true;
+  }
+
+  return Boolean(process.env.TWILIO_AUTH_TOKEN);
 }
 
 export async function POST(request: Request) {

@@ -10,11 +10,13 @@ export default async function WebhookDetailPage({
   params,
   searchParams,
 }: {
-  params: { webhookId: string };
-  searchParams?: { secret?: string };
+  params: Promise<{ webhookId: string }>;
+  searchParams?: Promise<{ secret?: string }>;
 }) {
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
   const webhook = await prisma.webhookEndpoint.findUnique({
-    where: { id: params.webhookId },
+    where: { id: resolvedParams.webhookId },
     include: { organization: { select: { publicName: true } } },
   });
 
@@ -32,11 +34,11 @@ export default async function WebhookDetailPage({
         <p className="text-sm text-zinc-600">Status: {webhook.status}</p>
       </header>
 
-      {searchParams?.secret ? (
+      {resolvedSearchParams?.secret ? (
         <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-sm text-emerald-900">
           <p className="font-semibold">Webhook secret generated</p>
           <p className="mt-2 break-all font-mono text-xs text-emerald-800">
-            {searchParams.secret}
+            {resolvedSearchParams.secret}
           </p>
           <p className="mt-2 text-xs text-emerald-700">
             Copy this secret now. You won&apos;t be able to see it again.
