@@ -23,7 +23,8 @@ function renderCtaLink(
   if (variant === "light") {
     return (
       <a
-        className="inline-flex h-12 items-center justify-center rounded-full bg-[color:var(--campaign-card)] px-6 text-sm font-semibold text-[color:var(--campaign-accent-strong)] transition hover:bg-[color:var(--campaign-surface)]"
+        className="inline-flex h-12 items-center justify-center rounded-full bg-[color:var(--campaign-card)] px-6 text-sm font-semibold transition hover:bg-[color:var(--campaign-surface)]"
+        style={{ color: "var(--campaign-accent-strong)" }}
         href={href}
       >
         {label}
@@ -78,7 +79,8 @@ export function BlockRenderer({
               >
                 <div
                   data-campaign-float="slow"
-                  className="absolute -right-24 -top-20 h-64 w-64 rounded-full bg-[color:var(--campaign-highlight)] opacity-40 blur-3xl"
+                  className="absolute -right-24 -top-20 h-64 w-64 rounded-full opacity-40 blur-3xl"
+                  style={{ backgroundColor: "var(--campaign-highlight)" }}
                 />
                 <div
                   data-campaign-float
@@ -96,7 +98,7 @@ export function BlockRenderer({
                         {data.title}
                       </h1>
                       {data.highlight ? (
-                        <p className="max-w-xl text-base font-semibold text-[color:var(--campaign-accent-strong)]">
+                        <p className="max-w-xl text-base font-semibold" style={{ color: "var(--campaign-accent-strong)" }}>
                           {data.highlight}
                         </p>
                       ) : null}
@@ -199,7 +201,7 @@ export function BlockRenderer({
                   </div>
                   {data.image ? (
                     <div className="relative">
-                      <div className="absolute -left-6 top-12 h-24 w-24 rounded-full bg-[color:var(--campaign-highlight)] opacity-50 blur-2xl" />
+                      <div className="absolute -left-6 top-12 h-24 w-24 rounded-full opacity-50 blur-2xl" style={{ backgroundColor: "var(--campaign-highlight)" }} />
                       <div className="relative overflow-hidden rounded-[28px] border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] shadow-[0_18px_50px_rgba(32,26,20,0.15)]">
                         <img
                           src={data.image.url}
