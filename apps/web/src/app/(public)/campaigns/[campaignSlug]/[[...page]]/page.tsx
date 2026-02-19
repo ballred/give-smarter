@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BlockRenderer, CampaignThemeProvider } from "@give-smarter/ui";
-import { moduleTypeLabels } from "@give-smarter/core";
 import { getCampaignBySlug } from "../campaign-data";
 import { DonationForm } from "../DonationForm";
 import { TicketPurchaseForm } from "../TicketPurchaseForm";
@@ -84,7 +83,6 @@ export default async function CampaignPage({
 
   const campaignPages = campaign.pages;
   const campaignSlug = campaign.slug;
-  const enabledModules = campaign.modules.filter((module) => module.isEnabled);
   const donatePage = campaignPages.find((item) => item.slug === "donate");
   const currentPageHref =
     page.slug === "home"
@@ -195,21 +193,6 @@ export default async function CampaignPage({
         </header>
 
         <main>
-          {enabledModules.length ? (
-            <section className="px-6 pt-10 sm:px-10">
-              <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-3">
-                {enabledModules.map((module) => (
-                  <span
-                    key={module.type}
-                    className="inline-flex items-center rounded-full border border-[color:var(--campaign-border)] bg-[color:var(--campaign-card)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--campaign-ink-muted)]"
-                  >
-                    {module.label ?? moduleTypeLabels[module.type]}
-                  </span>
-                ))}
-              </div>
-            </section>
-          ) : null}
-
           <BlockRenderer blocks={page.blocks} resolveHref={resolveCampaignHref} />
           {showDonationForm ? (
             <section id="donate">
